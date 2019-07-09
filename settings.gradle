@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        maven { url REPOSITORY }
+    }
+}
+
+rootProject.name = PROJECT_ARTIFACT
+
+enableFeaturePreview('STABLE_PUBLISHING')
+enableFeaturePreview("IMPROVED_POM_SUPPORT")
+
+include ':treasury-api',
+        ':treasury-impl',
+        ':treasury-rs'
+

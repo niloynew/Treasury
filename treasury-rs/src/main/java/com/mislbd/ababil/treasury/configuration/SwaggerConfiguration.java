@@ -18,59 +18,59 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration extends BaseSwaggerConfiguration {
 
-    private final BuildProperties buildProperties;
+  private final BuildProperties buildProperties;
 
-    public SwaggerConfiguration(BuildProperties buildProperties) {
-        this.buildProperties = buildProperties;
-    }
+  public SwaggerConfiguration(BuildProperties buildProperties) {
+    this.buildProperties = buildProperties;
+  }
 
-    @Bean
-    public Docket customerApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("Ababil Foreign Remittance " + buildProperties.getVersion())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.mislbd.ababil.treasury"))
-                .paths(PathSelectors.any())
-                .build()
-                .securitySchemes(Collections.singletonList(super.securitySchema()))
-                .securityContexts(Collections.singletonList(super.securityContext()))
-                .apiInfo(
-                        new ApiInfoBuilder()
-                                .title("Ababil Foreign Remittance API")
-                                .description("Ababil Foreign Remittance REST API")
-                                .version(buildProperties.getVersion())
-                                .license("© Millennium Information Solution Limited")
-                                .licenseUrl("http://www.mislbd.com")
-                                .contact(
-                                        new Contact(
-                                                "Millennium Information Solution Limited",
-                                                "http://www.mislbd.com",
-                                                "miraj@mislbd.com"))
-                                .build());
-    }
+  @Bean
+  public Docket customerApi() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .groupName("Ababil Foreign Remittance " + buildProperties.getVersion())
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("com.mislbd.ababil.treasury"))
+        .paths(PathSelectors.any())
+        .build()
+        .securitySchemes(Collections.singletonList(super.securitySchema()))
+        .securityContexts(Collections.singletonList(super.securityContext()))
+        .apiInfo(
+            new ApiInfoBuilder()
+                .title("Ababil Foreign Remittance API")
+                .description("Ababil Foreign Remittance REST API")
+                .version(buildProperties.getVersion())
+                .license("© Millennium Information Solution Limited")
+                .licenseUrl("http://www.mislbd.com")
+                .contact(
+                    new Contact(
+                        "Millennium Information Solution Limited",
+                        "http://www.mislbd.com",
+                        "miraj@mislbd.com"))
+                .build());
+  }
 
-    @Bean
-    public Docket documentApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("Ababil Dcoument " + buildProperties.getVersion())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.mislbd.document"))
-                .paths(PathSelectors.any())
-                .build()
-                .securitySchemes(Collections.singletonList(super.securitySchema()))
-                .securityContexts(Collections.singletonList(super.securityContext()))
-                .apiInfo(
-                        new ApiInfoBuilder()
-                                .title("Ababil Treasury API")
-                                .description("Ababil Treasury REST API")
-                                .version(buildProperties.getVersion())
-                                .license("© Millennium Information Solution Limited")
-                                .licenseUrl("http://www.mislbd.com")
-                                .contact(
-                                        new Contact(
-                                                "Millennium Information Solution Limited",
-                                                "http://www.mislbd.com",
-                                                "miraj@mislbd.com"))
-                                .build());
-    }
+  @Bean
+  public Docket documentApi() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .groupName("Ababil Dcoument " + buildProperties.getVersion())
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("com.mislbd.document"))
+        .paths(PathSelectors.any())
+        .build()
+        .securitySchemes(Collections.singletonList(super.securitySchema()))
+        .securityContexts(Collections.singletonList(super.securityContext()))
+        .apiInfo(
+            new ApiInfoBuilder()
+                .title("Ababil Treasury API")
+                .description("Ababil Treasury REST API")
+                .version(buildProperties.getVersion())
+                .license("© Millennium Information Solution Limited")
+                .licenseUrl("http://www.mislbd.com")
+                .contact(
+                    new Contact(
+                        "Millennium Information Solution Limited",
+                        "http://www.mislbd.com",
+                        "miraj@mislbd.com"))
+                .build());
+  }
 }

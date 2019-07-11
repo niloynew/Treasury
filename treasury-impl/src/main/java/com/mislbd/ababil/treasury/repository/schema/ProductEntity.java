@@ -1,17 +1,21 @@
 package com.mislbd.ababil.treasury.repository.schema;
 
 import com.mislbd.ababil.asset.repository.schema.BaseEntity;
+import com.mislbd.ababil.treasury.domain.DaysInYear;
 import com.mislbd.ababil.treasury.domain.ProductStatus;
 import com.mislbd.ababil.treasury.domain.ProfitCalculationMethod;
 import java.util.List;
 import javax.persistence.*;
 
+@Entity
 @Table(name = SchemaConstant.PRODUCT_TABLE_NAME)
 public class ProductEntity extends BaseEntity {
 
-  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-  private List<AccountEntity> accountEntityList;
+  //  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+  //  private List<AccountEntity> accountEntityList;
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "PRODUCT_ID_GEN")
   @SequenceGenerator(
       name = "PRODUCT_ID_GEN",
       allocationSize = 1,
@@ -29,26 +33,22 @@ public class ProductEntity extends BaseEntity {
   private boolean profitApplicable;
 
   @Column(name = "PRODUCT_NATURE")
-  private int productNature;
+  private String productNature;
 
   @Column(name = "PROFIT_CALCULATION")
   @Enumerated(EnumType.STRING)
   private ProfitCalculationMethod profitCalculationMethod;
 
-  @Column(name = "rule360")
-  private boolean rule360;
+  @Column(name = "DAYS_IN_YEAR")
+  @Enumerated(EnumType.STRING)
+  private DaysInYear daysInYear;
 
   @Column(name = "STATUS")
+  @Enumerated(EnumType.STRING)
   private ProductStatus status;
 
-  public List<AccountEntity> getAccountEntityList() {
-    return accountEntityList;
-  }
-
-  public ProductEntity setAccountEntityList(List<AccountEntity> accountEntityList) {
-    this.accountEntityList = accountEntityList;
-    return this;
-  }
+  @OneToMany(mappedBy = "product")
+  private List<AccountEntity> accounts;
 
   public long getId() {
     return id;
@@ -86,11 +86,11 @@ public class ProductEntity extends BaseEntity {
     return this;
   }
 
-  public int getProductNature() {
+  public String getProductNature() {
     return productNature;
   }
 
-  public ProductEntity setProductNature(int productNature) {
+  public ProductEntity setProductNature(String productNature) {
     this.productNature = productNature;
     return this;
   }
@@ -104,12 +104,12 @@ public class ProductEntity extends BaseEntity {
     return this;
   }
 
-  public boolean isRule360() {
-    return rule360;
+  public DaysInYear getDaysInYear() {
+    return daysInYear;
   }
 
-  public ProductEntity setRule360(boolean rule360) {
-    this.rule360 = rule360;
+  public ProductEntity setDaysInYear(DaysInYear daysInYear) {
+    this.daysInYear = daysInYear;
     return this;
   }
 
@@ -119,6 +119,15 @@ public class ProductEntity extends BaseEntity {
 
   public ProductEntity setStatus(ProductStatus status) {
     this.status = status;
+    return this;
+  }
+
+  public List<AccountEntity> getAccounts() {
+    return accounts;
+  }
+
+  public ProductEntity setAccounts(List<AccountEntity> accounts) {
+    this.accounts = accounts;
     return this;
   }
 }

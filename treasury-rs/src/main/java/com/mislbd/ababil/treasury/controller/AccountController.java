@@ -5,24 +5,50 @@ import static org.springframework.http.ResponseEntity.status;
 
 import com.mislbd.ababil.treasury.command.CreateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
+import com.mislbd.ababil.treasury.domain.AccountStatus;
+import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
+import com.mislbd.asset.commons.data.domain.PagedResult;
+import java.time.LocalDate;
+import java.util.List;
 import javax.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
 
   private final CommandProcessor commandProcessor;
+  private final AccountService accountService;
 
-  public AccountController(CommandProcessor commandProcessor) {
+  public AccountController(CommandProcessor commandProcessor, AccountService accountService) {
     this.commandProcessor = commandProcessor;
+    this.accountService = accountService;
+  }
+
+  @GetMapping()
+  public ResponseEntity<?> getAccounts(
+      Pageable pageable,
+      @RequestParam(value = "asPage", required = false) final boolean asPage,
+      @RequestParam(value = "productId", required = false) final Long productId,
+      @RequestParam(value = "currencyCode", required = false) final String currencyCode,
+      @RequestParam(value = "openDate", required = false) final LocalDate openDate,
+      @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
+      @RequestParam(value = "status", required = false) final AccountStatus status) {
+    if (asPage) {
+      PagedResult<Account> pagedAccounts =
+          accountService.findAccounts(
+              pageable, productId, currencyCode, openDate, expiryDate, status);
+      return ResponseEntity.ok(pagedAccounts);
+    } else {
+      List<Account> accounts =
+          accountService.findAccounts(productId, currencyCode, openDate, expiryDate, status);
+      return ResponseEntity.ok(accounts);
+    }
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

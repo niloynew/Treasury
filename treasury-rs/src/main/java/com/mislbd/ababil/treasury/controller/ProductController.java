@@ -1,9 +1,12 @@
 package com.mislbd.ababil.treasury.controller;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.mislbd.ababil.treasury.command.CreateProductCommand;
+import com.mislbd.ababil.treasury.command.DeleteProductCommand;
+import com.mislbd.ababil.treasury.command.UpdateProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
 import com.mislbd.ababil.treasury.domain.ProductStatus;
 import com.mislbd.ababil.treasury.service.ProductService;
@@ -48,5 +51,18 @@ public class ProductController {
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<CommandResponse<Long>> createProduct(@Valid @RequestBody Product product) {
     return status(CREATED).body(commandProcessor.executeResult(new CreateProductCommand(product)));
+  }
+
+  @PutMapping(path = "/{productId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Void> updateProduct(
+      @PathVariable("productId") Long productId, @Valid @RequestBody Product product) {
+    commandProcessor.executeUpdate(new UpdateProductCommand(product, productId));
+    return status(ACCEPTED).build();
+  }
+
+  @DeleteMapping(path = "/{productId}")
+  public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long productId) {
+    commandProcessor.executeUpdate(new DeleteProductCommand(productId));
+    return status(ACCEPTED).build();
   }
 }

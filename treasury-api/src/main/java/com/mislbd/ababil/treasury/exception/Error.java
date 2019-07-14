@@ -23,6 +23,22 @@ public enum Error {
       return message;
     }
   },
+
+  PRODUCT_NATURE_NOT_FOUND("270", "0002") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+          localeMessages.get(this.getModule() + this.getCode()).orElse("Product Nature not found");
+      return message;
+    }
+  },
   ;
 
   // region <R>

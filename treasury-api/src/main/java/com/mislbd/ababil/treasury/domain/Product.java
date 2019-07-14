@@ -11,7 +11,7 @@ public class Product {
   @NotNull private String name;
 
   private boolean profitApplicable;
-  private ProductNature productNature;
+  private long productNatureId;
   private ProfitCalculationMethod profitCalculationMethod;
   private DaysInYear daysInYear;
   private ProductStatus status;
@@ -52,12 +52,12 @@ public class Product {
     return this;
   }
 
-  public ProductNature getProductNature() {
-    return productNature;
+  public long getProductNatureId() {
+    return productNatureId;
   }
 
-  public Product setProductNature(ProductNature productNature) {
-    this.productNature = productNature;
+  public Product setProductNatureId(long productNatureId) {
+    this.productNatureId = productNatureId;
     return this;
   }
 

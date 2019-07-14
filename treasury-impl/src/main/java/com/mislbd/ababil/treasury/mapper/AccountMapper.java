@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.treasury.domain.Account;
+import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
@@ -33,7 +34,8 @@ public class AccountMapper {
             .setShadowAccountNumber(entity.getShadowAccountNumber())
             .setAccountOpenDate(entity.getAccountOpenDate())
             .setExpiryDate(entity.getExpiryDate())
-            .setTenor(entity.getTenor())
+            .setTenorAmount(entity.getTenorAmount())
+            .setTenorType(entity.getTenorType())
             .setRenewalDate(entity.getRenewalDate())
             .setExpectedProfitRate(entity.getExpectedProfitRate())
             .setStatus(entity.getStatus())
@@ -47,9 +49,9 @@ public class AccountMapper {
             .orElseGet(AccountEntity::new)
             .setId(domain.getId())
             .setProduct(
-                domain.getProductId() != null
-                    ? productRepository.getOne(domain.getProductId())
-                    : null)
+                productRepository
+                    .findById(domain.getProductId())
+                    .orElseThrow(ProductNotFoundException::new))
             .setCurrencyCode(domain.getCurrencyCode())
             .setBankId(domain.getBankId())
             .setBranchId(domain.getBranchId())
@@ -59,7 +61,8 @@ public class AccountMapper {
             .setShadowAccountNumber(domain.getShadowAccountNumber())
             .setAccountOpenDate(domain.getAccountOpenDate())
             .setExpiryDate(domain.getExpiryDate())
-            .setTenor(domain.getTenor())
+            .setTenorAmount(domain.getTenorAmount())
+            .setTenorType(domain.getTenorType())
             .setRenewalDate(domain.getRenewalDate())
             .setExpectedProfitRate(domain.getExpectedProfitRate())
             .setStatus(domain.getStatus())

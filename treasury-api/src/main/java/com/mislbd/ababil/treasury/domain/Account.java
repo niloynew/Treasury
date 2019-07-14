@@ -16,7 +16,8 @@ public class Account {
   private String shadowAccountNumber;
   private LocalDate accountOpenDate;
   private LocalDate expiryDate;
-  private String Tenor;
+  private int tenorAmount;
+  private TenorType tenorType;
   private LocalDate renewalDate;
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
@@ -121,12 +122,21 @@ public class Account {
     return this;
   }
 
-  public String getTenor() {
-    return Tenor;
+  public int getTenorAmount() {
+    return tenorAmount;
   }
 
-  public Account setTenor(String tenor) {
-    Tenor = tenor;
+  public Account setTenorAmount(int tenorAmount) {
+    this.tenorAmount = tenorAmount;
+    return this;
+  }
+
+  public TenorType getTenorType() {
+    return tenorType;
+  }
+
+  public Account setTenorType(TenorType tenorType) {
+    this.tenorType = tenorType;
     return this;
   }
 

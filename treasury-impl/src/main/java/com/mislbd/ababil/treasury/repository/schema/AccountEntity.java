@@ -2,6 +2,7 @@ package com.mislbd.ababil.treasury.repository.schema;
 
 import com.mislbd.ababil.asset.repository.schema.BaseEntity;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
+import com.mislbd.ababil.treasury.domain.TenorType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = SchemaConstant.ACCOUNT_TABLE_NAME)
 public class AccountEntity extends BaseEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "ACCOUNT_ID_GEN")
   @SequenceGenerator(
@@ -49,13 +51,17 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "EXPIRY_DATE")
   private LocalDate expiryDate;
 
-  @Column(name = "TENOR")
-  private String Tenor;
+  @Column(name = "TENOR_AMOUNT")
+  private int tenorAmount;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "TENOR_TYPE")
+  private TenorType tenorType;
 
   @Column(name = "RENEWAL_DATE")
   private LocalDate renewalDate;
 
-  @Column(name = "EXPECTD_PROFIT_RATE")
+  @Column(name = "EXPECTED_PROFIT_RATE")
   private BigDecimal expectedProfitRate;
 
   @Column(name = "STATUS")
@@ -163,12 +169,21 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
-  public String getTenor() {
-    return Tenor;
+  public int getTenorAmount() {
+    return tenorAmount;
   }
 
-  public AccountEntity setTenor(String tenor) {
-    Tenor = tenor;
+  public AccountEntity setTenorAmount(int tenorAmount) {
+    this.tenorAmount = tenorAmount;
+    return this;
+  }
+
+  public TenorType getTenorType() {
+    return tenorType;
+  }
+
+  public AccountEntity setTenorType(TenorType tenorType) {
+    this.tenorType = tenorType;
     return this;
   }
 

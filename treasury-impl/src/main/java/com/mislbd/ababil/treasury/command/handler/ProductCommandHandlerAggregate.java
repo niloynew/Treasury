@@ -6,6 +6,7 @@ import com.mislbd.ababil.treasury.command.CreateProductCommand;
 import com.mislbd.ababil.treasury.command.DeleteProductCommand;
 import com.mislbd.ababil.treasury.command.UpdateProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
+import com.mislbd.ababil.treasury.exception.ProductNatureNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.ProductMapper;
 import com.mislbd.ababil.treasury.repository.jpa.ProductNatureRepository;
@@ -50,7 +51,9 @@ public class ProductCommandHandlerAggregate {
             .setName(product.getName())
             .setProfitApplicable(product.isProfitApplicable())
             .setProductNature(
-                productNatureRepository.findByCode(product.getProductNature().getCode()).get())
+                productNatureRepository
+                    .findById(product.getProductNatureId())
+                    .orElseThrow(ProductNatureNotFoundException::new))
             .setProfitCalculationMethod(product.getProfitCalculationMethod())
             .setDaysInYear(product.getDaysInYear())
             .setStatus(product.getStatus()));

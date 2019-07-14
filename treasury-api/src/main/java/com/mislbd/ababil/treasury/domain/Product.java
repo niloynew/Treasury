@@ -1,12 +1,17 @@
 package com.mislbd.ababil.treasury.domain;
 
+import javax.validation.constraints.NotNull;
+
 public class Product {
 
   private long id;
-  private String code;
-  private String name;
+
+  @NotNull private String code;
+
+  @NotNull private String name;
+
   private boolean profitApplicable;
-  private String productNature;
+  private ProductNature productNature;
   private ProfitCalculationMethod profitCalculationMethod;
   private DaysInYear daysInYear;
   private ProductStatus status;
@@ -47,11 +52,11 @@ public class Product {
     return this;
   }
 
-  public String getProductNature() {
+  public ProductNature getProductNature() {
     return productNature;
   }
 
-  public Product setProductNature(String productNature) {
+  public Product setProductNature(ProductNature productNature) {
     this.productNature = productNature;
     return this;
   }

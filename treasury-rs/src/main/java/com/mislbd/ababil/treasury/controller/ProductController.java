@@ -8,7 +8,6 @@ import com.mislbd.ababil.treasury.command.CreateProductCommand;
 import com.mislbd.ababil.treasury.command.DeleteProductCommand;
 import com.mislbd.ababil.treasury.command.UpdateProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
-import com.mislbd.ababil.treasury.domain.ProductStatus;
 import com.mislbd.ababil.treasury.service.ProductService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
@@ -36,14 +35,12 @@ public class ProductController {
       Pageable pageable,
       @RequestParam(value = "asPage", required = false) final boolean asPage,
       @RequestParam(value = "name", required = false) final String name,
-      @RequestParam(value = "code", required = false) final String code,
-      @RequestParam(value = "status", required = false) final ProductStatus status) {
+      @RequestParam(value = "code", required = false) final String code) {
     if (asPage) {
-      PagedResult<Product> pagedProducts =
-          productService.findProducts(pageable, name, code, status);
+      PagedResult<Product> pagedProducts = productService.findProducts(pageable, name, code);
       return ResponseEntity.ok(pagedProducts);
     } else {
-      List<Product> products = productService.findProducts(name, code, status);
+      List<Product> products = productService.findProducts(name, code);
       return ResponseEntity.ok(products);
     }
   }

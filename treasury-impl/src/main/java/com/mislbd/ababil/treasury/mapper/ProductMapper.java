@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.treasury.domain.Product;
+import com.mislbd.ababil.treasury.repository.jpa.ProductNatureRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.ProductEntity;
 import com.mislbd.asset.commons.data.domain.ResultMapper;
@@ -10,9 +11,16 @@ import org.springframework.stereotype.Component;
 public class ProductMapper {
 
   private final ProductRepository productRepository;
+  private final ProductNatureRepository productNatureRepository;
+  private final ProductNatureMapper productNatureMapper;
 
-  public ProductMapper(ProductRepository productRepository) {
+  public ProductMapper(
+      ProductRepository productRepository,
+      ProductNatureRepository productNatureRepository,
+      ProductNatureMapper productNatureMapper) {
     this.productRepository = productRepository;
+    this.productNatureRepository = productNatureRepository;
+    this.productNatureMapper = productNatureMapper;
   }
 
   public ResultMapper<ProductEntity, Product> entityToDomain() {
@@ -23,7 +31,7 @@ public class ProductMapper {
             .setCode(entity.getCode())
             .setName(entity.getName())
             .setProfitApplicable(entity.isProfitApplicable())
-            .setProductNature(entity.getProductNature())
+            .setProductNature(productNatureMapper.entityToDomain().map(entity.getProductNature()))
             .setProfitCalculationMethod(entity.getProfitCalculationMethod())
             .setDaysInYear(entity.getDaysInYear())
             .setStatus(entity.getStatus());
@@ -38,7 +46,8 @@ public class ProductMapper {
             .setCode(domain.getCode())
             .setName(domain.getName())
             .setProfitApplicable(domain.isProfitApplicable())
-            .setProductNature(domain.getProductNature())
+            .setProductNature(
+                productNatureRepository.findByCode(domain.getProductNature().getCode()).get())
             .setProfitCalculationMethod(domain.getProfitCalculationMethod())
             .setDaysInYear(domain.getDaysInYear())
             .setStatus(domain.getStatus());

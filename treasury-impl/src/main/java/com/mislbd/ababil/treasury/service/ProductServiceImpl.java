@@ -1,7 +1,6 @@
 package com.mislbd.ababil.treasury.service;
 
 import com.mislbd.ababil.treasury.domain.Product;
-import com.mislbd.ababil.treasury.domain.ProductStatus;
 import com.mislbd.ababil.treasury.mapper.ProductMapper;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.specification.ProductSpecification;
@@ -24,17 +23,16 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public PagedResult<Product> findProducts(
-      Pageable pageable, String name, String code, ProductStatus status) {
+  public PagedResult<Product> findProducts(Pageable pageable, String name, String code) {
     return PagedResultBuilder.build(
-        productRepository.findAll(ProductSpecification.findProduct(name, code, status), pageable),
+        productRepository.findAll(ProductSpecification.findProduct(name, code), pageable),
         productMapper.entityToDomain());
   }
 
   @Override
-  public List<Product> findProducts(String name, String code, ProductStatus status) {
+  public List<Product> findProducts(String name, String code) {
     return ListResultBuilder.build(
-        productRepository.findAll(ProductSpecification.findProduct(name, code, status)),
+        productRepository.findAll(ProductSpecification.findProduct(name, code)),
         productMapper.entityToDomain());
   }
 }

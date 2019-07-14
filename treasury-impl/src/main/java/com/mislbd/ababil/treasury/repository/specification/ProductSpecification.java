@@ -7,8 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ProductSpecification {
 
-  public static Specification<ProductEntity> findProduct(
-      String name, String code, ProductStatus status) {
+  public static Specification<ProductEntity> findProduct(String name, String code) {
     return (root, query, cb) -> {
       Predicate predicate = cb.conjunction();
 
@@ -21,9 +20,7 @@ public class ProductSpecification {
         predicate = cb.and(predicate, cb.equal(root.get("code"), code));
       }
 
-      if (status != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("status"), status));
-      }
+      predicate = cb.and(predicate, cb.equal(root.get("status"), ProductStatus.ACTIVE));
 
       return predicate;
     };

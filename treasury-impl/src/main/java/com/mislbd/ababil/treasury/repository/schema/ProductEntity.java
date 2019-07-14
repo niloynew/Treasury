@@ -32,8 +32,9 @@ public class ProductEntity extends BaseEntity {
   @Column(name = "PROFIT_APPLICABLE")
   private boolean profitApplicable;
 
-  @Column(name = "PRODUCT_NATURE")
-  private String productNature;
+  @ManyToOne
+  @JoinColumn(name = "PRODUCT_NATURE")
+  private ProductNatureEntity productNature;
 
   @Column(name = "PROFIT_CALCULATION")
   @Enumerated(EnumType.STRING)
@@ -86,11 +87,11 @@ public class ProductEntity extends BaseEntity {
     return this;
   }
 
-  public String getProductNature() {
+  public ProductNatureEntity getProductNature() {
     return productNature;
   }
 
-  public ProductEntity setProductNature(String productNature) {
+  public ProductEntity setProductNature(ProductNatureEntity productNature) {
     this.productNature = productNature;
     return this;
   }

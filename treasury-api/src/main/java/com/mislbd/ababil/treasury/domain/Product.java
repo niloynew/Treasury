@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.domain;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class Product {
 
@@ -15,6 +16,7 @@ public class Product {
   private ProfitCalculationMethod profitCalculationMethod;
   private DaysInYear daysInYear;
   private ProductStatus status;
+  private List<ProductGeneralLedgerMapping> productGeneralLedgerMappingList;
 
   public long getId() {
     return id;
@@ -85,6 +87,15 @@ public class Product {
 
   public Product setStatus(ProductStatus status) {
     this.status = status;
+    return this;
+  }
+
+  public List<ProductGeneralLedgerMapping> getProductGeneralLedgerMappingList() {
+    return productGeneralLedgerMappingList;
+  }
+
+  public Product setProductGeneralLedgerMappingList(List<ProductGeneralLedgerMapping> productGeneralLedgerMappingList) {
+    this.productGeneralLedgerMappingList = productGeneralLedgerMappingList;
     return this;
   }
 }

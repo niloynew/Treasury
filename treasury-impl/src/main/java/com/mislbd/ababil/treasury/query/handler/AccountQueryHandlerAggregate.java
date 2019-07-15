@@ -5,6 +5,7 @@ import com.mislbd.ababil.treasury.query.AccountQuery;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.commons.data.domain.PagedResult;
 import com.mislbd.asset.query.annotation.QueryAggregate;
+import com.mislbd.asset.query.annotation.QueryHandler;
 import com.mislbd.asset.query.api.QueryResult;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class AccountQueryHandlerAggregate {
     this.accountService = accountService;
   }
 
+  @QueryHandler
   public QueryResult<?> accountSearch(AccountQuery accountQuery) {
     if (accountQuery.isAsPage()) {
       PagedResult<Account> accountPage =

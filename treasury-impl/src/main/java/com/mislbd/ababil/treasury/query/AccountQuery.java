@@ -31,6 +31,19 @@ public class AccountQuery extends QueryRequest {
     this.asPage = asPage;
   }
 
+  public AccountQuery(
+      Long productId,
+      String currencyCode,
+      LocalDate openDate,
+      LocalDate expiryDate,
+      AccountStatus status) {
+    this.productId = productId;
+    this.currencyCode = currencyCode;
+    this.openDate = openDate;
+    this.expiryDate = expiryDate;
+    this.status = status;
+  }
+
   public boolean isAsPage() {
     return asPage;
   }

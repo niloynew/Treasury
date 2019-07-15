@@ -1,7 +1,7 @@
 package com.mislbd.ababil.treasury.domain;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 public class Product {
 
@@ -94,7 +94,8 @@ public class Product {
     return productGeneralLedgerMappingList;
   }
 
-  public Product setProductGeneralLedgerMappingList(List<ProductGeneralLedgerMapping> productGeneralLedgerMappingList) {
+  public Product setProductGeneralLedgerMappingList(
+      List<ProductGeneralLedgerMapping> productGeneralLedgerMappingList) {
     this.productGeneralLedgerMappingList = productGeneralLedgerMappingList;
     return this;
   }

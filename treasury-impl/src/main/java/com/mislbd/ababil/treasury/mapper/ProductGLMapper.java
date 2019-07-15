@@ -9,28 +9,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductGLMapper {
 
-    private final ProductRelatedGLRepository productRelatedGLRepository;
+  private final ProductRelatedGLRepository productRelatedGLRepository;
 
-    public ProductGLMapper(ProductRelatedGLRepository productRelatedGLRepository) {
-        this.productRelatedGLRepository = productRelatedGLRepository;
-    }
+  public ProductGLMapper(ProductRelatedGLRepository productRelatedGLRepository) {
+    this.productRelatedGLRepository = productRelatedGLRepository;
+  }
 
-    public ResultMapper<ProductRelatedGLEntity, ProductGeneralLedgerMapping> entityToDomain() {
-        return entity ->
-                new ProductGeneralLedgerMapping()
-                        .setId(entity.getId())
-                .setGlType(entity.getGlType())
-                .setGeneralLedgerId(entity.getGlId())
-                .setProductId(entity.getProductId());
-    }
+  public ResultMapper<ProductRelatedGLEntity, ProductGeneralLedgerMapping> entityToDomain() {
+    return entity ->
+        new ProductGeneralLedgerMapping()
+            .setId(entity.getId())
+            .setGlType(entity.getGlType())
+            .setGeneralLedgerId(entity.getGlId())
+            .setProductId(entity.getProductId());
+  }
 
-    public ResultMapper<ProductGeneralLedgerMapping, ProductRelatedGLEntity> domainToEntity() {
-        return domain ->
-                productRelatedGLRepository
-                        .findById(domain.getId())
-                        .orElseGet(ProductRelatedGLEntity::new)
-                .setGlType(domain.getGlType())
-                .setGlId(domain.getGeneralLedgerId())
-                .setProductId(domain.getProductId());
-    }
+  public ResultMapper<ProductGeneralLedgerMapping, ProductRelatedGLEntity> domainToEntity() {
+    return domain ->
+        productRelatedGLRepository
+            .findById(domain.getId())
+            .orElseGet(ProductRelatedGLEntity::new)
+            .setGlType(domain.getGlType())
+            .setGlId(domain.getGeneralLedgerId())
+            .setProductId(domain.getProductId());
+  }
 }

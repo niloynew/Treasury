@@ -1,5 +1,3 @@
 package com.mislbd.ababil.treasury.service;
 
-public interface DefaultService {
-
-}
+public interface DefaultService {}

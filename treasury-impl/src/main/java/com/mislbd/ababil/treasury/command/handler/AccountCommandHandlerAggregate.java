@@ -26,22 +26,22 @@ public class AccountCommandHandlerAggregate {
   private final Auditor auditor;
 
   public AccountCommandHandlerAggregate(
-          AccountRepository accountRepository,
-          AccountMapper accountMapper,
-          ProductRepository productRepository, Auditor auditor) {
+      AccountRepository accountRepository,
+      AccountMapper accountMapper,
+      ProductRepository productRepository,
+      Auditor auditor) {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.productRepository = productRepository;
-      this.auditor = auditor;
+    this.auditor = auditor;
   }
 
-    @CommandListener(
-            commandClasses = {CreateAccountCommand.class, UpdateAccountCommand.class})
-    public void auditChargeCommandListener(CommandEvent e) {
-        auditor.audit(e.getCommand().getPayload(),e.getCommand());
-    }
+  @CommandListener(commandClasses = {CreateAccountCommand.class, UpdateAccountCommand.class})
+  public void auditChargeCommandListener(CommandEvent e) {
+    auditor.audit(e.getCommand().getPayload(), e.getCommand());
+  }
 
-    @Transactional
+  @Transactional
   @CommandHandler
   public CommandResponse<Long> createAccount(CreateAccountCommand command) {
     return CommandResponse.of(

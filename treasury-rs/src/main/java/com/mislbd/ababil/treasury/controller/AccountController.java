@@ -13,12 +13,10 @@ import com.mislbd.ababil.treasury.query.AccountQuery;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
-
-import java.time.LocalDate;
-import javax.validation.Valid;
-
 import com.mislbd.asset.query.api.QueryManager;
 import com.mislbd.asset.query.api.QueryResult;
+import java.time.LocalDate;
+import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +28,13 @@ public class AccountController {
 
   private final CommandProcessor commandProcessor;
   private final AccountService accountService;
-    private final QueryManager queryManager;;
+  private final QueryManager queryManager;;
 
-  public AccountController(CommandProcessor commandProcessor, AccountService accountService, QueryManager queryManager) {
+  public AccountController(
+      CommandProcessor commandProcessor, AccountService accountService, QueryManager queryManager) {
     this.commandProcessor = commandProcessor;
     this.accountService = accountService;
-      this.queryManager = queryManager;
+    this.queryManager = queryManager;
   }
 
   @GetMapping()
@@ -47,7 +46,7 @@ public class AccountController {
       @RequestParam(value = "openDate", required = false) final LocalDate openDate,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "status", required = false) final AccountStatus status) {
-  /*  if (asPage) {
+    /*  if (asPage) {
       PagedResult<Account> pagedAccounts =
           accountService.findAccounts(
               pageable, productId, currencyCode, openDate, expiryDate, status);
@@ -55,14 +54,15 @@ public class AccountController {
     } else {
       List<Account> accounts =
           accountService.findAccounts(productId, currencyCode, openDate, expiryDate, status);*/
-      QueryResult<?> queryResult=queryManager.executeQuery(new AccountQuery(asPage,
-              pageable,productId,currencyCode,openDate,expiryDate,status));
-      if(queryResult.isEmpty()) {
-          return ResponseEntity.noContent().build();
-      }
+    QueryResult<?> queryResult =
+        queryManager.executeQuery(
+            new AccountQuery(
+                asPage, pageable, productId, currencyCode, openDate, expiryDate, status));
+    if (queryResult.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
 
-      return ResponseEntity.ok(queryResult.getResult());
-
+    return ResponseEntity.ok(queryResult.getResult());
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

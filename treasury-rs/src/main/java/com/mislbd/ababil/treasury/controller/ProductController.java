@@ -28,6 +28,7 @@ public class ProductController {
   public ProductController(CommandProcessor commandProcessor, ProductService productService) {
     this.commandProcessor = commandProcessor;
     this.productService = productService;
+    //
   }
 
   @GetMapping()

@@ -70,6 +70,9 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "MTDR_INSTRUMENT")
   private String instrument;
 
+  @Column(name = "active")
+  private boolean active;
+
   public long getId() {
     return id;
   }
@@ -220,6 +223,15 @@ public class AccountEntity extends BaseEntity {
 
   public AccountEntity setInstrument(String instrument) {
     this.instrument = instrument;
+    return this;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public AccountEntity setActive(boolean active) {
+    this.active = active;
     return this;
   }
 }

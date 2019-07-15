@@ -66,6 +66,7 @@ public class AccountMapper {
             .setRenewalDate(domain.getRenewalDate())
             .setExpectedProfitRate(domain.getExpectedProfitRate())
             .setStatus(domain.getStatus())
-            .setInstrument(domain.getInstrument());
+            .setInstrument(domain.getInstrument())
+            .setActive(true);
   }
 }

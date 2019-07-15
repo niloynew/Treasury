@@ -46,7 +46,7 @@ public class AccountController {
       @RequestParam(value = "openDate", required = false) final LocalDate openDate,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "status", required = false) final AccountStatus status) {
-  /*  if (asPage) {
+    /*  if (asPage) {
       PagedResult<Account> pagedAccounts =
           accountService.findAccounts(
               pageable, productId, currencyCode, openDate, expiryDate, status);
@@ -58,8 +58,7 @@ public class AccountController {
     if (asPage) {
       QueryResult<?> queryResult =
           queryManager.executeQuery(
-              new AccountQuery(
-                  asPage, pageable, productId, currencyCode, openDate, expiryDate, status));
+              new AccountQuery(pageable, productId, currencyCode, openDate, expiryDate, status));
       if (queryResult.isEmpty()) {
         return ResponseEntity.noContent().build();
       }

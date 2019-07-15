@@ -31,6 +31,7 @@ public class AccountSpecification {
       if (status != null) {
         predicate = cb.and(predicate, cb.equal(root.get("status"), status));
       }
+      predicate = cb.and(predicate, cb.equal(root.get("active"), true));
 
       return predicate;
     };

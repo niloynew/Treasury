@@ -1,9 +1,12 @@
 package com.mislbd.ababil.treasury.controller;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.mislbd.ababil.treasury.command.CreateAccountCommand;
+import com.mislbd.ababil.treasury.command.DeleteAccountCommand;
+import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.service.AccountService;
@@ -54,5 +57,18 @@ public class AccountController {
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<CommandResponse<Long>> createAccounts(@Valid @RequestBody Account account) {
     return status(CREATED).body(commandProcessor.executeResult(new CreateAccountCommand(account)));
+  }
+
+  @PutMapping(path = "/{accountId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Void> updateAccount(
+      @PathVariable("accountId") Long accountId, @Valid @RequestBody Account account) {
+    commandProcessor.executeUpdate(new UpdateAccountCommand(account, accountId));
+    return status(ACCEPTED).build();
+  }
+
+  @DeleteMapping(path = "/{accountId}")
+  public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long accountId) {
+    commandProcessor.executeUpdate(new DeleteAccountCommand(accountId));
+    return status(ACCEPTED).build();
   }
 }

@@ -9,4 +9,6 @@ public interface ProductService {
   PagedResult<Product> findProducts(Pageable pageable, String name, String code);
 
   List<Product> findProducts(String name, String code);
+
+  Product findById(Long productId);
 }

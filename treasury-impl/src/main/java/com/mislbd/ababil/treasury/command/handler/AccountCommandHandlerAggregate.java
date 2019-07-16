@@ -38,6 +38,7 @@ public class AccountCommandHandlerAggregate {
 
   @CommandListener(commandClasses = {CreateAccountCommand.class, UpdateAccountCommand.class})
   public void auditChargeCommandListener(CommandEvent e) {
+
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }
 

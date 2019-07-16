@@ -2,6 +2,7 @@ package com.mislbd.ababil.treasury.service;
 
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
+import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.specification.AccountSpecification;
@@ -52,4 +53,18 @@ public class AccountServiceImpl implements AccountService {
                 productId, currencyCode, openDate, expiryDate, status)),
         accountMapper.entityToDomain());
   }
+
+  @Override
+  public Account findById(Long accountId) {
+    return accountMapper
+        .entityToDomain()
+        .map(accountRepository.findById(accountId).orElseThrow(AccountNotFoundException::new));
+  }
+
+  //    @Override
+  //    public Optional<AccountEntity> findById(Long accountId) {
+  //      AccountEntity
+  // account=accountMapper.entityToDomain().accountRepository.findById(accountId);
+  //        return account;
+  //    }
 }

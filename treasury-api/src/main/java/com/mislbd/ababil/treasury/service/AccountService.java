@@ -22,4 +22,8 @@ public interface AccountService {
       LocalDate openDate,
       LocalDate expiryDate,
       AccountStatus status);
+
+  Account findById(Long accountId);
+
+  //    Optional<AccountEntity> findById(Long accountId);
 }

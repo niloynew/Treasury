@@ -39,4 +39,20 @@ public class AccountSpecification {
       return predicate;
     };
   }
+
+  public static Specification<AccountEntity> findAccountById(Long accountId) {
+
+    return (root, query, cb) -> {
+      Predicate predicate = cb.conjunction();
+      Path<ProductEntity> productRoot = root.get("product");
+
+      if (accountId != null) {
+        predicate = cb.and(predicate, cb.equal(productRoot.get("id"), accountId));
+      }
+
+      predicate = cb.and(predicate, cb.equal(root.get("active"), true));
+
+      return predicate;
+    };
+  }
 }

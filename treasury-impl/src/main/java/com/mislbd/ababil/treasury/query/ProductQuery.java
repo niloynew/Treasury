@@ -5,14 +5,19 @@ import org.springframework.data.domain.Pageable;
 
 public class ProductQuery extends QueryRequest {
 
-  private final boolean asPage;
-  private final Pageable pageable;
-  private final String name;
-  private final String code;
+  private boolean asPage;
+  private Pageable pageable;
+  private String name;
+  private String code;
 
   public ProductQuery(boolean asPage, Pageable pageable, String name, String code) {
     this.asPage = asPage;
     this.pageable = pageable;
+    this.name = name;
+    this.code = code;
+  }
+
+  public ProductQuery(String name, String code) {
     this.name = name;
     this.code = code;
   }

@@ -10,6 +10,8 @@ import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.query.AccountQuery;
+import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
+import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
 import com.mislbd.asset.query.api.QueryManager;
@@ -26,13 +28,19 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
   private final CommandProcessor commandProcessor;
-  private final QueryManager queryManager;;
-  private QueryResult<?> queryResult;
+  private final QueryManager queryManager;
+  private final AccountService accountService;
 
-  public AccountController(CommandProcessor commandProcessor, QueryManager queryManager) {
+  public AccountController(
+      CommandProcessor commandProcessor,
+      QueryManager queryManager,
+      AccountRepository accountRepository,
+      AccountService accountService) {
     this.commandProcessor = commandProcessor;
 
     this.queryManager = queryManager;
+
+    this.accountService = accountService;
   }
 
   @GetMapping()
@@ -71,6 +79,19 @@ public class AccountController {
       }
       return ResponseEntity.ok(queryResult.getResult());
     }
+  }
+
+  //  @GetMapping(path = "/{accountId}")
+  //    public ResponseEntity<?> getAccount(@PathVariable Long accountId) {
+  //        QueryResult<?> queryResult = queryManager.executeQuery(new AccountQueryById(accountId));
+  //
+  //        return ResponseEntity.ok(queryResult);
+  //    }
+
+  @GetMapping(path = "/{accountId}")
+  public ResponseEntity<?> getAccount(@PathVariable Long accountId) {
+    Account account = accountService.findById(accountId);
+    return ResponseEntity.ok(account);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

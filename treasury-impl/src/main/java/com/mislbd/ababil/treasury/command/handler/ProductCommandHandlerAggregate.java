@@ -2,6 +2,7 @@ package com.mislbd.ababil.treasury.command.handler;
 
 import static com.mislbd.ababil.treasury.domain.ProductStatus.INACTIVE;
 
+import com.mislbd.ababil.asset.service.Auditor;
 import com.mislbd.ababil.treasury.command.CreateProductCommand;
 import com.mislbd.ababil.treasury.command.DeleteProductCommand;
 import com.mislbd.ababil.treasury.command.UpdateProductCommand;
@@ -13,9 +14,11 @@ import com.mislbd.ababil.treasury.mapper.ProductMapper;
 import com.mislbd.ababil.treasury.repository.jpa.ProductNatureRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
+import com.mislbd.asset.command.api.CommandEvent;
 import com.mislbd.asset.command.api.CommandResponse;
 import com.mislbd.asset.command.api.annotation.Aggregate;
 import com.mislbd.asset.command.api.annotation.CommandHandler;
+import com.mislbd.asset.command.api.annotation.CommandListener;
 import org.springframework.transaction.annotation.Transactional;
 
 @Aggregate
@@ -25,18 +28,27 @@ public class ProductCommandHandlerAggregate {
   private final ProductNatureRepository productNatureRepository;
   private final ProductRelatedGLRepository productRelatedGLRepository;
   private final ProductGLMapper productGLMapper;
+  private final Auditor auditor;
 
   public ProductCommandHandlerAggregate(
       ProductRepository productRepository,
       ProductMapper productMapper,
       ProductNatureRepository productNatureRepository,
       ProductRelatedGLRepository productRelatedGLRepository,
-      ProductGLMapper productGLMapper) {
+      ProductGLMapper productGLMapper,
+      Auditor auditor) {
     this.productRepository = productRepository;
     this.productMapper = productMapper;
     this.productNatureRepository = productNatureRepository;
     this.productRelatedGLRepository = productRelatedGLRepository;
     this.productGLMapper = productGLMapper;
+    this.auditor = auditor;
+  }
+
+  @CommandListener(commandClasses = {CreateProductCommand.class, UpdateProductCommand.class})
+  public void auditChargeCommandListener(CommandEvent e) {
+
+    auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }
 
   @Transactional

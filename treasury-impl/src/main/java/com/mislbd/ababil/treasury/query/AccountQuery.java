@@ -13,6 +13,7 @@ public class AccountQuery extends QueryRequest {
   private LocalDate openDate;
   private LocalDate expiryDate;
   private AccountStatus status;
+  private Long accountId;
 
   public AccountQuery(
       Pageable pageable,
@@ -41,6 +42,10 @@ public class AccountQuery extends QueryRequest {
     this.openDate = openDate;
     this.expiryDate = expiryDate;
     this.status = status;
+  }
+
+  public AccountQuery(Long accountId) {
+    this.accountId = accountId;
   }
 
   public boolean isAsPage() {

@@ -10,7 +10,6 @@ import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.query.AccountQuery;
-import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
 import com.mislbd.asset.query.api.QueryManager;
@@ -27,13 +26,12 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
   private final CommandProcessor commandProcessor;
-  private final AccountService accountService;
   private final QueryManager queryManager;;
+  private QueryResult<?> queryResult;
 
-  public AccountController(
-      CommandProcessor commandProcessor, AccountService accountService, QueryManager queryManager) {
+  public AccountController(CommandProcessor commandProcessor, QueryManager queryManager) {
     this.commandProcessor = commandProcessor;
-    this.accountService = accountService;
+
     this.queryManager = queryManager;
   }
 
@@ -89,7 +87,7 @@ public class AccountController {
   }
 
   @DeleteMapping(path = "/{accountId}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long accountId) {
+  public ResponseEntity<Void> deleteProduct(@PathVariable("accountId") Long accountId) {
     commandProcessor.executeUpdate(new DeleteAccountCommand(accountId));
     return status(ACCEPTED).build();
   }

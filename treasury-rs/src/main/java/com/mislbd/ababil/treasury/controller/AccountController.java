@@ -56,8 +56,7 @@ public class AccountController {
     if (asPage) {
       QueryResult<?> queryResult =
           queryManager.executeQuery(
-              new AccountQuery(
-                  asPage, pageable, productId, currencyCode, openDate, expiryDate, status));
+              new AccountQuery(pageable, productId, currencyCode, openDate, expiryDate, status));
       if (queryResult.isEmpty()) {
         return ResponseEntity.noContent().build();
       }

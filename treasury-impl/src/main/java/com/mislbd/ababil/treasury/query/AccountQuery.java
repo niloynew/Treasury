@@ -15,7 +15,6 @@ public class AccountQuery extends QueryRequest {
   private AccountStatus status;
 
   public AccountQuery(
-      boolean asPage,
       Pageable pageable,
       Long productId,
       String currencyCode,

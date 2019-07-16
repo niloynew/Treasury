@@ -64,6 +64,7 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "EXPECTED_PROFIT_RATE")
   private BigDecimal expectedProfitRate;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "STATUS")
   private AccountStatus status;
 

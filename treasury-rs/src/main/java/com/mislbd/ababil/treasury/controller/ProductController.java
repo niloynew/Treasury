@@ -2,6 +2,7 @@ package com.mislbd.ababil.treasury.controller;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.mislbd.ababil.treasury.command.CreateProductCommand;
@@ -44,6 +45,14 @@ public class ProductController {
       List<Product> products = productService.findProducts(name, code);
       return ResponseEntity.ok(products);
     }
+  }
+
+  @GetMapping(path = "/{productId}")
+  public ResponseEntity<Product> getIDProduct(@PathVariable("productId") Long productId) {
+    return productService
+        .findProduct(productId)
+        .map(ResponseEntity::ok)
+        .orElseGet(status(NOT_FOUND)::build);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -20,7 +20,7 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "ID")
   private long id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "PRODUCT_ID")
   private ProductEntity product;
 

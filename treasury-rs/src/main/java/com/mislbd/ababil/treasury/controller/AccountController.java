@@ -9,12 +9,12 @@ import com.mislbd.ababil.treasury.command.DeleteAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
-import com.mislbd.ababil.treasury.service.AccountService;
+import com.mislbd.ababil.treasury.query.AccountQuery;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
-import com.mislbd.asset.commons.data.domain.PagedResult;
+import com.mislbd.asset.query.api.QueryManager;
+import com.mislbd.asset.query.api.QueryResult;
 import java.time.LocalDate;
-import java.util.List;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -26,11 +26,13 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
   private final CommandProcessor commandProcessor;
-  private final AccountService accountService;
+  private final QueryManager queryManager;;
+  private QueryResult<?> queryResult;
 
-  public AccountController(CommandProcessor commandProcessor, AccountService accountService) {
+  public AccountController(CommandProcessor commandProcessor, QueryManager queryManager) {
     this.commandProcessor = commandProcessor;
-    this.accountService = accountService;
+
+    this.queryManager = queryManager;
   }
 
   @GetMapping()
@@ -42,15 +44,32 @@ public class AccountController {
       @RequestParam(value = "openDate", required = false) final LocalDate openDate,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "status", required = false) final AccountStatus status) {
-    if (asPage) {
+    /*  if (asPage) {
       PagedResult<Account> pagedAccounts =
           accountService.findAccounts(
               pageable, productId, currencyCode, openDate, expiryDate, status);
       return ResponseEntity.ok(pagedAccounts);
     } else {
       List<Account> accounts =
-          accountService.findAccounts(productId, currencyCode, openDate, expiryDate, status);
-      return ResponseEntity.ok(accounts);
+          accountService.findAccounts(productId, currencyCode, openDate, expiryDate, status);*/
+
+    if (asPage) {
+      QueryResult<?> queryResult =
+          queryManager.executeQuery(
+              new AccountQuery(pageable, productId, currencyCode, openDate, expiryDate, status));
+      if (queryResult.isEmpty()) {
+        return ResponseEntity.noContent().build();
+      }
+      return ResponseEntity.ok(queryResult.getResult());
+
+    } else {
+      QueryResult<?> queryResult =
+          queryManager.executeQuery(
+              new AccountQuery(productId, currencyCode, openDate, expiryDate, status));
+      if (queryResult.isEmpty()) {
+        return ResponseEntity.noContent().build();
+      }
+      return ResponseEntity.ok(queryResult.getResult());
     }
   }
 
@@ -67,7 +86,7 @@ public class AccountController {
   }
 
   @DeleteMapping(path = "/{accountId}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long accountId) {
+  public ResponseEntity<Void> deleteProduct(@PathVariable("accountId") Long accountId) {
     commandProcessor.executeUpdate(new DeleteAccountCommand(accountId));
     return status(ACCEPTED).build();
   }

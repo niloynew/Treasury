@@ -8,8 +8,10 @@ import com.mislbd.ababil.treasury.command.UpdateProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
 import com.mislbd.ababil.treasury.exception.ProductNatureNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
+import com.mislbd.ababil.treasury.mapper.ProductGLMapper;
 import com.mislbd.ababil.treasury.mapper.ProductMapper;
 import com.mislbd.ababil.treasury.repository.jpa.ProductNatureRepository;
+import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.asset.command.api.CommandResponse;
 import com.mislbd.asset.command.api.annotation.Aggregate;
@@ -21,21 +23,35 @@ public class ProductCommandHandlerAggregate {
   private final ProductRepository productRepository;
   private final ProductMapper productMapper;
   private final ProductNatureRepository productNatureRepository;
+  private final ProductRelatedGLRepository productRelatedGLRepository;
+  private final ProductGLMapper productGLMapper;
 
   public ProductCommandHandlerAggregate(
       ProductRepository productRepository,
       ProductMapper productMapper,
-      ProductNatureRepository productNatureRepository) {
+      ProductNatureRepository productNatureRepository,
+      ProductRelatedGLRepository productRelatedGLRepository,
+      ProductGLMapper productGLMapper) {
     this.productRepository = productRepository;
     this.productMapper = productMapper;
     this.productNatureRepository = productNatureRepository;
+    this.productRelatedGLRepository = productRelatedGLRepository;
+    this.productGLMapper = productGLMapper;
   }
 
   @Transactional
   @CommandHandler
   public CommandResponse<Long> createProduct(CreateProductCommand command) {
-    return CommandResponse.of(
-        productRepository.save(productMapper.domainToEntity().map(command.getPayload())).getId());
+    long productId = productMapper.domainToEntity().map(command.getPayload()).getId();
+    command
+        .getPayload()
+        .getProductGeneralLedgerMappingList()
+        .forEach(
+            glMap -> {
+              glMap.setProductId(productId);
+              productRelatedGLRepository.save(productGLMapper.domainToEntity().map(glMap));
+            });
+    return CommandResponse.of(productId);
   }
 
   @Transactional

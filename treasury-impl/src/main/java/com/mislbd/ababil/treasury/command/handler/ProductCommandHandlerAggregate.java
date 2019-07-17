@@ -62,7 +62,8 @@ public class ProductCommandHandlerAggregate {
   @Transactional
   @CommandHandler
   public CommandResponse<Long> createProduct(CreateProductCommand command) {
-    long productId = productRepository.save(productMapper.domainToEntity().map(command.getPayload())).getId();
+    long productId =
+        productRepository.save(productMapper.domainToEntity().map(command.getPayload())).getId();
     command
         .getPayload()
         .getProductGeneralLedgerMappingList()

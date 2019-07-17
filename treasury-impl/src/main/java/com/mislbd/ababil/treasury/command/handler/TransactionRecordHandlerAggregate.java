@@ -22,7 +22,7 @@ public class TransactionRecordHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<?> createTransactionRecord(CreateTransactionRecordCommand command) {
+  public CommandResponse<Long> createTransactionRecord(CreateTransactionRecordCommand command) {
     return CommandResponse.of(
         transactionRecordRepository
             .save(transactionRecordMapper.domainToEntity().map(command.getPayload()))

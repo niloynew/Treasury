@@ -42,21 +42,12 @@ public class ProductController {
       @RequestParam(value = "name", required = false) final String name,
       @RequestParam(value = "code", required = false) final String code) {
 
-    if (asPage) {
-      QueryResult<?> queryResult =
-          queryManager.executeQuery(new ProductQuery(asPage, pageable, name, code));
-      if (queryResult.isEmpty()) {
-        return ResponseEntity.noContent().build();
-      }
-      return ResponseEntity.ok(queryResult.getResult());
-    } else {
-      QueryResult<?> queryResult =
-          queryManager.executeQuery(new ProductQuery(false, null, name, code));
-      if (queryResult.isEmpty()) {
-        return ResponseEntity.noContent().build();
-      }
-      return ResponseEntity.ok(queryResult.getResult());
+    QueryResult<?> queryResult =
+        queryManager.executeQuery(new ProductQuery(asPage, pageable, name, code));
+    if (queryResult.isEmpty()) {
+      return ResponseEntity.noContent().build();
     }
+    return ResponseEntity.ok(queryResult.getResult());
   }
 
   @GetMapping(path = "/{productId}")

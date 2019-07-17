@@ -10,7 +10,6 @@ import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.query.AccountQuery;
-import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
@@ -32,14 +31,9 @@ public class AccountController {
   private final AccountService accountService;
 
   public AccountController(
-      CommandProcessor commandProcessor,
-      QueryManager queryManager,
-      AccountRepository accountRepository,
-      AccountService accountService) {
+      CommandProcessor commandProcessor, QueryManager queryManager, AccountService accountService) {
     this.commandProcessor = commandProcessor;
-
     this.queryManager = queryManager;
-
     this.accountService = accountService;
   }
 
@@ -52,33 +46,15 @@ public class AccountController {
       @RequestParam(value = "openDate", required = false) final LocalDate openDate,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "status", required = false) final AccountStatus status) {
-    /*  if (asPage) {
-      PagedResult<Account> pagedAccounts =
-          accountService.findAccounts(
-              pageable, productId, currencyCode, openDate, expiryDate, status);
-      return ResponseEntity.ok(pagedAccounts);
-    } else {
-      List<Account> accounts =
-          accountService.findAccounts(productId, currencyCode, openDate, expiryDate, status);*/
 
-    if (asPage) {
-      QueryResult<?> queryResult =
-          queryManager.executeQuery(
-              new AccountQuery(pageable, productId, currencyCode, openDate, expiryDate, status));
-      if (queryResult.isEmpty()) {
-        return ResponseEntity.noContent().build();
-      }
-      return ResponseEntity.ok(queryResult.getResult());
-
-    } else {
-      QueryResult<?> queryResult =
-          queryManager.executeQuery(
-              new AccountQuery(productId, currencyCode, openDate, expiryDate, status));
-      if (queryResult.isEmpty()) {
-        return ResponseEntity.noContent().build();
-      }
-      return ResponseEntity.ok(queryResult.getResult());
+    QueryResult<?> queryResult =
+        queryManager.executeQuery(
+            new AccountQuery(
+                asPage, pageable, productId, currencyCode, openDate, expiryDate, status));
+    if (queryResult.isEmpty()) {
+      return ResponseEntity.noContent().build();
     }
+    return ResponseEntity.ok(queryResult.getResult());
   }
 
   @GetMapping(path = "/{accountId}")

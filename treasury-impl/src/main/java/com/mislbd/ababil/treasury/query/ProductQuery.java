@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Pageable;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,10 +17,4 @@ public class ProductQuery extends QueryRequest {
   private Pageable pageable;
   private String name;
   private String code;
-
-  public ProductQuery(String name, String code) {
-    this.name = name;
-    this.code = code;
-  }
-
 }

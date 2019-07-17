@@ -8,6 +8,7 @@ import com.mislbd.asset.commons.data.domain.ListResultBuilder;
 import com.mislbd.asset.commons.data.domain.PagedResult;
 import com.mislbd.asset.commons.data.domain.PagedResultBuilder;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,10 @@ public class ProductServiceImpl implements ProductService {
     return ListResultBuilder.build(
         productRepository.findAll(ProductSpecification.findProduct(name, code)),
         productMapper.entityToDomain());
+  }
+
+  @Override
+  public Optional<Product> findProduct(Long id) {
+    return productRepository.findById(id).map(productMapper.entityToDomain()::map);
   }
 }

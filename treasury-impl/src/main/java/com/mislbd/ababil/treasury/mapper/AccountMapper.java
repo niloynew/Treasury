@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.treasury.domain.Account;
+import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
@@ -65,7 +66,7 @@ public class AccountMapper {
             .setTenorType(domain.getTenorType())
             .setRenewalDate(domain.getRenewalDate())
             .setExpectedProfitRate(domain.getExpectedProfitRate())
-            .setStatus(domain.getStatus())
+            .setStatus(AccountStatus.REGULAR)
             .setInstrument(domain.getInstrument())
             .setActive(true);
   }

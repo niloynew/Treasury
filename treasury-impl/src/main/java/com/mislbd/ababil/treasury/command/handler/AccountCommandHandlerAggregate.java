@@ -5,6 +5,7 @@ import com.mislbd.ababil.treasury.command.CreateAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
+import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
@@ -77,8 +78,9 @@ public class AccountCommandHandlerAggregate {
         .setTenorType(account.getTenorType())
         .setRenewalDate(account.getRenewalDate())
         .setExpectedProfitRate(account.getExpectedProfitRate())
-        .setStatus(account.getStatus())
-        .setInstrument(account.getInstrument());
+        .setStatus(AccountStatus.REGULAR)
+        .setInstrument(account.getInstrument())
+        .setActive(true);
 
     return CommandResponse.asVoid();
   }

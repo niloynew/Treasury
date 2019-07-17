@@ -1,7 +1,6 @@
 package com.mislbd.ababil.treasury.service;
 
 import com.mislbd.ababil.treasury.domain.Product;
-import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.ProductMapper;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.specification.ProductSpecification;
@@ -35,12 +34,5 @@ public class ProductServiceImpl implements ProductService {
     return ListResultBuilder.build(
         productRepository.findAll(ProductSpecification.findProduct(name, code)),
         productMapper.entityToDomain());
-  }
-
-  @Override
-  public Product findById(Long productId) {
-    return productMapper
-        .entityToDomain()
-        .map(productRepository.findById(productId).orElseThrow(ProductNotFoundException::new));
   }
 }

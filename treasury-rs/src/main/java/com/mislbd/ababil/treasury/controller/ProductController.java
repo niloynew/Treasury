@@ -56,25 +56,13 @@ public class ProductController {
       }
       return ResponseEntity.ok(queryResult.getResult());
     } else {
-      QueryResult<?> queryResult = queryManager.executeQuery(new ProductQuery(name, code));
+      QueryResult<?> queryResult =
+          queryManager.executeQuery(new ProductQuery(false, null, name, code));
       if (queryResult.isEmpty()) {
         return ResponseEntity.noContent().build();
       }
       return ResponseEntity.ok(queryResult.getResult());
     }
-  }
-
-  //  @GetMapping(path = "/{productId}")
-  //  public ResponseEntity<?> getProduct(@PathVariable Long productId) {
-  //    QueryResult<?> queryResult = queryManager.executeQuery(new ProductQueryById(productId));
-  //
-  //    return ResponseEntity.ok(queryResult);
-  //  }
-
-  @GetMapping(path = "/{productId}")
-  public ResponseEntity<?> getProduct(@PathVariable Long productId) {
-    Product product = productService.findById(productId);
-    return ResponseEntity.ok(product);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

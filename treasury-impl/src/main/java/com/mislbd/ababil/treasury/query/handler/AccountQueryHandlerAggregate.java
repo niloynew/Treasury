@@ -2,7 +2,6 @@ package com.mislbd.ababil.treasury.query.handler;
 
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.query.AccountQuery;
-import com.mislbd.ababil.treasury.query.AccountQueryById;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.commons.data.domain.PagedResult;
 import com.mislbd.asset.query.annotation.QueryAggregate;
@@ -16,11 +15,6 @@ public class AccountQueryHandlerAggregate {
 
   public AccountQueryHandlerAggregate(AccountService accountService) {
     this.accountService = accountService;
-  }
-
-  @QueryHandler
-  public QueryResult<?> accountSearchById(AccountQueryById accountQueryById) {
-    return QueryResult.of(accountService.findById(accountQueryById.getId()));
   }
 
   @QueryHandler

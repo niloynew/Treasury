@@ -81,13 +81,6 @@ public class AccountController {
     }
   }
 
-  //  @GetMapping(path = "/{accountId}")
-  //    public ResponseEntity<?> getAccount(@PathVariable Long accountId) {
-  //        QueryResult<?> queryResult = queryManager.executeQuery(new AccountQueryById(accountId));
-  //
-  //        return ResponseEntity.ok(queryResult);
-  //    }
-
   @GetMapping(path = "/{accountId}")
   public ResponseEntity<?> getAccount(@PathVariable Long accountId) {
     Account account = accountService.findById(accountId);

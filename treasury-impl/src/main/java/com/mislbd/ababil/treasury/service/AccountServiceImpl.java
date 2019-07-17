@@ -60,11 +60,4 @@ public class AccountServiceImpl implements AccountService {
         .entityToDomain()
         .map(accountRepository.findById(accountId).orElseThrow(AccountNotFoundException::new));
   }
-
-  //    @Override
-  //    public Optional<AccountEntity> findById(Long accountId) {
-  //      AccountEntity
-  // account=accountMapper.entityToDomain().accountRepository.findById(accountId);
-  //        return account;
-  //    }
 }

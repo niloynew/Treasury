@@ -41,13 +41,6 @@ public class ProductController {
       @RequestParam(value = "asPage", required = false) final boolean asPage,
       @RequestParam(value = "name", required = false) final String name,
       @RequestParam(value = "code", required = false) final String code) {
-    //    if (asPage) {
-    //      PagedResult<Product> pagedProducts = productService.findProducts(pageable, name, code);
-    //      return ResponseEntity.ok(pagedProducts);
-    //    } else {
-    //      List<Product> products = productService.findProducts(name, code);
-    //      return ResponseEntity.ok(products);
-    //    }
 
     if (asPage) {
       QueryResult<?> queryResult =

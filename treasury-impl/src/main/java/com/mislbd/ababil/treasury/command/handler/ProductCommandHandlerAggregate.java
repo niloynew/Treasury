@@ -14,6 +14,7 @@ import com.mislbd.ababil.treasury.mapper.ProductMapper;
 import com.mislbd.ababil.treasury.repository.jpa.ProductNatureRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
+import com.mislbd.ababil.treasury.service.ProductService;
 import com.mislbd.asset.command.api.CommandEvent;
 import com.mislbd.asset.command.api.CommandResponse;
 import com.mislbd.asset.command.api.annotation.Aggregate;
@@ -29,6 +30,7 @@ public class ProductCommandHandlerAggregate {
   private final ProductRelatedGLRepository productRelatedGLRepository;
   private final ProductGLMapper productGLMapper;
   private final Auditor auditor;
+  private final ProductService productService;
 
   public ProductCommandHandlerAggregate(
       ProductRepository productRepository,
@@ -36,19 +38,25 @@ public class ProductCommandHandlerAggregate {
       ProductNatureRepository productNatureRepository,
       ProductRelatedGLRepository productRelatedGLRepository,
       ProductGLMapper productGLMapper,
-      Auditor auditor) {
+      Auditor auditor,
+      ProductService productService) {
     this.productRepository = productRepository;
     this.productMapper = productMapper;
     this.productNatureRepository = productNatureRepository;
     this.productRelatedGLRepository = productRelatedGLRepository;
     this.productGLMapper = productGLMapper;
     this.auditor = auditor;
+    this.productService = productService;
   }
 
   @CommandListener(commandClasses = {CreateProductCommand.class, UpdateProductCommand.class})
-  public void auditChargeCommandListener(CommandEvent e) {
-
+  public void auditProductCreateAndUpdate(CommandEvent e) {
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
+  }
+
+  @CommandListener(commandClasses = {DeleteProductCommand.class})
+  public void auditProductDelete(CommandEvent e) {
+    auditor.audit(productService.findProduct((Long) e.getCommand().getPayload()), e.getCommand());
   }
 
   @Transactional

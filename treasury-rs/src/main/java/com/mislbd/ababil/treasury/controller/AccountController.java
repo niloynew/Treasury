@@ -10,6 +10,7 @@ import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.query.AccountQuery;
+import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
@@ -31,9 +32,14 @@ public class AccountController {
   private final AccountService accountService;
 
   public AccountController(
-      CommandProcessor commandProcessor, QueryManager queryManager, AccountService accountService) {
+      CommandProcessor commandProcessor,
+      QueryManager queryManager,
+      AccountRepository accountRepository,
+      AccountService accountService) {
     this.commandProcessor = commandProcessor;
+
     this.queryManager = queryManager;
+
     this.accountService = accountService;
   }
 

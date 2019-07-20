@@ -48,6 +48,9 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "ACCOUNT_OPEN_DATE")
   private LocalDate accountOpenDate;
 
+  @Column(name = "ACC_CLOSING_DATE")
+  private LocalDate accountClosingDate;
+
   @Column(name = "EXPIRY_DATE")
   private LocalDate expiryDate;
 
@@ -73,6 +76,15 @@ public class AccountEntity extends BaseEntity {
 
   @Column(name = "active")
   private boolean active;
+
+  @Column(name = "PROFIT_AMOUNT")
+  private BigDecimal profitAmount;
+
+  @Column(name = "ACTUAL_PROFIT")
+  private BigDecimal actualProfit;
+
+  @Column(name = "RENEW_WITH_PROFIT")
+  private boolean renewWithProfit;
 
   public long getId() {
     return id;
@@ -164,6 +176,15 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
+  public LocalDate getAccountClosingDate() {
+    return accountClosingDate;
+  }
+
+  public AccountEntity setAccountClosingDate(LocalDate accountClosingDate) {
+    this.accountClosingDate = accountClosingDate;
+    return this;
+  }
+
   public LocalDate getExpiryDate() {
     return expiryDate;
   }
@@ -233,6 +254,33 @@ public class AccountEntity extends BaseEntity {
 
   public AccountEntity setActive(boolean active) {
     this.active = active;
+    return this;
+  }
+
+  public BigDecimal getProfitAmount() {
+    return profitAmount;
+  }
+
+  public AccountEntity setProfitAmount(BigDecimal profitAmount) {
+    this.profitAmount = profitAmount;
+    return this;
+  }
+
+  public BigDecimal getActualProfit() {
+    return actualProfit;
+  }
+
+  public AccountEntity setActualProfit(BigDecimal actualProfit) {
+    this.actualProfit = actualProfit;
+    return this;
+  }
+
+  public boolean isRenewWithProfit() {
+    return renewWithProfit;
+  }
+
+  public AccountEntity setRenewWithProfit(boolean renewWithProfit) {
+    this.renewWithProfit = renewWithProfit;
     return this;
   }
 }

@@ -34,13 +34,17 @@ public class AccountMapper {
             .setAmount(entity.getAmount())
             .setShadowAccountNumber(entity.getShadowAccountNumber())
             .setAccountOpenDate(entity.getAccountOpenDate())
+            .setAccountClosingDate(entity.getAccountClosingDate())
             .setExpiryDate(entity.getExpiryDate())
             .setTenorAmount(entity.getTenorAmount())
             .setTenorType(entity.getTenorType())
             .setRenewalDate(entity.getRenewalDate())
             .setExpectedProfitRate(entity.getExpectedProfitRate())
             .setStatus(entity.getStatus())
-            .setInstrument(entity.getInstrument());
+            .setInstrument(entity.getInstrument())
+            .setProfitAmount(entity.getProfitAmount())
+            .setActualProfit(entity.getActualProfit())
+            .setRenewWithProfit(entity.isRenewWithProfit());
   }
 
   public ResultMapper<Account, AccountEntity> domainToEntity() {

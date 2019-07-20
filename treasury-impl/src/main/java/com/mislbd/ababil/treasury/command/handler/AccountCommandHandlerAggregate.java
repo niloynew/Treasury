@@ -88,7 +88,7 @@ public class AccountCommandHandlerAggregate {
         .setTenorType(account.getTenorType())
         .setRenewalDate(account.getRenewalDate())
         .setExpectedProfitRate(account.getExpectedProfitRate())
-        .setStatus(AccountStatus.REGULAR)
+        .setStatus(account.getStatus())
         .setInstrument(account.getInstrument())
         .setActive(true);
 

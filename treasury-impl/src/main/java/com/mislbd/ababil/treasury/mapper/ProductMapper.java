@@ -7,9 +7,8 @@ import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.ProductEntity;
 import com.mislbd.asset.commons.data.domain.ResultMapper;
-import org.springframework.stereotype.Component;
-
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
@@ -21,9 +20,11 @@ public class ProductMapper {
   private final ProductGLMapper productGLMapper;
 
   public ProductMapper(
-          ProductRepository productRepository,
-          ProductNatureRepository productNatureRepository,
-          ProductNatureMapper productNatureMapper, ProductRelatedGLRepository productRelatedGLRepository, ProductGLMapper productGLMapper) {
+      ProductRepository productRepository,
+      ProductNatureRepository productNatureRepository,
+      ProductNatureMapper productNatureMapper,
+      ProductRelatedGLRepository productRelatedGLRepository,
+      ProductGLMapper productGLMapper) {
     this.productRepository = productRepository;
     this.productNatureRepository = productNatureRepository;
     this.productNatureMapper = productNatureMapper;
@@ -43,10 +44,14 @@ public class ProductMapper {
             .setProfitCalculationMethod(entity.getProfitCalculationMethod())
             .setStatus(entity.getStatus())
             .setDaysInYear(entity.getDaysInYear())
-                .setProductGeneralLedgerMappingList(
-                        productRelatedGLRepository.findAllByProductId(entity.getId()).stream()
-                        .map(productRelatedGLEntity -> productGLMapper.entityToDomain().map(productRelatedGLEntity))
-                        .collect(Collectors.toList()));
+            .setProductGeneralLedgerMappingList(
+                productRelatedGLRepository
+                    .findAllByProductId(entity.getId())
+                    .stream()
+                    .map(
+                        productRelatedGLEntity ->
+                            productGLMapper.entityToDomain().map(productRelatedGLEntity))
+                    .collect(Collectors.toList()));
   }
 
   public ResultMapper<Product, ProductEntity> domainToEntity() {

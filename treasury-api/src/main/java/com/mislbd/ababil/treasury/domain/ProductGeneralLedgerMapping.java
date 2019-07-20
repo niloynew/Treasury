@@ -1,10 +1,15 @@
 package com.mislbd.ababil.treasury.domain;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductGeneralLedgerMapping {
 
   private long id;
+  @NotNull
   private GLType glType;
+  @NotNull
   private long generalLedgerId;
+  @NotNull
   private long productId;
 
   public long getId() {

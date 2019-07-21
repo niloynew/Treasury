@@ -19,7 +19,7 @@ build:
   before_script:
     - chmod +x gradlew
   script:
-    - ./gradlew clean build -x test
+    - ./gradlew clean build -x test -x checkstyleMain
   only: ['master']
   tags:
     - 'openjdk:8u181'

@@ -33,18 +33,15 @@ public class AccountMapper {
             .setAccountNumber(entity.getAccountNumber())
             .setAmount(entity.getAmount())
             .setShadowAccountNumber(entity.getShadowAccountNumber())
-            .setAccountOpenDate(entity.getAccountOpenDate())
-            .setAccountClosingDate(entity.getAccountClosingDate())
+            .setAccountOpenDate(entity.getOpenDate())
+            .setAccountClosingDate(entity.getClosingDate())
             .setExpiryDate(entity.getExpiryDate())
             .setTenorAmount(entity.getTenorAmount())
             .setTenorType(entity.getTenorType())
             .setRenewalDate(entity.getRenewalDate())
-            .setExpectedProfitRate(entity.getExpectedProfitRate())
+            .setExpectedProfitRate(entity.getProfitRate())
             .setStatus(entity.getStatus())
-            .setInstrument(entity.getInstrument())
-            .setProfitAmount(entity.getProfitAmount())
-            .setActualProfit(entity.getActualProfit())
-            .setRenewWithProfit(entity.isRenewWithProfit());
+            .setInstrument(entity.getInstrumentNumber());
   }
 
   public ResultMapper<Account, AccountEntity> domainToEntity() {
@@ -64,14 +61,14 @@ public class AccountMapper {
             .setAccountNumber(domain.getAccountNumber())
             .setAmount(domain.getAmount())
             .setShadowAccountNumber(domain.getShadowAccountNumber())
-            .setAccountOpenDate(domain.getAccountOpenDate())
+            .setOpenDate(domain.getAccountOpenDate())
             .setExpiryDate(domain.getExpiryDate())
             .setTenorAmount(domain.getTenorAmount())
             .setTenorType(domain.getTenorType())
             .setRenewalDate(domain.getRenewalDate())
-            .setExpectedProfitRate(domain.getExpectedProfitRate())
+            .setProfitRate(domain.getExpectedProfitRate())
             .setStatus(AccountStatus.REGULAR)
-            .setInstrument(domain.getInstrument())
+            .setInstrumentNumber(domain.getInstrument())
             .setActive(true);
   }
 }

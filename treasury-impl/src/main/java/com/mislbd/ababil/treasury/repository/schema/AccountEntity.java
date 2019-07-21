@@ -20,39 +20,61 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "ID")
   private long id;
 
-  @Column(name = "ACCOUNT_NO")
+  @Column(name = "ACCNO")
   private String accountNumber;
 
-  @Column(name = "SHADOW_ACC_NO")
+  @Column(name = "SHADOW_ACCNO")
   private String shadowAccountNumber;
 
   @Column(name = "NAME")
   private String accountTitle;
 
-  @Column(name = "BANK_ID")
-  private Long bankId;
+  @Column(name = "BRID")
+  private Long ownerBranchId;
 
-  @Column(name = "BRANCH_ID")
-  private Long branchId;
+  @Column(name = "INSTRUMENTNO")
+  private String instrumentNumber;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "PRODUCT_ID")
-  private ProductEntity product;
+  @Column(name = "OPENDATE")
+  private LocalDate openDate;
 
-  @Column(name = "CURRENCY_CODE")
+  @Column(name = "CLOSINGDATE")
+  private LocalDate closingDate;
+
+  @Column(name = "EXPIRYDATE")
+  private LocalDate expiryDate;
+
+  @Column(name = "RENEWALDATE")
+  private LocalDate renewalDate;
+
+  @Column(name = "LASTPROVITIONDATE")
+  private LocalDate lastProvisionDate;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "ACCOUNT_STATUS")
+  private AccountStatus status;
+
+  @Column(name = "CURRENCY")
   private String currencyCode;
 
-  @Column(name = "AMOUNT")
+  @Column(name = "BANK_CODE")
+  private Long bankId;
+
+  @Column(name = "BRANCH_CODE")
+  private Long branchId;
+
+  @Column(name = "PROFITRATE")
+  private BigDecimal profitRate;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "PRODID")
+  private ProductEntity product;
+
+  @Column(name = "OPENINGAMOUNT")
   private BigDecimal amount;
 
-  @Column(name = "ACCOUNT_OPEN_DATE")
-  private LocalDate accountOpenDate;
-
-  @Column(name = "ACC_CLOSING_DATE")
-  private LocalDate accountClosingDate;
-
-  @Column(name = "EXPIRY_DATE")
-  private LocalDate expiryDate;
+  @Column(name = "BALANCE")
+  private BigDecimal balance;
 
   @Column(name = "TENOR_AMOUNT")
   private int tenorAmount;
@@ -61,38 +83,20 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "TENOR_TYPE")
   private TenorType tenorType;
 
-  @Column(name = "RENEWAL_DATE")
-  private LocalDate renewalDate;
-
-  @Column(name = "EXPECTED_PROFIT_RATE")
-  private BigDecimal expectedProfitRate;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "STATUS")
-  private AccountStatus status;
-
-  @Column(name = "MTDR_INSTRUMENT")
-  private String instrument;
-
+  @Column(name = "PRINCIPAL_DEBIT")
   private BigDecimal principalDebit;
 
+  @Column(name = "PRINCIPAL_CREDIT")
   private BigDecimal principalCredit;
 
+  @Column(name = "PROFIT_DEBIT")
   private BigDecimal profitDebit;
 
+  @Column(name = "PROFIT_CREDIT")
   private BigDecimal profitCredit;
 
   @Column(name = "active")
   private boolean active;
-
-  @Column(name = "PROFIT_AMOUNT")
-  private BigDecimal profitAmount;
-
-  @Column(name = "ACTUAL_PROFIT")
-  private BigDecimal actualProfit;
-
-  @Column(name = "RENEW_WITH_PROFIT")
-  private boolean renewWithProfit;
 
   public long getId() {
     return id;
@@ -103,12 +107,102 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
-  public ProductEntity getProduct() {
-    return product;
+  public String getAccountNumber() {
+    return accountNumber;
   }
 
-  public AccountEntity setProduct(ProductEntity product) {
-    this.product = product;
+  public AccountEntity setAccountNumber(String accountNumber) {
+    this.accountNumber = accountNumber;
+    return this;
+  }
+
+  public String getShadowAccountNumber() {
+    return shadowAccountNumber;
+  }
+
+  public AccountEntity setShadowAccountNumber(String shadowAccountNumber) {
+    this.shadowAccountNumber = shadowAccountNumber;
+    return this;
+  }
+
+  public String getAccountTitle() {
+    return accountTitle;
+  }
+
+  public AccountEntity setAccountTitle(String accountTitle) {
+    this.accountTitle = accountTitle;
+    return this;
+  }
+
+  public Long getOwnerBranchId() {
+    return ownerBranchId;
+  }
+
+  public AccountEntity setOwnerBranchId(Long ownerBranchId) {
+    this.ownerBranchId = ownerBranchId;
+    return this;
+  }
+
+  public String getInstrumentNumber() {
+    return instrumentNumber;
+  }
+
+  public AccountEntity setInstrumentNumber(String instrumentNumber) {
+    this.instrumentNumber = instrumentNumber;
+    return this;
+  }
+
+  public LocalDate getOpenDate() {
+    return openDate;
+  }
+
+  public AccountEntity setOpenDate(LocalDate openDate) {
+    this.openDate = openDate;
+    return this;
+  }
+
+  public LocalDate getClosingDate() {
+    return closingDate;
+  }
+
+  public AccountEntity setClosingDate(LocalDate closingDate) {
+    this.closingDate = closingDate;
+    return this;
+  }
+
+  public LocalDate getExpiryDate() {
+    return expiryDate;
+  }
+
+  public AccountEntity setExpiryDate(LocalDate expiryDate) {
+    this.expiryDate = expiryDate;
+    return this;
+  }
+
+  public LocalDate getRenewalDate() {
+    return renewalDate;
+  }
+
+  public AccountEntity setRenewalDate(LocalDate renewalDate) {
+    this.renewalDate = renewalDate;
+    return this;
+  }
+
+  public LocalDate getLastProvisionDate() {
+    return lastProvisionDate;
+  }
+
+  public AccountEntity setLastProvisionDate(LocalDate lastProvisionDate) {
+    this.lastProvisionDate = lastProvisionDate;
+    return this;
+  }
+
+  public AccountStatus getStatus() {
+    return status;
+  }
+
+  public AccountEntity setStatus(AccountStatus status) {
+    this.status = status;
     return this;
   }
 
@@ -139,21 +233,21 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
-  public String getAccountTitle() {
-    return accountTitle;
+  public BigDecimal getProfitRate() {
+    return profitRate;
   }
 
-  public AccountEntity setAccountTitle(String accountTitle) {
-    this.accountTitle = accountTitle;
+  public AccountEntity setProfitRate(BigDecimal profitRate) {
+    this.profitRate = profitRate;
     return this;
   }
 
-  public String getAccountNumber() {
-    return accountNumber;
+  public ProductEntity getProduct() {
+    return product;
   }
 
-  public AccountEntity setAccountNumber(String accountNumber) {
-    this.accountNumber = accountNumber;
+  public AccountEntity setProduct(ProductEntity product) {
+    this.product = product;
     return this;
   }
 
@@ -166,39 +260,12 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
-  public String getShadowAccountNumber() {
-    return shadowAccountNumber;
+  public BigDecimal getBalance() {
+    return balance;
   }
 
-  public AccountEntity setShadowAccountNumber(String shadowAccountNumber) {
-    this.shadowAccountNumber = shadowAccountNumber;
-    return this;
-  }
-
-  public LocalDate getAccountOpenDate() {
-    return accountOpenDate;
-  }
-
-  public AccountEntity setAccountOpenDate(LocalDate accountOpenDate) {
-    this.accountOpenDate = accountOpenDate;
-    return this;
-  }
-
-  public LocalDate getAccountClosingDate() {
-    return accountClosingDate;
-  }
-
-  public AccountEntity setAccountClosingDate(LocalDate accountClosingDate) {
-    this.accountClosingDate = accountClosingDate;
-    return this;
-  }
-
-  public LocalDate getExpiryDate() {
-    return expiryDate;
-  }
-
-  public AccountEntity setExpiryDate(LocalDate expiryDate) {
-    this.expiryDate = expiryDate;
+  public AccountEntity setBalance(BigDecimal balance) {
+    this.balance = balance;
     return this;
   }
 
@@ -220,39 +287,39 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
-  public LocalDate getRenewalDate() {
-    return renewalDate;
+  public BigDecimal getPrincipalDebit() {
+    return principalDebit;
   }
 
-  public AccountEntity setRenewalDate(LocalDate renewalDate) {
-    this.renewalDate = renewalDate;
+  public AccountEntity setPrincipalDebit(BigDecimal principalDebit) {
+    this.principalDebit = principalDebit;
     return this;
   }
 
-  public BigDecimal getExpectedProfitRate() {
-    return expectedProfitRate;
+  public BigDecimal getPrincipalCredit() {
+    return principalCredit;
   }
 
-  public AccountEntity setExpectedProfitRate(BigDecimal expectedProfitRate) {
-    this.expectedProfitRate = expectedProfitRate;
+  public AccountEntity setPrincipalCredit(BigDecimal principalCredit) {
+    this.principalCredit = principalCredit;
     return this;
   }
 
-  public AccountStatus getStatus() {
-    return status;
+  public BigDecimal getProfitDebit() {
+    return profitDebit;
   }
 
-  public AccountEntity setStatus(AccountStatus status) {
-    this.status = status;
+  public AccountEntity setProfitDebit(BigDecimal profitDebit) {
+    this.profitDebit = profitDebit;
     return this;
   }
 
-  public String getInstrument() {
-    return instrument;
+  public BigDecimal getProfitCredit() {
+    return profitCredit;
   }
 
-  public AccountEntity setInstrument(String instrument) {
-    this.instrument = instrument;
+  public AccountEntity setProfitCredit(BigDecimal profitCredit) {
+    this.profitCredit = profitCredit;
     return this;
   }
 
@@ -262,33 +329,6 @@ public class AccountEntity extends BaseEntity {
 
   public AccountEntity setActive(boolean active) {
     this.active = active;
-    return this;
-  }
-
-  public BigDecimal getProfitAmount() {
-    return profitAmount;
-  }
-
-  public AccountEntity setProfitAmount(BigDecimal profitAmount) {
-    this.profitAmount = profitAmount;
-    return this;
-  }
-
-  public BigDecimal getActualProfit() {
-    return actualProfit;
-  }
-
-  public AccountEntity setActualProfit(BigDecimal actualProfit) {
-    this.actualProfit = actualProfit;
-    return this;
-  }
-
-  public boolean isRenewWithProfit() {
-    return renewWithProfit;
-  }
-
-  public AccountEntity setRenewWithProfit(boolean renewWithProfit) {
-    this.renewWithProfit = renewWithProfit;
     return this;
   }
 }

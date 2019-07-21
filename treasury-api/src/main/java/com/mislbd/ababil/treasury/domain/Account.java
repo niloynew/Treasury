@@ -8,6 +8,7 @@ public class Account {
   private long id;
   private Long productId;
   private String currencyCode;
+  private Long ownerBranchId;
   private Long bankId;
   private Long branchId;
   private String accountTitle;
@@ -23,9 +24,6 @@ public class Account {
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
   private String instrument;
-  private BigDecimal profitAmount;
-  private BigDecimal actualProfit;
-  private boolean renewWithProfit;
 
   public long getId() {
     return id;
@@ -51,6 +49,15 @@ public class Account {
 
   public Account setCurrencyCode(String currencyCode) {
     this.currencyCode = currencyCode;
+    return this;
+  }
+
+  public Long getOwnerBranchId() {
+    return ownerBranchId;
+  }
+
+  public Account setOwnerBranchId(Long ownerBranchId) {
+    this.ownerBranchId = ownerBranchId;
     return this;
   }
 
@@ -186,33 +193,6 @@ public class Account {
 
   public Account setInstrument(String instrument) {
     this.instrument = instrument;
-    return this;
-  }
-
-  public BigDecimal getProfitAmount() {
-    return profitAmount;
-  }
-
-  public Account setProfitAmount(BigDecimal profitAmount) {
-    this.profitAmount = profitAmount;
-    return this;
-  }
-
-  public BigDecimal getActualProfit() {
-    return actualProfit;
-  }
-
-  public Account setActualProfit(BigDecimal actualProfit) {
-    this.actualProfit = actualProfit;
-    return this;
-  }
-
-  public boolean isRenewWithProfit() {
-    return renewWithProfit;
-  }
-
-  public Account setRenewWithProfit(boolean renewWithProfit) {
-    this.renewWithProfit = renewWithProfit;
     return this;
   }
 }

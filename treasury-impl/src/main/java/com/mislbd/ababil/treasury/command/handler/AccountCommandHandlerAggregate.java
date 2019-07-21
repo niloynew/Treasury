@@ -82,6 +82,7 @@ public class AccountCommandHandlerAggregate {
         .setAmount(account.getAmount())
         .setShadowAccountNumber(account.getShadowAccountNumber())
         .setAccountOpenDate(account.getAccountOpenDate())
+        .setAccountClosingDate(account.getAccountClosingDate())
         .setExpiryDate(account.getExpiryDate())
         .setTenorAmount(account.getTenorAmount())
         .setTenorType(account.getTenorType())
@@ -89,6 +90,9 @@ public class AccountCommandHandlerAggregate {
         .setExpectedProfitRate(account.getExpectedProfitRate())
         .setStatus(account.getStatus())
         .setInstrument(account.getInstrument())
+        .setProfitAmount(account.getProfitAmount())
+        .setActualProfit(account.getActualProfit())
+        .setRenewWithProfit(account.isRenewWithProfit())
         .setActive(true);
 
     return CommandResponse.asVoid();

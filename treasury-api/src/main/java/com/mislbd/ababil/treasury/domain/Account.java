@@ -15,6 +15,7 @@ public class Account {
   private BigDecimal amount;
   private String shadowAccountNumber;
   private LocalDate accountOpenDate;
+  private LocalDate accountClosingDate;
   private LocalDate expiryDate;
   private int tenorAmount;
   private TenorType tenorType;
@@ -22,6 +23,9 @@ public class Account {
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
   private String instrument;
+  private BigDecimal profitAmount;
+  private BigDecimal actualProfit;
+  private boolean renewWithProfit;
 
   public long getId() {
     return id;
@@ -113,6 +117,15 @@ public class Account {
     return this;
   }
 
+  public LocalDate getAccountClosingDate() {
+    return accountClosingDate;
+  }
+
+  public Account setAccountClosingDate(LocalDate accountClosingDate) {
+    this.accountClosingDate = accountClosingDate;
+    return this;
+  }
+
   public LocalDate getExpiryDate() {
     return expiryDate;
   }
@@ -173,6 +186,33 @@ public class Account {
 
   public Account setInstrument(String instrument) {
     this.instrument = instrument;
+    return this;
+  }
+
+  public BigDecimal getProfitAmount() {
+    return profitAmount;
+  }
+
+  public Account setProfitAmount(BigDecimal profitAmount) {
+    this.profitAmount = profitAmount;
+    return this;
+  }
+
+  public BigDecimal getActualProfit() {
+    return actualProfit;
+  }
+
+  public Account setActualProfit(BigDecimal actualProfit) {
+    this.actualProfit = actualProfit;
+    return this;
+  }
+
+  public boolean isRenewWithProfit() {
+    return renewWithProfit;
+  }
+
+  public Account setRenewWithProfit(boolean renewWithProfit) {
+    this.renewWithProfit = renewWithProfit;
     return this;
   }
 }

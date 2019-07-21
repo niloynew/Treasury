@@ -1,4 +1,5 @@
 variables:
+  DOCKER_FILE: "http://192.168.1.145:8080/artifactory/simple/libs-release-local/com/mislbd/java-dockerfile/0.1.2/java-dockerfile-0.1.2.txt"
   ARTIFACT_NAME: ababil-treasury
   ARTIFACT_BUILD_PATH: ababil-treasury-rs/build
 
@@ -28,6 +29,10 @@ build:
 build_image:
   stage: build_image
   when: on_success
+  before_script:
+    - wget -O Dockerfile $DOCKER_FILE
+    - echo "Dockerfile:-"
+    - echo "$(cat Dockerfile)"
   script:
     - 'export BUILD_NUMBER=$(echo "$CI_PIPELINE_IID + $CI_PIPELINE_IID_OFFSET" | bc)'
     - export ARTIFACT="${ARTIFACT_BUILD_PATH}/libs/$(cat gradle.properties | grep PROJECT_ARTIFACT | cut -d'=' -f2-)-$(cat gradle.properties | grep PROJECT_VERSION | cut -d'=' -f2-).jar"

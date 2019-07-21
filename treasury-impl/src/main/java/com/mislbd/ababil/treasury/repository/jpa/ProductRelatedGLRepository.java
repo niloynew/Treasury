@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface ProductRelatedGLRepository
     extends JpaRepository<ProductRelatedGLEntity, Long>, JpaSpecificationExecutor {
   List<ProductRelatedGLEntity> findAllByProductId(long productId);
+
   void deleteAllByProductId(long productId);
 }

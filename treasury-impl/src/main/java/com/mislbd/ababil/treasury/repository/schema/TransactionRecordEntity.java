@@ -1,12 +1,11 @@
 package com.mislbd.ababil.treasury.repository.schema;
 
-import com.mislbd.ababil.asset.repository.schema.BaseEntity;
 import java.time.LocalDate;
 import javax.persistence.*;
 
 @Entity
 @Table(name = SchemaConstant.TRANSACTION_RECORD_TABLE_NAME)
-public class TransactionRecordEntity extends BaseEntity {
+public class TransactionRecordEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "TRANSACTION_RECORD_ID_GEN")
@@ -36,7 +35,7 @@ public class TransactionRecordEntity extends BaseEntity {
   private String instrumentNo;
 
   @Column(name = "TRTRDID")
-  private int txndId;
+  private int txnDefId;
 
   @Column(name = "TRTRDCODE")
   private int txndCode;
@@ -48,7 +47,7 @@ public class TransactionRecordEntity extends BaseEntity {
   private String narration;
 
   @Column(name = "TRGLOBALTXNNO")
-  private int globalTxnno;
+  private int globalTxnNo;
 
   @Column(name = "TRINITIATORMODULE")
   private String initiatorModule;
@@ -56,20 +55,26 @@ public class TransactionRecordEntity extends BaseEntity {
   @Column(name = "TRCREATEDBYAPPUSER")
   private String createdByAppUser;
 
-  @Column(name = "TRVERIFIEDBYAPPUSER")
-  private String verifiedByAppUser;
-
   @Column(name = "TRCREATEDTERMINAL")
   private String createdTerminal;
-
-  @Column(name = "TRVERIFIEDTERMINAL")
-  private String verfiedTermial;
 
   @Column(name = "TRCRATEDSYSUSER")
   private String createdSysUser;
 
+  @Column(name = "TRCRETETIME")
+  private LocalDate createTime;
+
+  @Column(name = "TRVERIFIEDBYAPPUSER")
+  private String verifiedByAppUser;
+
+  @Column(name = "TRVERIFIEDTERMINAL")
+  private String verfiedTermial;
+
   @Column(name = "TRVERIFIEDSYSUSER")
   private String verifiedSysUser;
+
+  @Column(name = "TRVERIFYTIME")
+  private LocalDate verifyTime;
 
   @Column(name = "TRORIGINATINGBRID")
   private int originatingBrId;
@@ -143,12 +148,12 @@ public class TransactionRecordEntity extends BaseEntity {
     return this;
   }
 
-  public int getTxndId() {
-    return txndId;
+  public int getTxnDefId() {
+    return txnDefId;
   }
 
-  public TransactionRecordEntity setTxndId(int txndId) {
-    this.txndId = txndId;
+  public TransactionRecordEntity setTxnDefId(int txnDefId) {
+    this.txnDefId = txnDefId;
     return this;
   }
 
@@ -179,12 +184,12 @@ public class TransactionRecordEntity extends BaseEntity {
     return this;
   }
 
-  public int getGlobalTxnno() {
-    return globalTxnno;
+  public int getGlobalTxnNo() {
+    return globalTxnNo;
   }
 
-  public TransactionRecordEntity setGlobalTxnno(int globalTxnno) {
-    this.globalTxnno = globalTxnno;
+  public TransactionRecordEntity setGlobalTxnNo(int globalTxnNo) {
+    this.globalTxnNo = globalTxnNo;
     return this;
   }
 
@@ -248,6 +253,24 @@ public class TransactionRecordEntity extends BaseEntity {
 
   public TransactionRecordEntity setVerifiedSysUser(String verifiedSysUser) {
     this.verifiedSysUser = verifiedSysUser;
+    return this;
+  }
+
+  public LocalDate getCreateTime() {
+    return createTime;
+  }
+
+  public TransactionRecordEntity setCreateTime(LocalDate createTime) {
+    this.createTime = createTime;
+    return this;
+  }
+
+  public LocalDate getVerifyTime() {
+    return verifyTime;
+  }
+
+  public TransactionRecordEntity setVerifyTime(LocalDate verifyTime) {
+    this.verifyTime = verifyTime;
     return this;
   }
 

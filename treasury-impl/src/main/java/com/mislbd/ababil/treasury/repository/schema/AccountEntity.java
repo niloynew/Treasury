@@ -20,12 +20,14 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "ID")
   private long id;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "PRODUCT_ID")
-  private ProductEntity product;
+  @Column(name = "ACCOUNT_NO")
+  private String accountNumber;
 
-  @Column(name = "CURRENCY_CODE")
-  private String currencyCode;
+  @Column(name = "SHADOW_ACC_NO")
+  private String shadowAccountNumber;
+
+  @Column(name = "NAME")
+  private String accountTitle;
 
   @Column(name = "BANK_ID")
   private Long bankId;
@@ -33,17 +35,15 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "BRANCH_ID")
   private Long branchId;
 
-  @Column(name = "ACCOUNT_TITLE")
-  private String accountTitle;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "PRODUCT_ID")
+  private ProductEntity product;
 
-  @Column(name = "ACCOUNT_NO")
-  private String accountNumber;
+  @Column(name = "CURRENCY_CODE")
+  private String currencyCode;
 
   @Column(name = "AMOUNT")
   private BigDecimal amount;
-
-  @Column(name = "SHADOW_ACC_NO")
-  private String shadowAccountNumber;
 
   @Column(name = "ACCOUNT_OPEN_DATE")
   private LocalDate accountOpenDate;
@@ -70,6 +70,14 @@ public class AccountEntity extends BaseEntity {
 
   @Column(name = "MTDR_INSTRUMENT")
   private String instrument;
+
+  private BigDecimal principalDebit;
+
+  private BigDecimal principalCredit;
+
+  private BigDecimal profitDebit;
+
+  private BigDecimal profitCredit;
 
   @Column(name = "active")
   private boolean active;

@@ -1,7 +1,7 @@
 variables:
   DOCKER_FILE: "http://192.168.1.145:8080/artifactory/simple/libs-release-local/com/mislbd/java-dockerfile/0.1.2/java-dockerfile-0.1.2.txt"
   ARTIFACT_NAME: ababil-treasury
-  ARTIFACT_BUILD_PATH: ababil-treasury-rs/build
+  ARTIFACT_BUILD_PATH: treasury-rs/build
 
 stages:
   - build

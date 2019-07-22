@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class AccountSpecification {
   public static Specification<AccountEntity> findAccount(
+      String accountNumber,
+      String accountTitle,
       Long productId,
       String currencyCode,
       LocalDate openDate,
@@ -19,6 +21,16 @@ public class AccountSpecification {
       Predicate predicate = cb.conjunction();
       Path<ProductEntity> productRoot = root.get("product");
 
+      if (accountNumber != null) {
+        predicate = cb.and(predicate, cb.equal(root.get("accountNumber"), accountNumber));
+      }
+      if (accountTitle != null) {
+        predicate =
+            cb.and(
+                predicate,
+                cb.like(
+                    cb.lower(root.get("accountTitle")), "%" + accountTitle.toLowerCase() + "%"));
+      }
       if (productId != null) {
         predicate = cb.and(predicate, cb.equal(productRoot.get("id"), productId));
       }

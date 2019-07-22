@@ -23,6 +23,8 @@ public class AccountQueryHandlerAggregate {
       PagedResult<Account> accountPage =
           accountService.findAccounts(
               accountQuery.getPageable(),
+              accountQuery.getAccountNumber(),
+              accountQuery.getAccountTitle(),
               accountQuery.getProductId(),
               accountQuery.getCurrencyCode(),
               accountQuery.getOpenDate(),
@@ -32,6 +34,8 @@ public class AccountQueryHandlerAggregate {
     } else {
       List<Account> accounts =
           accountService.findAccounts(
+              accountQuery.getAccountNumber(),
+              accountQuery.getAccountTitle(),
               accountQuery.getProductId(),
               accountQuery.getCurrencyCode(),
               accountQuery.getOpenDate(),

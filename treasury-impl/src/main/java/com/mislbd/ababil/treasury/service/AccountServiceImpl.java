@@ -28,6 +28,8 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public PagedResult<Account> findAccounts(
       Pageable pageable,
+      String accountNumber,
+      String accountTitle,
       Long productId,
       String currencyCode,
       LocalDate openDate,
@@ -35,13 +37,16 @@ public class AccountServiceImpl implements AccountService {
       AccountStatus status) {
     return PagedResultBuilder.build(
         accountRepository.findAll(
-            AccountSpecification.findAccount(productId, currencyCode, openDate, expiryDate, status),
+            AccountSpecification.findAccount(
+                accountNumber, accountTitle, productId, currencyCode, openDate, expiryDate, status),
             pageable),
         accountMapper.entityToDomain());
   }
 
   @Override
   public List<Account> findAccounts(
+      String accountNumber,
+      String accountTitle,
       Long productId,
       String currencyCode,
       LocalDate openDate,
@@ -50,7 +55,13 @@ public class AccountServiceImpl implements AccountService {
     return ListResultBuilder.build(
         accountRepository.findAll(
             AccountSpecification.findAccount(
-                productId, currencyCode, openDate, expiryDate, status)),
+                accountNumber,
+                accountTitle,
+                productId,
+                currencyCode,
+                openDate,
+                expiryDate,
+                status)),
         accountMapper.entityToDomain());
   }
 

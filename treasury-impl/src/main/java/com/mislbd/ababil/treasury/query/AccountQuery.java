@@ -17,6 +17,8 @@ public class AccountQuery extends QueryRequest {
 
   private boolean asPage;
   private Pageable pageable;
+  private String accountNumber;
+  private String accountTitle;
   private Long productId;
   private String currencyCode;
   private LocalDate openDate;

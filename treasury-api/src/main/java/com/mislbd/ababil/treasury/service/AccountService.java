@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 public interface AccountService {
   PagedResult<Account> findAccounts(
       Pageable pageable,
+      String accountNumber,
+      String accountTitle,
       Long productId,
       String currencyCode,
       LocalDate openDate,
@@ -17,6 +19,8 @@ public interface AccountService {
       AccountStatus status);
 
   List<Account> findAccounts(
+      String accountNumber,
+      String accountTitle,
       Long productId,
       String currencyCode,
       LocalDate openDate,

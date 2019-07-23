@@ -23,7 +23,7 @@ public class ProductQueryHandlerAggregate {
     if (productQuery.isAsPage()) {
       PagedResult<Product> productPage =
           productService.findProducts(
-              productQuery.getPageable(), productQuery.getCode(), productQuery.getName());
+              productQuery.getPageable(), productQuery.getName(), productQuery.getCode());
       return QueryResult.of(productPage);
     } else {
       List<Product> products =

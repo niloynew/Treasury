@@ -19,6 +19,7 @@ import com.mislbd.asset.query.api.QueryResult;
 import java.time.LocalDate;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,16 +48,28 @@ public class AccountController {
   public ResponseEntity<?> getAccounts(
       Pageable pageable,
       @RequestParam(value = "asPage", required = false) final boolean asPage,
+      @RequestParam(value = "accountNumber", required = false) final String accountNumber,
+      @RequestParam(value = "accountTitle", required = false) final String accountTitle,
       @RequestParam(value = "productId", required = false) final Long productId,
       @RequestParam(value = "currencyCode", required = false) final String currencyCode,
-      @RequestParam(value = "openDate", required = false) final LocalDate openDate,
+      @RequestParam(value = "openDate", required = false)
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          final LocalDate openDate,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "status", required = false) final AccountStatus status) {
 
     QueryResult<?> queryResult =
         queryManager.executeQuery(
             new AccountQuery(
-                asPage, pageable, productId, currencyCode, openDate, expiryDate, status));
+                asPage,
+                pageable,
+                accountNumber,
+                accountTitle,
+                productId,
+                currencyCode,
+                openDate,
+                expiryDate,
+                status));
     if (queryResult.isEmpty()) {
       return ResponseEntity.noContent().build();
     }

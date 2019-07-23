@@ -5,17 +5,23 @@ import com.mislbd.ababil.treasury.command.CreateAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
+import com.mislbd.ababil.treasury.domain.AuditInformation;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
+import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.service.AccountService;
+import com.mislbd.ababil.treasury.service.TransactionalOperationService;
+import com.mislbd.asset.command.api.Command;
 import com.mislbd.asset.command.api.CommandEvent;
 import com.mislbd.asset.command.api.CommandResponse;
 import com.mislbd.asset.command.api.annotation.Aggregate;
 import com.mislbd.asset.command.api.annotation.CommandHandler;
 import com.mislbd.asset.command.api.annotation.CommandListener;
+import com.mislbd.security.core.NgSession;
+import java.time.LocalDate;
 import org.springframework.transaction.annotation.Transactional;
 
 @Aggregate
@@ -26,23 +32,28 @@ public class AccountCommandHandlerAggregate {
   private final ProductRepository productRepository;
   private final Auditor auditor;
   private final AccountService accountService;
+  private final NgSession ngSession;
+  private final TransactionalOperationService operationService;
 
   public AccountCommandHandlerAggregate(
       AccountRepository accountRepository,
       AccountMapper accountMapper,
       ProductRepository productRepository,
       Auditor auditor,
-      AccountService accountService) {
+      AccountService accountService,
+      NgSession ngSession,
+      TransactionalOperationService operationService) {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.productRepository = productRepository;
     this.auditor = auditor;
     this.accountService = accountService;
+    this.ngSession = ngSession;
+    this.operationService = operationService;
   }
 
   @CommandListener(commandClasses = {CreateAccountCommand.class, UpdateAccountCommand.class})
   public void auditAccountCreateAndUpdate(CommandEvent e) {
-
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }
 
@@ -55,8 +66,11 @@ public class AccountCommandHandlerAggregate {
   @Transactional
   @CommandHandler
   public CommandResponse<Long> createAccount(CreateAccountCommand command) {
-    return CommandResponse.of(
-        accountRepository.save(accountMapper.domainToEntity().map(command.getPayload())).getId());
+    AccountEntity entity =
+        accountRepository.save(accountMapper.domainToEntity().map(command.getPayload()));
+    AuditInformation auditInformation = getAuditInformation(command);
+    operationService.dolPlacementTransaction(auditInformation, entity);
+    return CommandResponse.of(entity.getId());
   }
 
   @Transactional
@@ -104,5 +118,17 @@ public class AccountCommandHandlerAggregate {
             .orElseThrow(AccountNotFoundException::new)
             .setActive(false));
     return CommandResponse.asVoid();
+  }
+
+  private AuditInformation getAuditInformation(Command<?> command) {
+    AuditInformation auditInformation = new AuditInformation();
+    auditInformation
+        .setEntryUser(command.getExecutedBy())
+        .setVerifyUser(ngSession.getUsername())
+        .setVerifyTerminal(ngSession.getTerminal())
+        .setUserBranch(ngSession.getUserBranch().intValue())
+        .setProcessId(command.getProcessId())
+        .setEntryDate(LocalDate.now());
+    return auditInformation;
   }
 }

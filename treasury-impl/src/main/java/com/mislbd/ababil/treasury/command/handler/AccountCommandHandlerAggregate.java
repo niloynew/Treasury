@@ -1,9 +1,9 @@
 package com.mislbd.ababil.treasury.command.handler;
 
 import com.mislbd.ababil.asset.service.Auditor;
-import com.mislbd.ababil.treasury.command.CreateAccountCommand;
-import com.mislbd.ababil.treasury.command.DeleteAccountCommand;
-import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
+import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
@@ -52,12 +52,12 @@ public class AccountCommandHandlerAggregate {
     this.operationService = operationService;
   }
 
-  @CommandListener(commandClasses = {CreateAccountCommand.class, UpdateAccountCommand.class})
+  @CommandListener(commandClasses = {CreateTreasuryAccountCommand.class, UpdateTreasuryAccountCommand.class})
   public void auditAccountCreateAndUpdate(CommandEvent e) {
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }
 
-  @CommandListener(commandClasses = {DeleteAccountCommand.class})
+  @CommandListener(commandClasses = {DeleteTreasuryAccountCommand.class})
   public void auditAccountDelete(CommandEvent e) {
 
     auditor.audit(accountService.findById((Long) e.getCommand().getPayload()), e.getCommand());
@@ -65,7 +65,7 @@ public class AccountCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Long> createAccount(CreateAccountCommand command) {
+  public CommandResponse<Long> createAccount(CreateTreasuryAccountCommand command) {
     AccountEntity entity =
         accountRepository.save(accountMapper.domainToEntity().map(command.getPayload()));
     AuditInformation auditInformation = getAuditInformation(command);
@@ -75,7 +75,7 @@ public class AccountCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Void> updateAccount(UpdateAccountCommand command)
+  public CommandResponse<Void> updateAccount(UpdateTreasuryAccountCommand command)
       throws AccountNotFoundException {
     Account account = command.getPayload();
     accountRepository
@@ -111,7 +111,7 @@ public class AccountCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Void> deleteAccount(DeleteAccountCommand command) {
+  public CommandResponse<Void> deleteAccount(DeleteTreasuryAccountCommand command) {
     accountRepository.save(
         accountRepository
             .findById(command.getPayload())

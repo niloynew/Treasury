@@ -5,7 +5,6 @@ import lombok.*;
 
 @Getter
 @Builder
-@NoArgsConstructor
 public class TransactionalInformation {
   private String batchNumber;
   private Long globalTxnNumber;

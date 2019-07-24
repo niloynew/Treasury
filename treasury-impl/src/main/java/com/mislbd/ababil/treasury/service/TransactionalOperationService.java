@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.service;
 
 import com.mislbd.ababil.asset.service.ConfigurationService;
+import com.mislbd.ababil.transaction.domain.TransactionAmountType;
 import com.mislbd.ababil.transaction.domain.TransactionRequestType;
 import com.mislbd.ababil.transaction.service.TransactionService;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
@@ -44,8 +45,12 @@ public class TransactionalOperationService {
   public Long dolPlacementTransaction(AuditInformation auditInformation, AccountEntity entity) {
     TransactionalInformation txnInformation =
         getTransactionInformation(auditInformation, PLACEMENT_ACTIVITY, null);
+    transactionService.doTreasuryTransaction(
+        mapper.getPayableAccount(txnInformation, baseCurrency, auditInformation, true, entity),
+        TransactionRequestType.TRANSFER,
+        TransactionAmountType.PRINCIPAL);
     transactionService.doGlTransaction(
-        mapper.getPayableGL(entity, baseCurrency, false, auditInformation, txnInformation),
+        mapper.getPayableGL(txnInformation, baseCurrency, auditInformation, false, entity),
         TransactionRequestType.TRANSFER);
 
     return txnInformation.getGlobalTxnNumber();
@@ -53,8 +58,7 @@ public class TransactionalOperationService {
 
   private TransactionalInformation getTransactionInformation(
       AuditInformation auditInformation, Long activityId, Long globalTxnNumber) {
-    return new TransactionalInformation()
-        .builder()
+    return TransactionalInformation.builder()
         .batchNumber(
             transactionService.getBatchNumber(
                 auditInformation.getEntryUser(),

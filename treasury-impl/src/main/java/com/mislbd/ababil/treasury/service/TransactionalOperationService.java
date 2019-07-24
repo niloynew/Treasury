@@ -53,8 +53,7 @@ public class TransactionalOperationService {
 
   private TransactionalInformation getTransactionInformation(
       AuditInformation auditInformation, Long activityId, Long globalTxnNumber) {
-    return new TransactionalInformation()
-        .builder()
+    return TransactionalInformation.builder()
         .batchNumber(
             transactionService.getBatchNumber(
                 auditInformation.getEntryUser(),

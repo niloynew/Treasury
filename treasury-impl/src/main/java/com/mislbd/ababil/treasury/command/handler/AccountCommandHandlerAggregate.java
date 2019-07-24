@@ -52,7 +52,8 @@ public class AccountCommandHandlerAggregate {
     this.operationService = operationService;
   }
 
-  @CommandListener(commandClasses = {CreateTreasuryAccountCommand.class, UpdateTreasuryAccountCommand.class})
+  @CommandListener(
+      commandClasses = {CreateTreasuryAccountCommand.class, UpdateTreasuryAccountCommand.class})
   public void auditAccountCreateAndUpdate(CommandEvent e) {
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }

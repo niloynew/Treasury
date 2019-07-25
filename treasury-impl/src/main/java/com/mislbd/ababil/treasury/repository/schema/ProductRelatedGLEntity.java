@@ -26,6 +26,9 @@ public class ProductRelatedGLEntity {
   @Column(name = "GL_CODE")
   private String glCode;
 
+  @Column(name = "GL_ID")
+  private String glId;
+
   public long getId() {
     return id;
   }
@@ -59,6 +62,15 @@ public class ProductRelatedGLEntity {
 
   public ProductRelatedGLEntity setGlCode(String glCode) {
     this.glCode = glCode;
+    return this;
+  }
+
+  public String getGlId() {
+    return glId;
+  }
+
+  public ProductRelatedGLEntity setGlId(String glId) {
+    this.glId = glId;
     return this;
   }
 }

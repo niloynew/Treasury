@@ -7,6 +7,7 @@ public class ProductGeneralLedgerMapping {
   private long id;
   @NotNull private GLType glType;
   @NotNull private String generalLedgerCode;
+  @NotNull private String generalLedgerId;
   @NotNull private long productId;
 
   public long getId() {
@@ -42,6 +43,15 @@ public class ProductGeneralLedgerMapping {
 
   public ProductGeneralLedgerMapping setProductId(long productId) {
     this.productId = productId;
+    return this;
+  }
+
+  public String getGeneralLedgerId() {
+    return generalLedgerId;
+  }
+
+  public ProductGeneralLedgerMapping setGeneralLedgerId(String generalLedgerId) {
+    this.generalLedgerId = generalLedgerId;
     return this;
   }
 }

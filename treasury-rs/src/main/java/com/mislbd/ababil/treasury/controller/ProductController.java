@@ -5,9 +5,9 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ResponseEntity.status;
 
-import com.mislbd.ababil.treasury.command.CreateProductCommand;
-import com.mislbd.ababil.treasury.command.DeleteProductCommand;
-import com.mislbd.ababil.treasury.command.UpdateProductCommand;
+import com.mislbd.ababil.treasury.command.CreateTreasuryProductCommand;
+import com.mislbd.ababil.treasury.command.DeleteTreasuryProductCommand;
+import com.mislbd.ababil.treasury.command.UpdateTreasuryProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
 import com.mislbd.ababil.treasury.query.ProductQuery;
 import com.mislbd.ababil.treasury.service.ProductService;
@@ -60,19 +60,20 @@ public class ProductController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<CommandResponse<Long>> createProduct(@Valid @RequestBody Product product) {
-    return status(CREATED).body(commandProcessor.executeResult(new CreateProductCommand(product)));
+    return status(CREATED)
+        .body(commandProcessor.executeResult(new CreateTreasuryProductCommand(product)));
   }
 
   @PutMapping(path = "/{productId}", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> updateProduct(
       @PathVariable("productId") Long productId, @Valid @RequestBody Product product) {
-    commandProcessor.executeUpdate(new UpdateProductCommand(product, productId));
+    commandProcessor.executeUpdate(new UpdateTreasuryProductCommand(product, productId));
     return status(ACCEPTED).build();
   }
 
   @DeleteMapping(path = "/{productId}")
   public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long productId) {
-    commandProcessor.executeUpdate(new DeleteProductCommand(productId));
+    commandProcessor.executeUpdate(new DeleteTreasuryProductCommand(productId));
     return status(ACCEPTED).build();
   }
 }

@@ -10,4 +10,5 @@ public class TransactionalInformation {
   private Long globalTxnNumber;
   private BigDecimal exchangeRate;
   private Long exchangeRateType;
+  private Long activityId;
 }

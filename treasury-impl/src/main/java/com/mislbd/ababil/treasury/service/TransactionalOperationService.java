@@ -5,9 +5,13 @@ import com.mislbd.ababil.transaction.domain.TransactionAmountType;
 import com.mislbd.ababil.transaction.domain.TransactionRequestType;
 import com.mislbd.ababil.transaction.service.TransactionService;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
+import com.mislbd.ababil.treasury.domain.GLType;
 import com.mislbd.ababil.treasury.domain.TransactionalInformation;
+import com.mislbd.ababil.treasury.exception.ProductRelatedGLNotFoundException;
 import com.mislbd.ababil.treasury.mapper.TransactionalOperationMapper;
+import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
+import com.mislbd.ababil.treasury.repository.schema.ProductRelatedGLEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,15 +27,18 @@ public class TransactionalOperationService {
   private final ConfigurationService configurationService;
   private final TransactionalOperationMapper mapper;
   private final String baseCurrency;
+  private final ProductRelatedGLRepository productRelatedGLRepository;
 
   public TransactionalOperationService(
       TransactionService transactionService,
       ConfigurationService configurationService,
-      TransactionalOperationMapper mapper) {
+      TransactionalOperationMapper mapper,
+      ProductRelatedGLRepository productRelatedGLRepository) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
     this.mapper = mapper;
+    this.productRelatedGLRepository = productRelatedGLRepository;
   }
 
   /*
@@ -49,8 +56,18 @@ public class TransactionalOperationService {
         mapper.getPayableAccount(txnInformation, baseCurrency, auditInformation, true, entity),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
+    ProductRelatedGLEntity productRelatedGL =
+        productRelatedGLRepository
+            .findByProductIdAndGlType(entity.getProduct().getId(), GLType.SETTLEMENT_GL)
+            .orElseThrow(ProductRelatedGLNotFoundException::new);
     transactionService.doGlTransaction(
-        mapper.getPayableGL(txnInformation, baseCurrency, auditInformation, false, entity),
+        mapper.getPayableGL(
+            txnInformation,
+            baseCurrency,
+            auditInformation,
+            false,
+            entity,
+            productRelatedGL.getGlCode()),
         TransactionRequestType.TRANSFER);
 
     return txnInformation.getGlobalTxnNumber();
@@ -73,6 +90,7 @@ public class TransactionalOperationService {
         .exchangeRateType(
             Long.valueOf(
                 configurationService.getConfiguration(SYSTEM_EXCHANGE_RATE_TYPE).get().getValue()))
+        .activityId(activityId)
         .build();
   }
 }

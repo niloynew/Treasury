@@ -7,6 +7,7 @@ import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.asset.commons.data.domain.ResultMapper;
+import com.mislbd.security.core.NgSession;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,10 +15,15 @@ public class AccountMapper {
 
   private final AccountRepository accountRepository;
   private final ProductRepository productRepository;
+  private final NgSession ngSession;
 
-  public AccountMapper(AccountRepository accountRepository, ProductRepository productRepository) {
+  public AccountMapper(
+      AccountRepository accountRepository,
+      ProductRepository productRepository,
+      NgSession ngSession) {
     this.accountRepository = accountRepository;
     this.productRepository = productRepository;
+    this.ngSession = ngSession;
   }
 
   public ResultMapper<AccountEntity, Account> entityToDomain() {
@@ -32,6 +38,7 @@ public class AccountMapper {
             .setAccountTitle(entity.getAccountTitle())
             .setAccountNumber(entity.getAccountNumber())
             .setAmount(entity.getAmount())
+            .setOwnerBranchId(entity.getOwnerBranchId())
             .setShadowAccountNumber(entity.getShadowAccountNumber())
             .setAccountOpenDate(entity.getOpenDate())
             .setAccountClosingDate(entity.getClosingDate())
@@ -69,6 +76,7 @@ public class AccountMapper {
             .setProfitRate(domain.getExpectedProfitRate())
             .setStatus(AccountStatus.REGULAR)
             .setInstrumentNumber(domain.getInstrument())
+            .setOwnerBranchId(ngSession.getUserBranch())
             .setActive(true);
   }
 }

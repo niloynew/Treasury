@@ -20,7 +20,7 @@ public class ProductGLMapper {
         new ProductGeneralLedgerMapping()
             .setId(entity.getId())
             .setGlType(entity.getGlType())
-            .setGeneralLedgerId(entity.getGlId())
+            .setGeneralLedgerCode(entity.getGlCode())
             .setProductId(entity.getProductId());
   }
 
@@ -30,7 +30,7 @@ public class ProductGLMapper {
             .findById(domain.getId())
             .orElseGet(ProductRelatedGLEntity::new)
             .setGlType(domain.getGlType())
-            .setGlId(domain.getGeneralLedgerId())
+            .setGlCode(domain.getGeneralLedgerCode())
             .setProductId(domain.getProductId());
   }
 }

@@ -1,9 +1,9 @@
 package com.mislbd.ababil.treasury.command.handler;
 
 import com.mislbd.ababil.asset.service.Auditor;
-import com.mislbd.ababil.treasury.command.CreateAccountCommand;
-import com.mislbd.ababil.treasury.command.DeleteAccountCommand;
-import com.mislbd.ababil.treasury.command.UpdateAccountCommand;
+import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
@@ -21,117 +21,116 @@ import com.mislbd.asset.command.api.annotation.Aggregate;
 import com.mislbd.asset.command.api.annotation.CommandHandler;
 import com.mislbd.asset.command.api.annotation.CommandListener;
 import com.mislbd.security.core.NgSession;
-
 import java.time.LocalDate;
-
 import org.springframework.transaction.annotation.Transactional;
 
 @Aggregate
 public class AccountCommandHandlerAggregate {
 
-    private final AccountRepository accountRepository;
-    private final AccountMapper accountMapper;
-    private final ProductRepository productRepository;
-    private final Auditor auditor;
-    private final AccountService accountService;
-    private final NgSession ngSession;
-    private final TransactionalOperationService operationService;
+  private final AccountRepository accountRepository;
+  private final AccountMapper accountMapper;
+  private final ProductRepository productRepository;
+  private final Auditor auditor;
+  private final AccountService accountService;
+  private final NgSession ngSession;
+  private final TransactionalOperationService operationService;
 
-    public AccountCommandHandlerAggregate(
-            AccountRepository accountRepository,
-            AccountMapper accountMapper,
-            ProductRepository productRepository,
-            Auditor auditor,
-            AccountService accountService,
-            NgSession ngSession,
-            TransactionalOperationService operationService) {
-        this.accountRepository = accountRepository;
-        this.accountMapper = accountMapper;
-        this.productRepository = productRepository;
-        this.auditor = auditor;
-        this.accountService = accountService;
-        this.ngSession = ngSession;
-        this.operationService = operationService;
-    }
+  public AccountCommandHandlerAggregate(
+      AccountRepository accountRepository,
+      AccountMapper accountMapper,
+      ProductRepository productRepository,
+      Auditor auditor,
+      AccountService accountService,
+      NgSession ngSession,
+      TransactionalOperationService operationService) {
+    this.accountRepository = accountRepository;
+    this.accountMapper = accountMapper;
+    this.productRepository = productRepository;
+    this.auditor = auditor;
+    this.accountService = accountService;
+    this.ngSession = ngSession;
+    this.operationService = operationService;
+  }
 
-    @CommandListener(commandClasses = {CreateAccountCommand.class, UpdateAccountCommand.class})
-    public void auditAccountCreateAndUpdate(CommandEvent e) {
-        auditor.audit(e.getCommand().getPayload(), e.getCommand());
-    }
+  @CommandListener(
+      commandClasses = {CreateTreasuryAccountCommand.class, UpdateTreasuryAccountCommand.class})
+  public void auditAccountCreateAndUpdate(CommandEvent e) {
+    auditor.audit(e.getCommand().getPayload(), e.getCommand());
+  }
 
-    @CommandListener(commandClasses = {DeleteAccountCommand.class})
-    public void auditAccountDelete(CommandEvent e) {
+  @CommandListener(commandClasses = {DeleteTreasuryAccountCommand.class})
+  public void auditAccountDelete(CommandEvent e) {
 
-        auditor.audit(accountService.findById((Long) e.getCommand().getPayload()), e.getCommand());
-    }
+    auditor.audit(accountService.findById((Long) e.getCommand().getPayload()), e.getCommand());
+  }
 
-    @Transactional
-    @CommandHandler
-    public CommandResponse<Long> createAccount(CreateAccountCommand command) {
-        AccountEntity entity =
-                accountRepository.save(accountMapper.domainToEntity().map(command.getPayload()));
-        AuditInformation auditInformation = getAuditInformation(command);
-        operationService.dolPlacementTransaction(auditInformation, entity);
-        return CommandResponse.of(entity.getId());
-    }
+  @Transactional
+  @CommandHandler
+  public CommandResponse<Long> createAccount(CreateTreasuryAccountCommand command) {
+    AccountEntity entity =
+        accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
+    AuditInformation auditInformation = getAuditInformation(command);
+    operationService.dolPlacementTransaction(auditInformation, entity);
+    return CommandResponse.of(entity.getId());
+  }
 
-    @Transactional
-    @CommandHandler
-    public CommandResponse<Void> updateAccount(UpdateAccountCommand command)
-            throws AccountNotFoundException {
-        Account account = command.getPayload();
+  @Transactional
+  @CommandHandler
+  public CommandResponse<Void> updateAccount(UpdateTreasuryAccountCommand command)
+      throws AccountNotFoundException {
+    Account account = command.getPayload();
+    accountRepository
+        .save(
+            accountRepository
+                .findById(account.getId())
+                .orElseThrow(AccountNotFoundException::new)
+                .setId(account.getId())
+                .setProduct(
+                    productRepository
+                        .findById(account.getProductId())
+                        .orElseThrow(ProductNotFoundException::new)))
+        .setCurrencyCode(account.getCurrencyCode())
+        .setBankId(account.getBankId())
+        .setBranchId(account.getBranchId())
+        .setAccountTitle(account.getAccountTitle())
+        .setAccountNumber(account.getAccountNumber())
+        .setAmount(account.getAmount())
+        .setShadowAccountNumber(account.getShadowAccountNumber())
+        .setOpenDate(account.getAccountOpenDate())
+        .setClosingDate(account.getAccountClosingDate())
+        .setExpiryDate(account.getExpiryDate())
+        .setTenorAmount(account.getTenorAmount())
+        .setTenorType(account.getTenorType())
+        .setRenewalDate(account.getRenewalDate())
+        .setProfitRate(account.getExpectedProfitRate())
+        .setStatus(account.getStatus())
+        .setInstrumentNumber(account.getInstrument())
+        .setActive(true);
+
+    return CommandResponse.asVoid();
+  }
+
+  @Transactional
+  @CommandHandler
+  public CommandResponse<Void> deleteAccount(DeleteTreasuryAccountCommand command) {
+    accountRepository.save(
         accountRepository
-                .save(
-                        accountRepository
-                                .findById(account.getId())
-                                .orElseThrow(AccountNotFoundException::new)
-                                .setId(account.getId())
-                                .setProduct(
-                                        productRepository
-                                                .findById(account.getProductId())
-                                                .orElseThrow(ProductNotFoundException::new)))
-                .setCurrencyCode(account.getCurrencyCode())
-                .setBankId(account.getBankId())
-                .setBranchId(account.getBranchId())
-                .setAccountTitle(account.getAccountTitle())
-                .setAccountNumber(account.getAccountNumber())
-                .setAmount(account.getAmount())
-                .setShadowAccountNumber(account.getShadowAccountNumber())
-                .setOpenDate(account.getAccountOpenDate())
-                .setClosingDate(account.getAccountClosingDate())
-                .setExpiryDate(account.getExpiryDate())
-                .setTenorAmount(account.getTenorAmount())
-                .setTenorType(account.getTenorType())
-                .setRenewalDate(account.getRenewalDate())
-                .setProfitRate(account.getExpectedProfitRate())
-                .setStatus(account.getStatus())
-                .setInstrumentNumber(account.getInstrument())
-                .setActive(true);
+            .findById(command.getPayload())
+            .orElseThrow(AccountNotFoundException::new)
+            .setActive(false));
+    return CommandResponse.asVoid();
+  }
 
-        return CommandResponse.asVoid();
-    }
-
-    @Transactional
-    @CommandHandler
-    public CommandResponse<Void> deleteAccount(DeleteAccountCommand command) {
-        accountRepository.save(
-                accountRepository
-                        .findById(command.getPayload())
-                        .orElseThrow(AccountNotFoundException::new)
-                        .setActive(false));
-        return CommandResponse.asVoid();
-    }
-
-    private AuditInformation getAuditInformation(Command<?> command) {
-        AuditInformation auditInformation = new AuditInformation();
-        auditInformation
-                .setEntryUser(command.getInitiator())
-                .setEntryTerminal(command.getInitiatorTerminal())
-                .setVerifyUser(ngSession.getUsername())
-                .setVerifyTerminal(ngSession.getTerminal())
-                .setUserBranch(ngSession.getUserBranch().intValue())
-                .setProcessId(command.getProcessId())
-                .setEntryDate(LocalDate.now());
-        return auditInformation;
-    }
+  private AuditInformation getAuditInformation(Command<?> command) {
+    AuditInformation auditInformation = new AuditInformation();
+    auditInformation
+        .setEntryUser(command.getInitiator())
+        .setEntryTerminal(command.getInitiatorTerminal())
+        .setVerifyUser(ngSession.getUsername())
+        .setVerifyTerminal(ngSession.getTerminal())
+        .setUserBranch(ngSession.getUserBranch().intValue())
+        .setProcessId(command.getProcessId())
+        .setEntryDate(LocalDate.now());
+    return auditInformation;
+  }
 }

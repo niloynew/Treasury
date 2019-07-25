@@ -3,9 +3,9 @@ package com.mislbd.ababil.treasury.command.handler;
 import static com.mislbd.ababil.treasury.domain.ProductStatus.INACTIVE;
 
 import com.mislbd.ababil.asset.service.Auditor;
-import com.mislbd.ababil.treasury.command.CreateProductCommand;
-import com.mislbd.ababil.treasury.command.DeleteProductCommand;
-import com.mislbd.ababil.treasury.command.UpdateProductCommand;
+import com.mislbd.ababil.treasury.command.CreateTreasuryProductCommand;
+import com.mislbd.ababil.treasury.command.DeleteTreasuryProductCommand;
+import com.mislbd.ababil.treasury.command.UpdateTreasuryProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
 import com.mislbd.ababil.treasury.exception.ProductNatureNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
@@ -49,19 +49,20 @@ public class ProductCommandHandlerAggregate {
     this.productService = productService;
   }
 
-  @CommandListener(commandClasses = {CreateProductCommand.class, UpdateProductCommand.class})
+  @CommandListener(
+      commandClasses = {CreateTreasuryProductCommand.class, UpdateTreasuryProductCommand.class})
   public void auditProductCreateAndUpdate(CommandEvent e) {
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }
 
-  @CommandListener(commandClasses = {DeleteProductCommand.class})
+  @CommandListener(commandClasses = {DeleteTreasuryProductCommand.class})
   public void auditProductDelete(CommandEvent e) {
     auditor.audit(productService.findProduct((Long) e.getCommand().getPayload()), e.getCommand());
   }
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Long> createProduct(CreateProductCommand command) {
+  public CommandResponse<Long> createProduct(CreateTreasuryProductCommand command) {
     long productId =
         productRepository.save(productMapper.domainToEntity().map(command.getPayload())).getId();
     command
@@ -77,7 +78,7 @@ public class ProductCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Void> updateProduct(UpdateProductCommand command) {
+  public CommandResponse<Void> updateProduct(UpdateTreasuryProductCommand command) {
     Product product = command.getPayload();
     productRepository.save(
         productRepository
@@ -109,7 +110,7 @@ public class ProductCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Void> deleteProduct(DeleteProductCommand command) {
+  public CommandResponse<Void> deleteProduct(DeleteTreasuryProductCommand command) {
     productRepository.save(
         productRepository
             .findById(command.getPayload())

@@ -7,8 +7,7 @@ stages:
   - build
   - build_image
   - push_image
-  - deploy_dev
-  - deploy_qa
+  - deploy
 
 cache:
   paths:
@@ -65,7 +64,7 @@ push_image:
     - docker rmi mislbd/${ARTIFACT_NAME}-service:latest
 
 deploy_dev:
-  stage: deploy_dev
+  stage: deploy
   when: on_success
   only:
     - master
@@ -74,10 +73,10 @@ deploy_dev:
   script:
     - 'export BUILD_NUMBER=$(echo "$CI_PIPELINE_IID + $CI_PIPELINE_IID_OFFSET" | bc)'
     - docker pull 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:latest
-    - bash  ~/.bin/ababil_dev_auto deploy_service
+    - docker service update --force --image 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:latest stage-ababil-service_ababil-treasury
 
 deploy_qa:
-  stage: deploy_qa
+  stage: deploy
   when: manual
   only:
     - master
@@ -89,4 +88,18 @@ deploy_qa:
     - docker pull 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:${VERSION}-B$BUILD_NUMBER
     - docker tag  172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:${VERSION}-B$BUILD_NUMBER 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:qa-latest
     - docker rmi  172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:${VERSION}-B$BUILD_NUMBER
-    - bash  ~/.bin/ababil_qa_auto deploy_service
+    - docker service update --force --image 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:latest qa-ababil-service_ababil-treasury
+deploy_sbl:
+  stage: deploy
+  when: manual
+  only:
+    - master
+  tags:
+    - docker-server-ssh
+  script:
+    - 'export BUILD_NUMBER=$(echo "$CI_PIPELINE_IID + $CI_PIPELINE_IID_OFFSET" | bc)'
+    - export VERSION="$(cat gradle.properties | grep PROJECT_VERSION | cut -d'=' -f2-)"
+    - docker pull 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:${VERSION}-B$BUILD_NUMBER
+    - docker tag  172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:${VERSION}-B$BUILD_NUMBER 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:sbl-latest
+    - docker rmi  172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:${VERSION}-B$BUILD_NUMBER
+    - docker service update --force --image 172.16.190.13:5000/mislbd/${ARTIFACT_NAME}-service:sbl-latest sbl-ababil-service_ababil-treasury

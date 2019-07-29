@@ -70,7 +70,7 @@ public class AccountCommandHandlerAggregate {
     AccountEntity entity =
         accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
     AuditInformation auditInformation = getAuditInformation(command);
-    operationService.dolPlacementTransaction(auditInformation, entity);
+    //    operationService.dolPlacementTransaction(auditInformation, entity);
     return CommandResponse.of(entity.getId());
   }
 

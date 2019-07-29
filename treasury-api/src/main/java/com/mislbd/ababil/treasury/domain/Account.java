@@ -24,6 +24,7 @@ public class Account {
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
   private String instrument;
+  private TransactionEvent event;
 
   public long getId() {
     return id;
@@ -193,6 +194,15 @@ public class Account {
 
   public Account setInstrument(String instrument) {
     this.instrument = instrument;
+    return this;
+  }
+
+  public TransactionEvent getEvent() {
+    return event;
+  }
+
+  public Account setEvent(TransactionEvent event) {
+    this.event = event;
     return this;
   }
 }

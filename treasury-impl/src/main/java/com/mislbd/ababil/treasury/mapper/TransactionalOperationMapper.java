@@ -51,7 +51,6 @@ public class TransactionalOperationMapper {
       boolean isDebit,
       AccountEntity entity,
       String glCode) {
-    String narration = "";
     GlTransactionRequest glRequest = new GlTransactionRequest();
     glRequest.setActivityId(txnInformation.getActivityId());
     glRequest.setAmountLcy(entity.getAmount());
@@ -67,7 +66,11 @@ public class TransactionalOperationMapper {
     glRequest.setEntryTime(auditInformation.getEntryDate());
     glRequest.setVerifyUser(auditInformation.getVerifyUser());
     glRequest.setVerifyTerminal(auditInformation.getVerifyTerminal());
-    glRequest.setNarration(narration);
+    glRequest.setNarration(
+        " GL "
+            + (isDebit ? "DEBIT" : "CREDIT")
+            + " FOR TREASURY."
+            + entity.getShadowAccountNumber());
     glRequest.setApprovalFlowInstanceId(auditInformation.getProcessId());
     glRequest.setInitiatorModule("TREASURY");
     glRequest.setInitiatorBranch(auditInformation.getUserBranch());

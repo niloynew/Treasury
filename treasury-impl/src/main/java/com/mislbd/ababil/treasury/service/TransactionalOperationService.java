@@ -73,6 +73,14 @@ public class TransactionalOperationService {
     return txnInformation.getGlobalTxnNumber();
   }
 
+  /*
+  *
+  ###### Close Transaction #######
+  *   get audit information
+  *   debit treasury account
+  *   credit settlement account
+  * */
+
   private TransactionalInformation getTransactionInformation(
       AuditInformation auditInformation, Long activityId, Long globalTxnNumber) {
     return TransactionalInformation.builder()

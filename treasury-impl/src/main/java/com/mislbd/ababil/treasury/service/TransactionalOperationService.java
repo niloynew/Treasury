@@ -101,4 +101,8 @@ public class TransactionalOperationService {
         .activityId(activityId)
         .build();
   }
+
+  public Long doSettlementTransaction(AuditInformation auditInformation, AccountEntity entity) {
+    return null;
+  }
 }

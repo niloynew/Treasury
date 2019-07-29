@@ -6,9 +6,11 @@ import static org.springframework.http.ResponseEntity.status;
 
 import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.SettlementTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
+import com.mislbd.ababil.treasury.domain.TransactionEvent;
 import com.mislbd.ababil.treasury.query.AccountQuery;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.service.AccountService;
@@ -84,8 +86,14 @@ public class AccountController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<CommandResponse<Long>> createAccounts(@Valid @RequestBody Account account) {
+      return status(CREATED)
+              .body(commandProcessor.executeResult(new CreateTreasuryAccountCommand(account)));
+  }
+
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommandResponse<Long>> settleOrCloseAccounts(@Valid @RequestBody Account account) {
     return status(CREATED)
-        .body(commandProcessor.executeResult(new CreateTreasuryAccountCommand(account)));
+            .body(commandProcessor.executeResult(new CreateTreasuryAccountCommand(account)));
   }
 
   @PutMapping(path = "/{accountId}", consumes = MediaType.APPLICATION_JSON_VALUE)

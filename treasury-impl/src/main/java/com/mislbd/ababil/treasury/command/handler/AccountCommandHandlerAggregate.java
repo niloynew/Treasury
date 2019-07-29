@@ -3,6 +3,7 @@ package com.mislbd.ababil.treasury.command.handler;
 import com.mislbd.ababil.asset.service.Auditor;
 import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.SettlementTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
@@ -70,8 +71,18 @@ public class AccountCommandHandlerAggregate {
     AccountEntity entity =
         accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
     AuditInformation auditInformation = getAuditInformation(command);
-    //    operationService.dolPlacementTransaction(auditInformation, entity);
+        operationService.dolPlacementTransaction(auditInformation, entity);
     return CommandResponse.of(entity.getId());
+  }
+
+  @Transactional
+  @CommandHandler
+  public CommandResponse<Long> settlementAccount(SettlementTreasuryAccountCommand command) {
+    AccountEntity entity =
+            accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
+    AuditInformation auditInformation = getAuditInformation(command);
+    Long globalTxnNumber = operationService.doSettlementTransaction(auditInformation, entity);
+    return CommandResponse.of(globalTxnNumber);
   }
 
   @Transactional

@@ -13,76 +13,61 @@ public class TransactionRecordEntity {
       name = "TRANSACTION_RECORD_ID_GEN",
       allocationSize = 1,
       sequenceName = SchemaConstant.TRANSACTION_RECORD_SEQUENCE_NAME)
-  @Column(name = "TRID")
+  @Column(name = "ID")
   private long id;
 
-  @Column(name = "TRCODE")
+  @Column(name = "CODE")
   private String txnCode;
 
-  @Column(name = "TRDATE")
+  @Column(name = "TXN_DATE")
   private LocalDate txnDate;
 
-  @Column(name = "TRAMOUNT")
+  @Column(name = "AMOUNT")
   private int amount;
 
-  @Column(name = "TRISVALID")
-  private boolean Valid;
+  @Column(name = "INIT_BRANCH")
+  private String initiatorBranch;
 
-  @Column(name = "TRINITIATOR")
-  private String initiator;
-
-  @Column(name = "TRINSTRUMENTNO")
+  @Column(name = "INSTRUMENT_NO")
   private String instrumentNo;
 
-  @Column(name = "TRTRDID")
+  @Column(name = "TXN_DEF_ID")
   private int txnDefId;
 
-  @Column(name = "TRTRDCODE")
-  private int txndCode;
-
-  @Column(name = "TRREFACCID")
+  @Column(name = "REF_ACC_ID")
   private int refAccId;
 
-  @Column(name = "TRNARRATION")
+  @Column(name = "NARRATION")
   private String narration;
 
   @Column(name = "TRGLOBALTXNNO")
   private int globalTxnNo;
 
-  @Column(name = "TRINITIATORMODULE")
-  private String initiatorModule;
+  @Column(name = "CREATED_USER")
+  private String createdUser;
 
-  @Column(name = "TRCREATEDBYAPPUSER")
-  private String createdByAppUser;
-
-  @Column(name = "TRCREATEDTERMINAL")
+  @Column(name = "CREATED_TERMINAL")
   private String createdTerminal;
 
-  @Column(name = "TRCRATEDSYSUSER")
-  private String createdSysUser;
-
-  @Column(name = "TRCRETETIME")
+  @Column(name = "CRETE_TIME")
   private LocalDate createTime;
 
-  @Column(name = "TRVERIFIEDBYAPPUSER")
-  private String verifiedByAppUser;
+  @Column(name = "VERIFIED_USER")
+  private String verifiedUser;
 
-  @Column(name = "TRVERIFIEDTERMINAL")
-  private String verfiedTermial;
+  @Column(name = "VERIFIED_TERMINAL")
+  private String verifiedTermial;
 
-  @Column(name = "TRVERIFIEDSYSUSER")
-  private String verifiedSysUser;
-
-  @Column(name = "TRVERIFYTIME")
+  @Column(name = "VERIFY_TIME")
   private LocalDate verifyTime;
 
-  @Column(name = "TRORIGINATINGBRID")
+  @Column(name = "ORIGINATING_BR_ID")
   private int originatingBrId;
 
-  @Column(name = "TROWNERBRID")
+  @Column(name = "OWNER_BR_ID")
   private int ownerBrId;
 
-  @Column(name = "TRVALUEDATE")
+  @Column(name = "VALUE_DATE")
   private LocalDate txnValueDate;
 
   public long getId() {
@@ -121,21 +106,12 @@ public class TransactionRecordEntity {
     return this;
   }
 
-  public boolean isValid() {
-    return Valid;
+  public String getInitiatorBranch() {
+    return initiatorBranch;
   }
 
-  public TransactionRecordEntity setValid(boolean valid) {
-    Valid = valid;
-    return this;
-  }
-
-  public String getInitiator() {
-    return initiator;
-  }
-
-  public TransactionRecordEntity setInitiator(String initiator) {
-    this.initiator = initiator;
+  public TransactionRecordEntity setInitiatorBranch(String initiatorBranch) {
+    this.initiatorBranch = initiatorBranch;
     return this;
   }
 
@@ -154,15 +130,6 @@ public class TransactionRecordEntity {
 
   public TransactionRecordEntity setTxnDefId(int txnDefId) {
     this.txnDefId = txnDefId;
-    return this;
-  }
-
-  public int getTxndCode() {
-    return txndCode;
-  }
-
-  public TransactionRecordEntity setTxndCode(int txndCode) {
-    this.txndCode = txndCode;
     return this;
   }
 
@@ -193,30 +160,12 @@ public class TransactionRecordEntity {
     return this;
   }
 
-  public String getInitiatorModule() {
-    return initiatorModule;
+  public String getCreatedUser() {
+    return createdUser;
   }
 
-  public TransactionRecordEntity setInitiatorModule(String initiatorModule) {
-    this.initiatorModule = initiatorModule;
-    return this;
-  }
-
-  public String getCreatedByAppUser() {
-    return createdByAppUser;
-  }
-
-  public TransactionRecordEntity setCreatedByAppUser(String createdByAppUser) {
-    this.createdByAppUser = createdByAppUser;
-    return this;
-  }
-
-  public String getVerifiedByAppUser() {
-    return verifiedByAppUser;
-  }
-
-  public TransactionRecordEntity setVerifiedByAppUser(String verifiedByAppUser) {
-    this.verifiedByAppUser = verifiedByAppUser;
+  public TransactionRecordEntity setCreatedUser(String createdUser) {
+    this.createdUser = createdUser;
     return this;
   }
 
@@ -229,39 +178,30 @@ public class TransactionRecordEntity {
     return this;
   }
 
-  public String getVerfiedTermial() {
-    return verfiedTermial;
-  }
-
-  public TransactionRecordEntity setVerfiedTermial(String verfiedTermial) {
-    this.verfiedTermial = verfiedTermial;
-    return this;
-  }
-
-  public String getCreatedSysUser() {
-    return createdSysUser;
-  }
-
-  public TransactionRecordEntity setCreatedSysUser(String createdSysUser) {
-    this.createdSysUser = createdSysUser;
-    return this;
-  }
-
-  public String getVerifiedSysUser() {
-    return verifiedSysUser;
-  }
-
-  public TransactionRecordEntity setVerifiedSysUser(String verifiedSysUser) {
-    this.verifiedSysUser = verifiedSysUser;
-    return this;
-  }
-
   public LocalDate getCreateTime() {
     return createTime;
   }
 
   public TransactionRecordEntity setCreateTime(LocalDate createTime) {
     this.createTime = createTime;
+    return this;
+  }
+
+  public String getVerifiedUser() {
+    return verifiedUser;
+  }
+
+  public TransactionRecordEntity setVerifiedUser(String verifiedUser) {
+    this.verifiedUser = verifiedUser;
+    return this;
+  }
+
+  public String getVerifiedTermial() {
+    return verifiedTermial;
+  }
+
+  public TransactionRecordEntity setVerifiedTermial(String verifiedTermial) {
+    this.verifiedTermial = verifiedTermial;
     return this;
   }
 

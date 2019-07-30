@@ -10,7 +10,6 @@ import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.query.AccountQuery;
-import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
@@ -33,14 +32,9 @@ public class AccountController {
   private final AccountService accountService;
 
   public AccountController(
-      CommandProcessor commandProcessor,
-      QueryManager queryManager,
-      AccountRepository accountRepository,
-      AccountService accountService) {
+      CommandProcessor commandProcessor, QueryManager queryManager, AccountService accountService) {
     this.commandProcessor = commandProcessor;
-
     this.queryManager = queryManager;
-
     this.accountService = accountService;
   }
 
@@ -87,6 +81,13 @@ public class AccountController {
     return status(CREATED)
         .body(commandProcessor.executeResult(new CreateTreasuryAccountCommand(account)));
   }
+
+  //  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+  //  public ResponseEntity<CommandResponse<Long>> settleOrCloseAccounts(
+  //      @Valid @RequestBody Account account) {
+  //    return status(CREATED)
+  //        .body(commandProcessor.executeResult(new SettlementTreasuryAccountCommand(account)));
+  //  }
 
   @PutMapping(path = "/{accountId}", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> updateAccount(

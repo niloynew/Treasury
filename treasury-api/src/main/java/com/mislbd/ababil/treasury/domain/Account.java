@@ -24,6 +24,13 @@ public class Account {
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
   private String instrument;
+  private TransactionEvent event;
+  private BigDecimal profitAmount;
+  private BigDecimal actualProfit;
+  private Boolean renewWithProfit;
+  private int newTenorAmount;
+  private TenorType newTenorType;
+  private LocalDate valueDate;
 
   public long getId() {
     return id;
@@ -193,6 +200,69 @@ public class Account {
 
   public Account setInstrument(String instrument) {
     this.instrument = instrument;
+    return this;
+  }
+
+  public TransactionEvent getEvent() {
+    return event;
+  }
+
+  public Account setEvent(TransactionEvent event) {
+    this.event = event;
+    return this;
+  }
+
+  public BigDecimal getProfitAmount() {
+    return profitAmount;
+  }
+
+  public Account setProfitAmount(BigDecimal profitAmount) {
+    this.profitAmount = profitAmount;
+    return this;
+  }
+
+  public BigDecimal getActualProfit() {
+    return actualProfit;
+  }
+
+  public Account setActualProfit(BigDecimal actualProfit) {
+    this.actualProfit = actualProfit;
+    return this;
+  }
+
+  public Boolean getRenewWithProfit() {
+    return renewWithProfit;
+  }
+
+  public Account setRenewWithProfit(Boolean renewWithProfit) {
+    this.renewWithProfit = renewWithProfit;
+    return this;
+  }
+
+  public int getNewTenorAmount() {
+    return newTenorAmount;
+  }
+
+  public Account setNewTenorAmount(int newTenorAmount) {
+    this.newTenorAmount = newTenorAmount;
+    return this;
+  }
+
+  public TenorType getNewTenorType() {
+    return newTenorType;
+  }
+
+  public Account setNewTenorType(TenorType newTenorType) {
+    this.newTenorType = newTenorType;
+    return this;
+  }
+
+  public LocalDate getValueDate() {
+    return valueDate;
+  }
+
+  public Account setValueDate(LocalDate valueDate) {
+    this.valueDate = valueDate;
     return this;
   }
 }

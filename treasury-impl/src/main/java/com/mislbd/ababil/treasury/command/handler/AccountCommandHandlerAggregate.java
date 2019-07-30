@@ -11,7 +11,6 @@ import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
-import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.ababil.treasury.service.TransactionalOperationService;
 import com.mislbd.asset.command.api.Command;
@@ -67,12 +66,20 @@ public class AccountCommandHandlerAggregate {
   @Transactional
   @CommandHandler
   public CommandResponse<Long> createAccount(CreateTreasuryAccountCommand command) {
-    AccountEntity entity =
-        accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
     AuditInformation auditInformation = getAuditInformation(command);
-    //    operationService.dolPlacementTransaction(auditInformation, entity);
-    return CommandResponse.of(entity.getId());
+    Long globalTxnNumber =
+        operationService.dolPlacementTransaction(auditInformation, command.getPayload());
+    return CommandResponse.of(globalTxnNumber);
   }
+
+  //    @Transactional
+  //    @CommandHandler
+  //    public CommandResponse<Long> settlementAccount(SettlementTreasuryAccountCommand command) {
+  //      AuditInformation auditInformation = getAuditInformation(command);
+  //      Long globalTxnNumber =
+  //          operationService.doSettlementTransaction(auditInformation, command.getPayload());
+  //      return CommandResponse.of(globalTxnNumber);
+  //    }
 
   @Transactional
   @CommandHandler

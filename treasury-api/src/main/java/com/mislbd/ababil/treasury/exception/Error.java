@@ -86,6 +86,22 @@ public enum Error {
       return message;
     }
   },
+
+  PROVISION_MISMATCH("270", "0005") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+          localeMessages.get(this.getModule() + this.getCode()).orElse("Product Nature not found");
+      return message;
+    }
+  },
   ;
 
   // region <R>

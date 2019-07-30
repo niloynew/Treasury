@@ -3,7 +3,6 @@ package com.mislbd.ababil.treasury.command.handler;
 import com.mislbd.ababil.asset.service.Auditor;
 import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.SettlementTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
@@ -12,7 +11,6 @@ import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
-import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.ababil.treasury.service.TransactionalOperationService;
 import com.mislbd.asset.command.api.Command;
@@ -68,22 +66,20 @@ public class AccountCommandHandlerAggregate {
   @Transactional
   @CommandHandler
   public CommandResponse<Long> createAccount(CreateTreasuryAccountCommand command) {
-    AccountEntity entity =
-        accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
     AuditInformation auditInformation = getAuditInformation(command);
-        operationService.dolPlacementTransaction(auditInformation, entity);
-    return CommandResponse.of(entity.getId());
-  }
-
-  @Transactional
-  @CommandHandler
-  public CommandResponse<Long> settlementAccount(SettlementTreasuryAccountCommand command) {
-    AccountEntity entity =
-            accountRepository.saveAndFlush(accountMapper.domainToEntity().map(command.getPayload()));
-    AuditInformation auditInformation = getAuditInformation(command);
-    Long globalTxnNumber = operationService.doSettlementTransaction(auditInformation, entity);
+    Long globalTxnNumber =
+        operationService.dolPlacementTransaction(auditInformation, command.getPayload());
     return CommandResponse.of(globalTxnNumber);
   }
+
+  //    @Transactional
+  //    @CommandHandler
+  //    public CommandResponse<Long> settlementAccount(SettlementTreasuryAccountCommand command) {
+  //      AuditInformation auditInformation = getAuditInformation(command);
+  //      Long globalTxnNumber =
+  //          operationService.doSettlementTransaction(auditInformation, command.getPayload());
+  //      return CommandResponse.of(globalTxnNumber);
+  //    }
 
   @Transactional
   @CommandHandler

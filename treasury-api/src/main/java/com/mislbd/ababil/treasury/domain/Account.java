@@ -30,6 +30,7 @@ public class Account {
   private Boolean renewWithProfit;
   private int newTenorAmount;
   private TenorType newTenorType;
+  private LocalDate valueDate;
 
   public long getId() {
     return id;
@@ -253,6 +254,15 @@ public class Account {
 
   public Account setNewTenorType(TenorType newTenorType) {
     this.newTenorType = newTenorType;
+    return this;
+  }
+
+  public LocalDate getValueDate() {
+    return valueDate;
+  }
+
+  public Account setValueDate(LocalDate valueDate) {
+    this.valueDate = valueDate;
     return this;
   }
 }

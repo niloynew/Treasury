@@ -24,4 +24,5 @@ public class AccountQuery extends QueryRequest {
   private LocalDate openDate;
   private LocalDate expiryDate;
   private AccountStatus status;
+  private Long ownerBranchId;
 }

@@ -16,7 +16,8 @@ public interface AccountService {
       String currencyCode,
       LocalDate openDate,
       LocalDate expiryDate,
-      AccountStatus status);
+      AccountStatus status,
+      Long ownerBranchId);
 
   List<Account> findAccounts(
       String accountNumber,
@@ -25,7 +26,8 @@ public interface AccountService {
       String currencyCode,
       LocalDate openDate,
       LocalDate expiryDate,
-      AccountStatus status);
+      AccountStatus status,
+      Long ownerBranchId);
 
   Account findById(Long accountId);
 

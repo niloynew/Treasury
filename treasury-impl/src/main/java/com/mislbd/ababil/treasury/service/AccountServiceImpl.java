@@ -39,7 +39,14 @@ public class AccountServiceImpl implements AccountService {
     return PagedResultBuilder.build(
         accountRepository.findAll(
             AccountSpecification.findAccount(
-                accountNumber, accountTitle, productId, currencyCode, openDate, expiryDate, status,ownerBranchId),
+                accountNumber,
+                accountTitle,
+                productId,
+                currencyCode,
+                openDate,
+                expiryDate,
+                status,
+                ownerBranchId),
             pageable),
         accountMapper.entityToDomain());
   }

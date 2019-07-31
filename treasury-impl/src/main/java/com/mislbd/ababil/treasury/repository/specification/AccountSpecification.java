@@ -17,11 +17,11 @@ public class AccountSpecification {
       LocalDate openDate,
       LocalDate expiryDate,
       AccountStatus status,
-      Long  ownerBranchId) {
+      Long ownerBranchId) {
     return (root, query, cb) -> {
       Predicate predicate = cb.conjunction();
       Path<ProductEntity> productRoot = root.get("product");
-
+      query = query.orderBy(cb.desc(root.get("id")));
       if (accountNumber != null) {
         predicate = cb.and(predicate, cb.equal(root.get("accountNumber"), accountNumber));
       }

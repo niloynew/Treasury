@@ -17,10 +17,9 @@ public class UtilityServiceImpl implements UtilityService {
   }
 
   @Override
-  public BigDecimal totalProvisionOfAccounts(String accountNumber) {
+  public BigDecimal totalProvisionOfAccounts(String accountNumber, boolean glPosted, boolean accountPosted) {
     List<MonthendProductInfoEntity> productInfoEntities =
-        monthendProductInfoRepository.findAll(
-            MonthendProductSpecification.getProvision(accountNumber));
+        getMonthendProductInfoDatas(accountNumber, glPosted, accountPosted);
     return !productInfoEntities.isEmpty()
         ? BigDecimal.valueOf(
             productInfoEntities
@@ -28,5 +27,35 @@ public class UtilityServiceImpl implements UtilityService {
                 .mapToDouble(entity -> entity.getProvisionAmount().doubleValue())
                 .sum())
         : BigDecimal.ZERO;
+  }
+
+  @Override
+  public void updateMonthendInfo(String accountNumber, String event, boolean accountPosted) {
+    List<MonthendProductInfoEntity> productInfoEntities =
+        getMonthendProductInfoDatas(accountNumber, null, false);
+    productInfoEntities
+        .stream()
+        .forEach(
+            object ->
+                monthendProductInfoRepository.save(
+                    object.setProfitPostingEvent(event).setGlPosted(true).setAccPosted(true)));
+  }
+
+  @Override
+  public BigDecimal totalProductOfAccounts(String shadowAccountNumber, boolean glPosted, boolean accountPosted) {
+    List<MonthendProductInfoEntity> productInfoEntities = getMonthendProductInfoDatas(shadowAccountNumber, glPosted, accountPosted);
+    return !productInfoEntities.isEmpty()
+            ? BigDecimal.valueOf(
+            productInfoEntities
+                    .stream()
+                    .mapToDouble(entity -> entity.getAccProduct().doubleValue())
+                    .sum())
+            : BigDecimal.ZERO;
+  }
+
+  private List<MonthendProductInfoEntity> getMonthendProductInfoDatas(
+      String accountNumber, Boolean glPosted, Boolean accPosted) {
+    return monthendProductInfoRepository.findAll(
+        MonthendProductSpecification.getProvision(accountNumber, glPosted, accPosted));
   }
 }

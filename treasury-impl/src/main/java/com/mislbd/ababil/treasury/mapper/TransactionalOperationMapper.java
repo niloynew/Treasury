@@ -7,12 +7,14 @@ import com.mislbd.ababil.treasury.domain.TransactionalInformation;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.stream.IntStream;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class TransactionalOperationMapper {
 
-  public TreasuryTransactionRequest getPrincipalPayableAccount(
+  public TreasuryTransactionRequest getPayableAccount(
       TransactionalInformation txnInformation,
       String baseCurrency,
       AuditInformation auditInformation,
@@ -187,5 +189,41 @@ public class TransactionalOperationMapper {
     glRequest.setValueDate(valueDate);
     glRequest.setGlCode(glCode);
     return glRequest;
+  }
+
+  public TreasuryTransactionRequest getPrincipalPayableAccount(
+          TransactionalInformation txnInformation,
+          String baseCurrency,
+          AuditInformation auditInformation,
+          boolean isDebit,
+          String accountNumber,
+          BigDecimal principalAmount) {
+    TreasuryTransactionRequest request = new TreasuryTransactionRequest();
+    request.setActivityId(txnInformation.getActivityId());
+    request.setAmountCcy(principalAmount);
+    request.setAmountLcy(principalAmount);
+    request.setCurrencyCode(baseCurrency);
+    request.setExchangeRate(txnInformation.getExchangeRate());
+    request.setRateType(txnInformation.getExchangeRateType());
+    request.setDebitTransaction(isDebit);
+    request.setBatchNo(txnInformation.getBatchNumber());
+    request.setGlobalTxnNo(txnInformation.getGlobalTxnNumber());
+    request.setEntryUser(auditInformation.getEntryUser());
+    request.setEntryTerminal(auditInformation.getEntryTerminal());
+    request.setEntryTime(auditInformation.getEntryDate());
+    request.setVerifyUser(auditInformation.getVerifyUser());
+    request.setVerifyTerminal(auditInformation.getVerifyTerminal());
+    request.setNarration(
+            "Principal "
+                    + principalAmount
+                    + " BDT "
+                    + (isDebit ? "debited to" : "credited from")
+                    + " account "
+                    + accountNumber);
+    request.setApprovalFlowInstanceId(auditInformation.getProcessId());
+    request.setInitiatorModule("TREASURY");
+    request.setInitiatorBranch(auditInformation.getUserBranch());
+    request.setAccNumber(accountNumber);
+    return request;
   }
 }

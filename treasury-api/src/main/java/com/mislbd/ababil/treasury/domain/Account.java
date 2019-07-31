@@ -1,5 +1,8 @@
 package com.mislbd.ababil.treasury.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,7 +16,9 @@ public class Account {
   private Long branchId;
   private String accountTitle;
   private String accountNumber;
+  private BigDecimal balance;
   private BigDecimal amount;
+  private BigDecimal productAmount;
   private String shadowAccountNumber;
   private LocalDate accountOpenDate;
   private LocalDate accountClosingDate;
@@ -31,6 +36,8 @@ public class Account {
   private int newTenorAmount;
   private TenorType newTenorType;
   private LocalDate valueDate;
+  private BigDecimal newProfitRate;
+  private LocalDate newExpiryDate;
 
   public long getId() {
     return id;
@@ -104,12 +111,30 @@ public class Account {
     return this;
   }
 
+  public BigDecimal getBalance() {
+    return balance;
+  }
+
+  public Account setBalance(BigDecimal balance) {
+    this.balance = balance;
+    return this;
+  }
+
   public BigDecimal getAmount() {
     return amount;
   }
 
   public Account setAmount(BigDecimal amount) {
     this.amount = amount;
+    return this;
+  }
+
+  public BigDecimal getProductAmount() {
+    return productAmount;
+  }
+
+  public Account setProductAmount(BigDecimal productAmount) {
+    this.productAmount = productAmount;
     return this;
   }
 
@@ -263,6 +288,24 @@ public class Account {
 
   public Account setValueDate(LocalDate valueDate) {
     this.valueDate = valueDate;
+    return this;
+  }
+
+  public BigDecimal getNewProfitRate() {
+    return newProfitRate;
+  }
+
+  public Account setNewProfitRate(BigDecimal newProfitRate) {
+    this.newProfitRate = newProfitRate;
+    return this;
+  }
+
+  public LocalDate getNewExpiryDate() {
+    return newExpiryDate;
+  }
+
+  public Account setNewExpiryDate(LocalDate newExpiryDate) {
+    this.newExpiryDate = newExpiryDate;
     return this;
   }
 }

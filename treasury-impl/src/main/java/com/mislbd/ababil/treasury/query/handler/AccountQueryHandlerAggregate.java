@@ -2,6 +2,7 @@ package com.mislbd.ababil.treasury.query.handler;
 
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.query.AccountQuery;
+import com.mislbd.ababil.treasury.query.SettlementAccountQuery;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.commons.data.domain.PagedResult;
 import com.mislbd.asset.query.annotation.QueryAggregate;
@@ -46,4 +47,16 @@ public class AccountQueryHandlerAggregate {
       return QueryResult.of(accounts);
     }
   }
+
+  @QueryHandler
+  public QueryResult<?> settlementAccountSearch(SettlementAccountQuery accountQuery) {
+    PagedResult<Account> accountPage =
+            accountService.findSettlementAccounts(
+                    accountQuery.getPageable(),
+                    accountQuery.getAccountNumber(),
+                    accountQuery.getExpiryDate(),
+                    accountQuery.getOwnerBranchId());
+    return QueryResult.of(accountPage);
+  }
+
 }

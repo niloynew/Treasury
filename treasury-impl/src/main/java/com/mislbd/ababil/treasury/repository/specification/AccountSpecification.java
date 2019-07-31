@@ -73,9 +73,9 @@ public class AccountSpecification {
     };
   }
 
-  public static Specification<AccountEntity> findSettlementAccounts(String accountNumber, LocalDate expiryDate, Long ownerBranchId){
+  public static Specification<AccountEntity> findSettlementAccounts(
+      String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
     return (root, query, cb) -> {
-
       Predicate predicate = cb.conjunction();
 
       if (accountNumber != null) {
@@ -96,5 +96,4 @@ public class AccountSpecification {
       return predicate;
     };
   }
-
 }

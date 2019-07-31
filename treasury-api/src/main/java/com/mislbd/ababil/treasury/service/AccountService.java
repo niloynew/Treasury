@@ -31,7 +31,8 @@ public interface AccountService {
 
   Account findById(Long accountId);
 
-    PagedResult<Account> findSettlementAccounts(Pageable pageable, String accountNumber, LocalDate expiryDate, Long brId);
+  PagedResult<Account> findSettlementAccounts(
+      Pageable pageable, String accountNumber, LocalDate expiryDate, Long brId);
 
-    //    Optional<AccountEntity> findById(Long accountId);
+  //    Optional<AccountEntity> findById(Long accountId);
 }

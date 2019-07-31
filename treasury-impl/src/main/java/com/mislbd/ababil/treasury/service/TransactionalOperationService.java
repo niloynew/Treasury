@@ -68,8 +68,7 @@ public class TransactionalOperationService {
         getTransactionInformation(auditInformation, PLACEMENT_ACTIVITY, null);
 
     transactionService.doTreasuryTransaction(
-        mapper.getPayableAccount(
-            txnInformation, baseCurrency, auditInformation, true, entity),
+        mapper.getPayableAccount(txnInformation, baseCurrency, auditInformation, true, entity),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
 
@@ -199,41 +198,70 @@ public class TransactionalOperationService {
       accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
-    if(account.getEvent() == TransactionEvent.Settlement){
+    if (account.getEvent() == TransactionEvent.Settlement) {
       if (account.getRenewWithProfit() != null
-              && account.getProfitAmount().compareTo(BigDecimal.ZERO) == 1) {
+          && account.getProfitAmount().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
-                mapper.getProfitPayableAccount(
-                        txnInformation,
-                        baseCurrency,
-                        auditInformation,
-                        false,
-                        entity.getShadowAccountNumber(),
-                        account.getProfitAmount()),
-                TransactionRequestType.TRANSFER,
-                TransactionAmountType.PROFIT);
+            mapper.getProfitPayableAccount(
+                txnInformation,
+                baseCurrency,
+                auditInformation,
+                false,
+                entity.getShadowAccountNumber(),
+                account.getProfitAmount()),
+            TransactionRequestType.TRANSFER,
+            TransactionAmountType.PROFIT);
         transactionService.doGlTransaction(
-                mapper.getProfitPayableGL(
-                        txnInformation,
-                        baseCurrency,
-                        auditInformation,
-                        true,
-                        entity.getShadowAccountNumber(),
-                        account.getProfitAmount(),
-                        settlementGl,
-                        account.getValueDate()),
-                TransactionRequestType.TRANSFER);
+            mapper.getProfitPayableGL(
+                txnInformation,
+                baseCurrency,
+                auditInformation,
+                true,
+                entity.getShadowAccountNumber(),
+                account.getProfitAmount(),
+                settlementGl,
+                account.getValueDate()),
+            TransactionRequestType.TRANSFER);
       }
       accountRepository.save(accountMapper.renwalDomainToEntity().map(account));
     }
 
-    if(account.getEvent() == TransactionEvent.Close){
-      entity = accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
+    if (account.getEvent() == TransactionEvent.Close) {
+      entity =
+          accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
       BigDecimal closingProfit = entity.getProfitDebit().subtract(entity.getProfitCredit());
       BigDecimal closingPrincipal = entity.getBalance().subtract(closingProfit);
-      transactionService.doTreasuryTransaction(mapper.getProfitPayableAccount(txnInformation, baseCurrency, auditInformation, false, entity.getShadowAccountNumber(), closingProfit), TransactionRequestType.TRANSFER, TransactionAmountType.PROFIT);
-      transactionService.doTreasuryTransaction(mapper.getPrincipalPayableAccount(txnInformation, baseCurrency, auditInformation, false, entity.getShadowAccountNumber(), closingPrincipal), TransactionRequestType.TRANSFER, TransactionAmountType.PRINCIPAL);
-      transactionService.doGlTransaction(mapper.getBalancingPayableGl(txnInformation, baseCurrency, auditInformation, true, entity.getShadowAccountNumber(), entity.getBalance(), settlementGl, account.getValueDate()), TransactionRequestType.TRANSFER);
+      transactionService.doTreasuryTransaction(
+          mapper.getProfitPayableAccount(
+              txnInformation,
+              baseCurrency,
+              auditInformation,
+              false,
+              entity.getShadowAccountNumber(),
+              closingProfit),
+          TransactionRequestType.TRANSFER,
+          TransactionAmountType.PROFIT);
+      transactionService.doTreasuryTransaction(
+          mapper.getPrincipalPayableAccount(
+              txnInformation,
+              baseCurrency,
+              auditInformation,
+              false,
+              entity.getShadowAccountNumber(),
+              closingPrincipal),
+          TransactionRequestType.TRANSFER,
+          TransactionAmountType.PRINCIPAL);
+      transactionService.doGlTransaction(
+          mapper.getBalancingPayableGl(
+              txnInformation,
+              baseCurrency,
+              auditInformation,
+              true,
+              entity.getShadowAccountNumber(),
+              entity.getBalance(),
+              settlementGl,
+              account.getValueDate()),
+          TransactionRequestType.TRANSFER);
       accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
@@ -243,7 +271,8 @@ public class TransactionalOperationService {
   }
 
   private void doProvisionPosted(String shadowAccountNumber, BigDecimal profitAmount) {
-    BigDecimal provisionAmount = utilityService.totalProvisionOfAccounts(shadowAccountNumber, true, false);
+    BigDecimal provisionAmount =
+        utilityService.totalProvisionOfAccounts(shadowAccountNumber, true, false);
     if (provisionAmount.compareTo(profitAmount) != 0) {
       throw new ProvisionMismatchException(
           "Provision not match for account " + shadowAccountNumber);

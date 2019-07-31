@@ -16,11 +16,12 @@ public class AccountSpecification {
       String currencyCode,
       LocalDate openDate,
       LocalDate expiryDate,
-      AccountStatus status) {
+      AccountStatus status,
+      Long ownerBranchId) {
     return (root, query, cb) -> {
       Predicate predicate = cb.conjunction();
       Path<ProductEntity> productRoot = root.get("product");
-
+      query = query.orderBy(cb.desc(root.get("id")));
       if (accountNumber != null) {
         predicate = cb.and(predicate, cb.equal(root.get("accountNumber"), accountNumber));
       }
@@ -45,6 +46,10 @@ public class AccountSpecification {
       }
       if (status != null) {
         predicate = cb.and(predicate, cb.equal(root.get("status"), status));
+      }
+
+      if (ownerBranchId != null) {
+        predicate = cb.and(predicate, cb.equal(root.get("ownerBranchId"), ownerBranchId));
       }
       predicate = cb.and(predicate, cb.equal(root.get("active"), true));
 

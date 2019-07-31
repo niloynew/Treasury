@@ -5,9 +5,9 @@ import com.mislbd.asset.command.api.Command;
 import com.mislbd.asset.command.api.annotation.CommandAttribute;
 
 @CommandAttribute(name = "Settlement Treasury Account", group = "TREASURY")
-public class SettlementTreasuryAccountCommand extends Command<Account> {
+public class SettlementOrCloseTreasuryAccountCommand extends Command<Account> {
 
-  public SettlementTreasuryAccountCommand(Account payload) {
+  public SettlementOrCloseTreasuryAccountCommand(Account payload) {
     super(payload);
   }
 }

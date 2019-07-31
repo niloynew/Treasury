@@ -3,6 +3,7 @@ package com.mislbd.ababil.treasury.command.handler;
 import com.mislbd.ababil.asset.service.Auditor;
 import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.SettlementOrCloseTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
@@ -72,14 +73,14 @@ public class AccountCommandHandlerAggregate {
     return CommandResponse.of(globalTxnNumber);
   }
 
-  //    @Transactional
-  //    @CommandHandler
-  //    public CommandResponse<Long> settlementAccount(SettlementTreasuryAccountCommand command) {
-  //      AuditInformation auditInformation = getAuditInformation(command);
-  //      Long globalTxnNumber =
-  //          operationService.doSettlementTransaction(auditInformation, command.getPayload());
-  //      return CommandResponse.of(globalTxnNumber);
-  //    }
+  @Transactional
+  @CommandHandler
+  public CommandResponse<Long> settlemenOrClosetAccount(SettlementOrCloseTreasuryAccountCommand command) {
+    AuditInformation auditInformation = getAuditInformation(command);
+    Long globalTxnNumber =
+        operationService.doSettlementOrCloseTransaction(auditInformation, command.getPayload());
+    return CommandResponse.of(globalTxnNumber);
+  }
 
   @Transactional
   @CommandHandler

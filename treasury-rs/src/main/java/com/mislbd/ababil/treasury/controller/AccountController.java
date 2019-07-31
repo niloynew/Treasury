@@ -2,14 +2,18 @@ package com.mislbd.ababil.treasury.controller;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.SettlementOrCloseTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
+import com.mislbd.ababil.treasury.domain.TransactionEvent;
 import com.mislbd.ababil.treasury.query.AccountQuery;
+import com.mislbd.ababil.treasury.query.SettlementAccountQuery;
 import com.mislbd.ababil.treasury.service.AccountService;
 import com.mislbd.asset.command.api.CommandProcessor;
 import com.mislbd.asset.command.api.CommandResponse;
@@ -17,6 +21,8 @@ import com.mislbd.asset.query.api.QueryManager;
 import com.mislbd.asset.query.api.QueryResult;
 import java.time.LocalDate;
 import javax.validation.Valid;
+
+import com.mislbd.security.core.NgSession;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;

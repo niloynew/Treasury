@@ -29,7 +29,8 @@ public class AccountQueryHandlerAggregate {
               accountQuery.getCurrencyCode(),
               accountQuery.getOpenDate(),
               accountQuery.getExpiryDate(),
-              accountQuery.getStatus());
+              accountQuery.getStatus(),
+              accountQuery.getOwnerBranchId()    );
       return QueryResult.of(accountPage);
     } else {
       List<Account> accounts =
@@ -40,7 +41,8 @@ public class AccountQueryHandlerAggregate {
               accountQuery.getCurrencyCode(),
               accountQuery.getOpenDate(),
               accountQuery.getExpiryDate(),
-              accountQuery.getStatus());
+              accountQuery.getStatus(),
+              accountQuery.getOwnerBranchId()    );
       return QueryResult.of(accounts);
     }
   }

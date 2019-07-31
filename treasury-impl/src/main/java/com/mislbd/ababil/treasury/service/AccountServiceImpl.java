@@ -34,11 +34,12 @@ public class AccountServiceImpl implements AccountService {
       String currencyCode,
       LocalDate openDate,
       LocalDate expiryDate,
-      AccountStatus status) {
+      AccountStatus status,
+      Long ownerBranchId) {
     return PagedResultBuilder.build(
         accountRepository.findAll(
             AccountSpecification.findAccount(
-                accountNumber, accountTitle, productId, currencyCode, openDate, expiryDate, status),
+                accountNumber, accountTitle, productId, currencyCode, openDate, expiryDate, status,ownerBranchId),
             pageable),
         accountMapper.entityToDomain());
   }
@@ -51,7 +52,8 @@ public class AccountServiceImpl implements AccountService {
       String currencyCode,
       LocalDate openDate,
       LocalDate expiryDate,
-      AccountStatus status) {
+      AccountStatus status,
+      Long ownerBranchId) {
     return ListResultBuilder.build(
         accountRepository.findAll(
             AccountSpecification.findAccount(
@@ -61,7 +63,8 @@ public class AccountServiceImpl implements AccountService {
                 currencyCode,
                 openDate,
                 expiryDate,
-                status)),
+                status,
+                ownerBranchId)),
         accountMapper.entityToDomain());
   }
 

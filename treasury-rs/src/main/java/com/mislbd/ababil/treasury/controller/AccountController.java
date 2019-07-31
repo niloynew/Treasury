@@ -17,6 +17,8 @@ import com.mislbd.asset.query.api.QueryManager;
 import com.mislbd.asset.query.api.QueryResult;
 import java.time.LocalDate;
 import javax.validation.Valid;
+
+import com.mislbd.security.core.NgSession;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -30,12 +32,14 @@ public class AccountController {
   private final CommandProcessor commandProcessor;
   private final QueryManager queryManager;
   private final AccountService accountService;
+  private final NgSession ngSession;
 
   public AccountController(
-      CommandProcessor commandProcessor, QueryManager queryManager, AccountService accountService) {
+          CommandProcessor commandProcessor, QueryManager queryManager, AccountService accountService, NgSession ngSession) {
     this.commandProcessor = commandProcessor;
     this.queryManager = queryManager;
     this.accountService = accountService;
+    this.ngSession = ngSession;
   }
 
   @GetMapping()
@@ -50,7 +54,8 @@ public class AccountController {
           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
           final LocalDate openDate,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
-      @RequestParam(value = "status", required = false) final AccountStatus status) {
+      @RequestParam(value = "status", required = false) final AccountStatus status,
+      @RequestParam(value = "ownerBranchId", required = false) final Long ownerBranchId) {
 
     QueryResult<?> queryResult =
         queryManager.executeQuery(
@@ -63,7 +68,8 @@ public class AccountController {
                 currencyCode,
                 openDate,
                 expiryDate,
-                status));
+                status,
+                ownerBranchId==null?ngSession.getUserBranch():ownerBranchId ));
     if (queryResult.isEmpty()) {
       return ResponseEntity.noContent().build();
     }

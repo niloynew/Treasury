@@ -7,8 +7,6 @@ import com.mislbd.ababil.treasury.domain.TransactionalInformation;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.stream.IntStream;
-
 import org.springframework.stereotype.Component;
 
 @Component
@@ -192,12 +190,12 @@ public class TransactionalOperationMapper {
   }
 
   public TreasuryTransactionRequest getPrincipalPayableAccount(
-          TransactionalInformation txnInformation,
-          String baseCurrency,
-          AuditInformation auditInformation,
-          boolean isDebit,
-          String accountNumber,
-          BigDecimal principalAmount) {
+      TransactionalInformation txnInformation,
+      String baseCurrency,
+      AuditInformation auditInformation,
+      boolean isDebit,
+      String accountNumber,
+      BigDecimal principalAmount) {
     TreasuryTransactionRequest request = new TreasuryTransactionRequest();
     request.setActivityId(txnInformation.getActivityId());
     request.setAmountCcy(principalAmount);
@@ -214,12 +212,12 @@ public class TransactionalOperationMapper {
     request.setVerifyUser(auditInformation.getVerifyUser());
     request.setVerifyTerminal(auditInformation.getVerifyTerminal());
     request.setNarration(
-            "Principal "
-                    + principalAmount
-                    + " BDT "
-                    + (isDebit ? "debited to" : "credited from")
-                    + " account "
-                    + accountNumber);
+        "Principal "
+            + principalAmount
+            + " BDT "
+            + (isDebit ? "debited to" : "credited from")
+            + " account "
+            + accountNumber);
     request.setApprovalFlowInstanceId(auditInformation.getProcessId());
     request.setInitiatorModule("TREASURY");
     request.setInitiatorBranch(auditInformation.getUserBranch());

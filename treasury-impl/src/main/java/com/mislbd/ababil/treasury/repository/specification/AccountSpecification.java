@@ -21,7 +21,8 @@ public class AccountSpecification {
     return (root, query, cb) -> {
       Predicate predicate = cb.conjunction();
       Path<ProductEntity> productRoot = root.get("product");
-      query = query.orderBy(cb.desc(root.get("id")));
+      query.orderBy(cb.desc(root.get("id")));
+
       if (accountNumber != null) {
         predicate = cb.and(predicate, cb.equal(root.get("accountNumber"), accountNumber));
       }
@@ -73,16 +74,16 @@ public class AccountSpecification {
     };
   }
 
-  public static Specification<AccountEntity> findSettlementAccounts(String accountNumber, LocalDate expiryDate, Long ownerBranchId){
+  public static Specification<AccountEntity> findSettlementAccounts(
+      String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
     return (root, query, cb) -> {
-
       Predicate predicate = cb.conjunction();
 
       if (accountNumber != null) {
         predicate = cb.and(predicate, cb.equal(root.get("shadowAccountNumber"), accountNumber));
       }
 
-      if (accountNumber != null) {
+      if (ownerBranchId != null) {
         predicate = cb.and(predicate, cb.equal(root.get("ownerBranchId"), ownerBranchId));
       }
 
@@ -97,4 +98,22 @@ public class AccountSpecification {
     };
   }
 
+  public static Specification<AccountEntity> findProductAndBranchSpecificAccount(
+      Long productId, Long branchId) {
+    return (root, query, cb) -> {
+      Predicate predicate = cb.conjunction();
+      Path<ProductEntity> productRoot = root.get("product");
+      query.orderBy(cb.desc(root.get("id")));
+
+      if (productId != null) {
+        predicate = cb.and(predicate, cb.equal(productRoot.get("id"), productId));
+      }
+
+      if (branchId != null) {
+        predicate = cb.and(predicate, cb.equal(root.get("ownerBranchId"), branchId));
+      }
+
+      return predicate;
+    };
+  }
 }

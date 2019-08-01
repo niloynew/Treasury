@@ -10,9 +10,8 @@ import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.service.UtilityService;
 import com.mislbd.asset.commons.data.domain.ResultMapper;
 import com.mislbd.security.core.NgSession;
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
+import org.springframework.stereotype.Component;
 
 @Component
 public class AccountMapper {
@@ -23,9 +22,10 @@ public class AccountMapper {
   private final UtilityService utilityService;
 
   public AccountMapper(
-          AccountRepository accountRepository,
-          ProductRepository productRepository,
-          NgSession ngSession, UtilityService utilityService) {
+      AccountRepository accountRepository,
+      ProductRepository productRepository,
+      NgSession ngSession,
+      UtilityService utilityService) {
     this.accountRepository = accountRepository;
     this.productRepository = productRepository;
     this.ngSession = ngSession;
@@ -102,35 +102,39 @@ public class AccountMapper {
 
   public ResultMapper<Account, AccountEntity> closeDomainToEntity() {
     return domain ->
-            accountRepository
-                    .findById(domain.getId())
-                    .orElseThrow(AccountNotFoundException::new)
-                    .setAmount(BigDecimal.ZERO)
-                    .setClosingDate(domain.getValueDate())
-                    .setStatus(AccountStatus.CLOSED);
+        accountRepository
+            .findById(domain.getId())
+            .orElseThrow(AccountNotFoundException::new)
+            .setAmount(BigDecimal.ZERO)
+            .setClosingDate(domain.getValueDate())
+            .setStatus(AccountStatus.CLOSED);
   }
 
   public ResultMapper<AccountEntity, Account> entityToSettlementDomain() {
 
     return entity ->
-            new Account()
-                    .setId(entity.getId())
-                    .setProductId(entity.getProduct().getId())
-                    .setCurrencyCode(entity.getCurrencyCode())
-                    .setBankId(entity.getBankId())
-                    .setBranchId(entity.getBranchId())
-                    .setAccountTitle(entity.getAccountTitle())
-                    .setAccountNumber(entity.getAccountNumber())
-                    .setBalance(entity.getBalance())
-                    .setShadowAccountNumber(entity.getShadowAccountNumber())
-                    .setAccountOpenDate(entity.getOpenDate())
-                    .setExpiryDate(entity.getExpiryDate())
-                    .setTenorAmount(entity.getTenorAmount())
-                    .setTenorType(entity.getTenorType())
-                    .setRenewalDate(entity.getRenewalDate())
-                    .setExpectedProfitRate(entity.getProfitRate())
-                    .setInstrument(entity.getInstrumentNumber())
-                    .setProfitAmount(utilityService.totalProvisionOfAccounts(entity.getShadowAccountNumber(), true, false))
-                    .setProductAmount(utilityService.totalProductOfAccounts(entity.getShadowAccountNumber(), true, false));
+        new Account()
+            .setId(entity.getId())
+            .setProductId(entity.getProduct().getId())
+            .setCurrencyCode(entity.getCurrencyCode())
+            .setBankId(entity.getBankId())
+            .setBranchId(entity.getBranchId())
+            .setAccountTitle(entity.getAccountTitle())
+            .setAccountNumber(entity.getAccountNumber())
+            .setBalance(entity.getBalance())
+            .setShadowAccountNumber(entity.getShadowAccountNumber())
+            .setAccountOpenDate(entity.getOpenDate())
+            .setExpiryDate(entity.getExpiryDate())
+            .setTenorAmount(entity.getTenorAmount())
+            .setTenorType(entity.getTenorType())
+            .setRenewalDate(entity.getRenewalDate())
+            .setExpectedProfitRate(entity.getProfitRate())
+            .setInstrument(entity.getInstrumentNumber())
+            .setProfitAmount(
+                utilityService.totalProvisionOfAccounts(
+                    entity.getShadowAccountNumber(), true, false))
+            .setProductAmount(
+                utilityService.totalProductOfAccounts(
+                    entity.getShadowAccountNumber(), true, false));
   }
 }

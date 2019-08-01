@@ -17,9 +17,10 @@ public class UtilityServiceImpl implements UtilityService {
   }
 
   @Override
-  public BigDecimal totalProvisionOfAccounts(String accountNumber, boolean glPosted, boolean accountPosted) {
+  public BigDecimal totalProvisionOfAccounts(
+      String accountNumber, boolean glPosted, boolean accountPosted) {
     List<MonthendProductInfoEntity> productInfoEntities =
-        getMonthendProductInfoDatas(accountNumber, glPosted, accountPosted);
+        getMonthendProductInfoData(accountNumber, glPosted, accountPosted);
     return !productInfoEntities.isEmpty()
         ? BigDecimal.valueOf(
             productInfoEntities
@@ -32,7 +33,7 @@ public class UtilityServiceImpl implements UtilityService {
   @Override
   public void updateMonthendInfo(String accountNumber, String event, boolean accountPosted) {
     List<MonthendProductInfoEntity> productInfoEntities =
-        getMonthendProductInfoDatas(accountNumber, null, false);
+        getMonthendProductInfoData(accountNumber, null, false);
     productInfoEntities
         .stream()
         .forEach(
@@ -42,18 +43,20 @@ public class UtilityServiceImpl implements UtilityService {
   }
 
   @Override
-  public BigDecimal totalProductOfAccounts(String shadowAccountNumber, boolean glPosted, boolean accountPosted) {
-    List<MonthendProductInfoEntity> productInfoEntities = getMonthendProductInfoDatas(shadowAccountNumber, glPosted, accountPosted);
+  public BigDecimal totalProductOfAccounts(
+      String shadowAccountNumber, boolean glPosted, boolean accountPosted) {
+    List<MonthendProductInfoEntity> productInfoEntities =
+        getMonthendProductInfoData(shadowAccountNumber, glPosted, accountPosted);
     return !productInfoEntities.isEmpty()
-            ? BigDecimal.valueOf(
+        ? BigDecimal.valueOf(
             productInfoEntities
-                    .stream()
-                    .mapToDouble(entity -> entity.getAccProduct().doubleValue())
-                    .sum())
-            : BigDecimal.ZERO;
+                .stream()
+                .mapToDouble(entity -> entity.getAccProduct().doubleValue())
+                .sum())
+        : BigDecimal.ZERO;
   }
 
-  private List<MonthendProductInfoEntity> getMonthendProductInfoDatas(
+  private List<MonthendProductInfoEntity> getMonthendProductInfoData(
       String accountNumber, Boolean glPosted, Boolean accPosted) {
     return monthendProductInfoRepository.findAll(
         MonthendProductSpecification.getProvision(accountNumber, glPosted, accPosted));

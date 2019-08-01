@@ -11,6 +11,4 @@ public interface UtilityService {
 
   BigDecimal totalProductOfAccounts(
       String shadowAccountNumber, boolean glPosted, boolean accountPosted);
-
-  String generateAccountNumber(Long productId, Long branchId);
 }

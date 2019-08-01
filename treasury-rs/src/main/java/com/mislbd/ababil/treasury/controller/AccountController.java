@@ -12,6 +12,7 @@ import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.domain.TransactionEvent;
+import com.mislbd.ababil.treasury.query.AccountNumberGenerationQuery;
 import com.mislbd.ababil.treasury.query.AccountQuery;
 import com.mislbd.ababil.treasury.query.SettlementAccountQuery;
 import com.mislbd.ababil.treasury.service.AccountService;
@@ -132,5 +133,19 @@ public class AccountController {
   public ResponseEntity<Void> deleteProduct(@PathVariable("accountId") Long accountId) {
     commandProcessor.executeUpdate(new DeleteTreasuryAccountCommand(accountId));
     return status(ACCEPTED).build();
+  }
+
+  @GetMapping(path = "/generate_account_number")
+  public ResponseEntity<?> getAccountNumber(
+      @RequestParam(value = "productId") final Long productId,
+      @RequestParam(name = "branchId", required = false) Long branchId) {
+    QueryResult<?> queryResult =
+        queryManager.executeQuery(
+            new AccountNumberGenerationQuery(
+                productId, branchId == null ? ngSession.getUserBranch() : branchId));
+    if (queryResult.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(queryResult.getResult());
   }
 }

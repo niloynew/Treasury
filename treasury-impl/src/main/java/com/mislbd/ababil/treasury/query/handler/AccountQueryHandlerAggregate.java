@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.query.handler;
 
 import com.mislbd.ababil.treasury.domain.Account;
+import com.mislbd.ababil.treasury.query.AccountNumberGenerationQuery;
 import com.mislbd.ababil.treasury.query.AccountQuery;
 import com.mislbd.ababil.treasury.query.SettlementAccountQuery;
 import com.mislbd.ababil.treasury.service.AccountService;
@@ -57,5 +58,13 @@ public class AccountQueryHandlerAggregate {
             accountQuery.getExpiryDate(),
             accountQuery.getOwnerBranchId());
     return QueryResult.of(accountPage);
+  }
+
+  @QueryHandler
+  public QueryResult<?> getGeneratedAccountNumber(AccountNumberGenerationQuery accountQuery) {
+    String accountNumber =
+        accountService.generateAccountNumber(
+            accountQuery.getProductId(), accountQuery.getBranchId());
+    return QueryResult.of(accountNumber);
   }
 }

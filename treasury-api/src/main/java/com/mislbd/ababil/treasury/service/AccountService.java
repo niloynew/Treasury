@@ -34,5 +34,7 @@ public interface AccountService {
   PagedResult<Account> findSettlementAccounts(
       Pageable pageable, String accountNumber, LocalDate expiryDate, Long brId);
 
-  //    Optional<AccountEntity> findById(Long accountId);
+  String generateAccountNumber(Long productId, Long branchId);
+
+  String getMaxSerialNumber(Long productId, Long branchId, Integer startPoint, Integer endPoint);
 }

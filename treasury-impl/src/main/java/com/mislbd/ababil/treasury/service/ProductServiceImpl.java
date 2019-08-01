@@ -41,4 +41,9 @@ public class ProductServiceImpl implements ProductService {
   public Optional<Product> findProduct(Long id) {
     return productRepository.findById(id).map(productMapper.entityToDomain()::map);
   }
+
+  @Override
+  public boolean isExist(Long id) {
+    return productRepository.existsById(id);
+  }
 }

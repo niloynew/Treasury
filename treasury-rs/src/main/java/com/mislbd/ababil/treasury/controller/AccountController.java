@@ -85,14 +85,12 @@ public class AccountController {
 
   @GetMapping(path = "/settlement")
   public ResponseEntity<?> getSettlementAccounts(
-      Pageable pageable,
-      @RequestParam(value = "accountNumber", required = false) final String accountNumber,
+      @RequestParam(value = "accountNumber") final String accountNumber,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "brId", required = false) final Long ownerBranchId) {
     QueryResult<?> queryResult =
         queryManager.executeQuery(
             new SettlementAccountQuery(
-                pageable,
                 accountNumber,
                 expiryDate,
                 ownerBranchId != null ? ownerBranchId : ngSession.getUserBranch()));

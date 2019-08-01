@@ -96,14 +96,14 @@ public class AccountServiceImpl implements AccountService {
   }
 
   @Override
-  public PagedResult<Account> findSettlementAccounts(
-      Pageable pageable, String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
-
-    return PagedResultBuilder.build(
-        accountRepository.findAll(
-            AccountSpecification.findSettlementAccounts(accountNumber, expiryDate, ownerBranchId),
-            pageable),
-        accountMapper.entityToSettlementDomain());
+  public Account findSettlementAccounts(
+      String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
+    return accountMapper
+        .entityToSettlementDomain()
+        .map(
+            accountRepository
+                .findByShadowAccountNumberAndOwnerBranchId(accountNumber, ownerBranchId)
+                .orElseThrow(AccountNotFoundException::new));
   }
 
   @Override

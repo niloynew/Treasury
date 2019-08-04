@@ -5,10 +5,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.http.ResponseEntity.status;
 
-import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.SettlementOrCloseTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.*;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.domain.TransactionEvent;
@@ -117,6 +114,9 @@ public class AccountController {
       return status(CREATED)
           .body(
               commandProcessor.executeResult(new SettlementOrCloseTreasuryAccountCommand(account)));
+    if (account.getEvent() == TransactionEvent.Reactive)
+      return status(CREATED)
+          .body(commandProcessor.executeResult(new ReactivateTreasuryAccountCommand(account)));
     return status(NOT_IMPLEMENTED).build();
   }
 

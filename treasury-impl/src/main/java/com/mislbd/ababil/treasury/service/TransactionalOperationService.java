@@ -8,12 +8,12 @@ import com.mislbd.ababil.treasury.domain.*;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductRelatedGLNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProvisionMismatchException;
+import com.mislbd.ababil.treasury.external.service.GlAccountService;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.mapper.TransactionalOperationMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
-import com.mislbd.ababil.treasury.repository.schema.ProductRelatedGLEntity;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +33,7 @@ public class TransactionalOperationService {
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
   private final UtilityService utilityService;
+  private final GlAccountService glAccountService;
 
   public TransactionalOperationService(
       TransactionService transactionService,
@@ -41,7 +42,8 @@ public class TransactionalOperationService {
       ProductRelatedGLRepository productRelatedGLRepository,
       AccountRepository accountRepository,
       AccountMapper accountMapper,
-      UtilityService utilityService) {
+      UtilityService utilityService,
+      GlAccountService glAccountService) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -50,6 +52,7 @@ public class TransactionalOperationService {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.utilityService = utilityService;
+    this.glAccountService = glAccountService;
   }
 
   /*
@@ -281,10 +284,25 @@ public class TransactionalOperationService {
   }
 
   String getRelatedGl(long productId, GLType glType) {
-    ProductRelatedGLEntity productRelatedGl =
-        productRelatedGLRepository
-            .findByProductIdAndGlType(productId, glType)
-            .orElseThrow(ProductRelatedGLNotFoundException::new);
-    return productRelatedGl.getGlCode();
+    return glAccountService
+        .getGlAccount(
+            productRelatedGLRepository
+                .findByProductIdAndGlType(productId, glType)
+                .orElseThrow(ProductRelatedGLNotFoundException::new)
+                .getGlId())
+        .getCode();
+  }
+
+  public Long doReactiveTransaction(AuditInformation auditInformation, Account account) {
+
+    AccountEntity entity =
+        accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
+
+    TransactionalInformation txnInformation =
+        getTransactionInformation(auditInformation, REACTIVE_ACTIVITY, null);
+
+
+
+    return null;
   }
 }

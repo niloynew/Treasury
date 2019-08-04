@@ -119,7 +119,25 @@ public enum Error {
               .orElse("General ledger account not found.");
       return message;
     }
-  };
+  },
+
+  REACTIVE_TRANSACTION_EXCEPTION("270", "0007") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+              localeMessages.get(this.getModule() + this.getCode()).orElse("Reactive transaction exception");
+      return message;
+    }
+  },
+
+  ;
 
   // region <R>
   Error(final String module, final String code) {

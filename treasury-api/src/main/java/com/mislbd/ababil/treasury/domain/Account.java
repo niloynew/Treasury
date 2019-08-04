@@ -23,8 +23,10 @@ public class Account {
   private int tenorAmount;
   private TenorType tenorType;
   private LocalDate renewalDate;
+  private LocalDate newRenewalDate;
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
+  private AccountStatus newSstatus;
   private String instrument;
   private TransactionEvent event;
   private BigDecimal profitAmount;
@@ -35,6 +37,8 @@ public class Account {
   private LocalDate valueDate;
   private BigDecimal newProfitRate;
   private LocalDate newExpiryDate;
+  private Long globalTxnNumber;
+  private LocalDate lastProvisionDate;
 
   public long getId() {
     return id;
@@ -198,6 +202,15 @@ public class Account {
     return this;
   }
 
+  public LocalDate getNewRenewalDate() {
+    return newRenewalDate;
+  }
+
+  public Account setNewRenewalDate(LocalDate newRenewalDate) {
+    this.newRenewalDate = newRenewalDate;
+    return this;
+  }
+
   public BigDecimal getExpectedProfitRate() {
     return expectedProfitRate;
   }
@@ -213,6 +226,15 @@ public class Account {
 
   public Account setStatus(AccountStatus status) {
     this.status = status;
+    return this;
+  }
+
+  public AccountStatus getNewSstatus() {
+    return newSstatus;
+  }
+
+  public Account setNewSstatus(AccountStatus newSstatus) {
+    this.newSstatus = newSstatus;
     return this;
   }
 
@@ -303,6 +325,24 @@ public class Account {
 
   public Account setNewExpiryDate(LocalDate newExpiryDate) {
     this.newExpiryDate = newExpiryDate;
+    return this;
+  }
+
+  public Long getGlobalTxnNumber() {
+    return globalTxnNumber;
+  }
+
+  public Account setGlobalTxnNumber(Long globalTxnNumber) {
+    this.globalTxnNumber = globalTxnNumber;
+    return this;
+  }
+
+  public LocalDate getLastProvisionDate() {
+    return lastProvisionDate;
+  }
+
+  public Account setLastProvisionDate(LocalDate lastProvisionDate) {
+    this.lastProvisionDate = lastProvisionDate;
     return this;
   }
 }

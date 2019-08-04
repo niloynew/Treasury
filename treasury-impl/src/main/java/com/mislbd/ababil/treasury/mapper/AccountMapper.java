@@ -4,9 +4,11 @@ import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
+import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
+import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
 import com.mislbd.ababil.treasury.service.UtilityService;
 import com.mislbd.asset.commons.data.domain.ResultMapper;
 import com.mislbd.security.core.NgSession;
@@ -20,16 +22,18 @@ public class AccountMapper {
   private final ProductRepository productRepository;
   private final NgSession ngSession;
   private final UtilityService utilityService;
+  private final AccountProcessRepository accountProcessRepository;
 
   public AccountMapper(
-      AccountRepository accountRepository,
-      ProductRepository productRepository,
-      NgSession ngSession,
-      UtilityService utilityService) {
+          AccountRepository accountRepository,
+          ProductRepository productRepository,
+          NgSession ngSession,
+          UtilityService utilityService, AccountProcessRepository accountProcessRepository) {
     this.accountRepository = accountRepository;
     this.productRepository = productRepository;
     this.ngSession = ngSession;
     this.utilityService = utilityService;
+    this.accountProcessRepository = accountProcessRepository;
   }
 
   public ResultMapper<AccountEntity, Account> entityToDomain() {
@@ -84,6 +88,28 @@ public class AccountMapper {
             .setInstrumentNumber(domain.getInstrument())
             .setOwnerBranchId(ngSession.getUserBranch())
             .setActive(true);
+  }
+
+  public ResultMapper<Account, AccountProcessEntity> domainToProcessEntity() {
+    return domain ->
+            new AccountProcessEntity()
+            .setAccountNumber(domain.getShadowAccountNumber())
+            .setName(domain.getAccountTitle())
+            .setBalance(domain.getBalance())
+            .setTotalProduct(domain.getProductAmount())
+            .setProfitRate(domain.getExpectedProfitRate())
+            .setProvisionAmount(domain.getProfitAmount())
+            .setActualProvision(domain.getActualProfit())
+            .setOldStatus(domain.getStatus())
+            .setNewStatus(domain.getStatus())
+            .setOldExpiryDate(domain.getExpiryDate())
+            .setNewExpiryDate(domain.getNewExpiryDate())
+            .setOldRenewalDate(domain.getRenewalDate())
+            .setNewRenewalDate(domain.getRenewalDate())
+            .setLastProvisionDate(domain.getLastProvisionDate())
+            .setGlobalTxnNumber(domain.getGlobalTxnNumber())
+            .setValid(true)
+            .setRenewWithProfit(domain.getRenewWithProfit());
   }
 
   public ResultMapper<Account, AccountEntity> renwalDomainToEntity() {

@@ -8,6 +8,7 @@ import com.mislbd.ababil.treasury.domain.*;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductRelatedGLNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProvisionMismatchException;
+import com.mislbd.ababil.treasury.exception.ReactiveTransactionException;
 import com.mislbd.ababil.treasury.external.service.GlAccountService;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.mapper.TransactionalOperationMapper;
@@ -15,6 +16,8 @@ import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -75,7 +78,7 @@ public class TransactionalOperationService {
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
 
-    String settlementGlCode = getRelatedGl(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
+    String settlementGlCode = getRelatedGlCode(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
 
     transactionService.doGlTransaction(
         mapper.getPrincipalPayableGL(
@@ -139,9 +142,9 @@ public class TransactionalOperationService {
         getTransactionInformation(auditInformation, SETTLEMENT_OR_CLOSE_ACTIVITY, null);
 
     String profitReceivableGl =
-        getRelatedGl(entity.getProduct().getId(), GLType.PROFIT_RECEIVABLE_GL);
-    String incomeGl = getRelatedGl(entity.getProduct().getId(), GLType.INCOME_GL);
-    String settlementGl = getRelatedGl(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
+        getRelatedGlCode(entity.getProduct().getId(), GLType.PROFIT_RECEIVABLE_GL);
+    String incomeGl = getRelatedGlCode(entity.getProduct().getId(), GLType.INCOME_GL);
+    String settlementGl = getRelatedGlCode(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
 
     transactionService.doTreasuryTransaction(
         mapper.getProfitPayableAccount(
@@ -283,7 +286,7 @@ public class TransactionalOperationService {
     utilityService.updateMonthendInfo(shadowAccountNumber, "RENEWAL", false);
   }
 
-  String getRelatedGl(long productId, GLType glType) {
+  String getRelatedGlCode(long productId, GLType glType) {
     return glAccountService
         .getGlAccount(
             productRelatedGLRepository
@@ -301,8 +304,15 @@ public class TransactionalOperationService {
     TransactionalInformation txnInformation =
         getTransactionInformation(auditInformation, REACTIVE_ACTIVITY, null);
 
+    if(!entity.getClosingDate().isEqual(account.getValueDate())){
+      throw new ReactiveTransactionException("Can not be reverse, account closing date " + DateTimeFormatter.ofPattern("MM/dd/yyyy").format(entity.getClosingDate()) + " not not equal to current date." );
+    }
 
+    if(entity.getStatus() != AccountStatus.CLOSED || entity.getStatus() != AccountStatus.REGULAR ){
+      throw new ReactiveTransactionException("Can not be reverse, account status found "+ entity.getStatus());
+    }
 
-    return null;
+    transactionService.correctTransaction(mapper.doTransactionCorrection(auditInformation));
+    return txnInformation.getGlobalTxnNumber();
   }
 }

@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.transaction.domain.GlTransactionRequest;
+import com.mislbd.ababil.transaction.domain.TransactionCorrectionRequest;
 import com.mislbd.ababil.transaction.domain.TreasuryTransactionRequest;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
 import com.mislbd.ababil.treasury.domain.TransactionalInformation;
@@ -224,4 +225,11 @@ public class TransactionalOperationMapper {
     request.setAccNumber(accountNumber);
     return request;
   }
+
+    public TransactionCorrectionRequest doTransactionCorrection(AuditInformation auditInformation) {
+    TransactionCorrectionRequest request = new TransactionCorrectionRequest();
+      return request;
+    }
+
+
 }

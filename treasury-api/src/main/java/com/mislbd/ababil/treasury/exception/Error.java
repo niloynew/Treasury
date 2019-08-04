@@ -132,11 +132,12 @@ public enum Error {
     @Override
     public String getMessages(LocaleMessages localeMessages) {
       message =
-              localeMessages.get(this.getModule() + this.getCode()).orElse("Reactive transaction exception");
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("Reactive transaction exception");
       return message;
     }
   },
-
   ;
 
   // region <R>

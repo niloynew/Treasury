@@ -4,7 +4,6 @@ import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
-import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
@@ -22,18 +21,16 @@ public class AccountMapper {
   private final ProductRepository productRepository;
   private final NgSession ngSession;
   private final UtilityService utilityService;
-  private final AccountProcessRepository accountProcessRepository;
 
   public AccountMapper(
-          AccountRepository accountRepository,
-          ProductRepository productRepository,
-          NgSession ngSession,
-          UtilityService utilityService, AccountProcessRepository accountProcessRepository) {
+      AccountRepository accountRepository,
+      ProductRepository productRepository,
+      NgSession ngSession,
+      UtilityService utilityService) {
     this.accountRepository = accountRepository;
     this.productRepository = productRepository;
     this.ngSession = ngSession;
     this.utilityService = utilityService;
-    this.accountProcessRepository = accountProcessRepository;
   }
 
   public ResultMapper<AccountEntity, Account> entityToDomain() {
@@ -92,7 +89,7 @@ public class AccountMapper {
 
   public ResultMapper<Account, AccountProcessEntity> domainToProcessEntity() {
     return domain ->
-            new AccountProcessEntity()
+        new AccountProcessEntity()
             .setAccountNumber(domain.getShadowAccountNumber())
             .setName(domain.getAccountTitle())
             .setBalance(domain.getBalance())

@@ -18,6 +18,6 @@ public class SchemaConstant {
   public static final String PRODUCT_RELATED_GL_TABLE_NAME = "TREASURY_PRODUCT_GL";
   public static final String MONTHEND_PRODUCT_TABLE_NAME = "TREASURY_MONTHEND_PRODUCT";
   public static final String MONTHEND_PRODUCT_SEQUENCE_NAME = "S_ID_TREASURY_MONTHEND_PROD";
-    public static final String ACCOUNT_PROCESS_TABLE_NAME = "TREASURY_ACCOUNT_PROCESS";
+  public static final String ACCOUNT_PROCESS_TABLE_NAME = "TREASURY_ACCOUNT_PROCESS";
   public static final String ACCOUNT_PROCESS_SEQUENCE_NAME = "S_ID_TREASURY_ACCOUNT_PROCESS";
 }

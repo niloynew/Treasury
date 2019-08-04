@@ -17,7 +17,6 @@ import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -304,12 +303,16 @@ public class TransactionalOperationService {
     TransactionalInformation txnInformation =
         getTransactionInformation(auditInformation, REACTIVE_ACTIVITY, null);
 
-    if(!entity.getClosingDate().isEqual(account.getValueDate())){
-      throw new ReactiveTransactionException("Can not be reverse, account closing date " + DateTimeFormatter.ofPattern("MM/dd/yyyy").format(entity.getClosingDate()) + " not not equal to current date." );
+    if (!entity.getClosingDate().isEqual(account.getValueDate())) {
+      throw new ReactiveTransactionException(
+          "Can not be reverse, account closing date "
+              + DateTimeFormatter.ofPattern("MM/dd/yyyy").format(entity.getClosingDate())
+              + " not not equal to current date.");
     }
 
-    if(entity.getStatus() != AccountStatus.CLOSED || entity.getStatus() != AccountStatus.REGULAR ){
-      throw new ReactiveTransactionException("Can not be reverse, account status found "+ entity.getStatus());
+    if (entity.getStatus() != AccountStatus.CLOSED || entity.getStatus() != AccountStatus.REGULAR) {
+      throw new ReactiveTransactionException(
+          "Can not be reverse, account status found " + entity.getStatus());
     }
 
     transactionService.correctTransaction(mapper.doTransactionCorrection(auditInformation));

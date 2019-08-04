@@ -226,10 +226,8 @@ public class TransactionalOperationMapper {
     return request;
   }
 
-    public TransactionCorrectionRequest doTransactionCorrection(AuditInformation auditInformation) {
+  public TransactionCorrectionRequest doTransactionCorrection(AuditInformation auditInformation) {
     TransactionCorrectionRequest request = new TransactionCorrectionRequest();
-      return request;
-    }
-
-
+    return request;
+  }
 }

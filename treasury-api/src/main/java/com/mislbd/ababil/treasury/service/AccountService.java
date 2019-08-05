@@ -36,4 +36,7 @@ public interface AccountService {
   String generateAccountNumber(Long productId, Long branchId);
 
   String getMaxSerialNumber(Long productId, Long branchId, Integer startPoint, Integer endPoint);
+
+  void registerTransactionProcess(Account account);
+
 }

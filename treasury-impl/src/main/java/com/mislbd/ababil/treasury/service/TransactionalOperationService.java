@@ -5,18 +5,18 @@ import com.mislbd.ababil.transaction.domain.TransactionAmountType;
 import com.mislbd.ababil.transaction.domain.TransactionRequestType;
 import com.mislbd.ababil.transaction.service.TransactionService;
 import com.mislbd.ababil.treasury.domain.*;
-import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
-import com.mislbd.ababil.treasury.exception.ProductRelatedGLNotFoundException;
-import com.mislbd.ababil.treasury.exception.ProvisionMismatchException;
-import com.mislbd.ababil.treasury.exception.ReactiveTransactionException;
+import com.mislbd.ababil.treasury.exception.*;
 import com.mislbd.ababil.treasury.external.service.GlAccountService;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.mapper.TransactionalOperationMapper;
+import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+
+import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,16 +36,17 @@ public class TransactionalOperationService {
   private final AccountMapper accountMapper;
   private final UtilityService utilityService;
   private final GlAccountService glAccountService;
+  private final AccountProcessRepository processRepository;
 
   public TransactionalOperationService(
-      TransactionService transactionService,
-      ConfigurationService configurationService,
-      TransactionalOperationMapper mapper,
-      ProductRelatedGLRepository productRelatedGLRepository,
-      AccountRepository accountRepository,
-      AccountMapper accountMapper,
-      UtilityService utilityService,
-      GlAccountService glAccountService) {
+          TransactionService transactionService,
+          ConfigurationService configurationService,
+          TransactionalOperationMapper mapper,
+          ProductRelatedGLRepository productRelatedGLRepository,
+          AccountRepository accountRepository,
+          AccountMapper accountMapper,
+          UtilityService utilityService,
+          GlAccountService glAccountService, AccountProcessRepository processRepository) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -55,6 +56,7 @@ public class TransactionalOperationService {
     this.accountMapper = accountMapper;
     this.utilityService = utilityService;
     this.glAccountService = glAccountService;
+    this.processRepository = processRepository;
   }
 
   /*
@@ -116,9 +118,9 @@ public class TransactionalOperationService {
     * Treasury account debit
     * Profit_Receivable credit
     * if actual_profit > provisional_profit
-    *   then income gl credit (actual_profit - provisional_profit)
+    *   then income gl credit (amount = actual_profit - provisional_profit)
     * if provisional_profit > actual_profit
-    *   then debit income gl  (provisional_profit - actual_profit)
+    *   then debit income gl  (amount = provisional_profit - actual_profit)
     *
     ##### Renewal with profit #########
     * Treasury account credit
@@ -300,14 +302,16 @@ public class TransactionalOperationService {
     AccountEntity entity =
         accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
 
+    AccountProcessEntity processEntity = processRepository.findByAccountNumberAndNewStatusAndValid(entity.getShadowAccountNumber(), entity.getStatus(), true).orElseThrow(ProcessRecordNotFoundException::new);
+
     TransactionalInformation txnInformation =
-        getTransactionInformation(auditInformation, REACTIVE_ACTIVITY, null);
+        getTransactionInformation(auditInformation, REACTIVE_ACTIVITY, processEntity.getGlobalTxnNumber());
 
     if (!entity.getClosingDate().isEqual(account.getValueDate())) {
       throw new ReactiveTransactionException(
           "Can not be reverse, account closing date "
               + DateTimeFormatter.ofPattern("MM/dd/yyyy").format(entity.getClosingDate())
-              + " not not equal to current date.");
+              + " not equal to current date.");
     }
 
     if (entity.getStatus() != AccountStatus.CLOSED || entity.getStatus() != AccountStatus.REGULAR) {
@@ -315,7 +319,7 @@ public class TransactionalOperationService {
           "Can not be reverse, account status found " + entity.getStatus());
     }
 
-    transactionService.correctTransaction(mapper.doTransactionCorrection(auditInformation));
+    transactionService.correctTransaction(mapper.doTransactionCorrection(txnInformation, auditInformation));
     return txnInformation.getGlobalTxnNumber();
   }
 }

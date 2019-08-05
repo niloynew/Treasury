@@ -6,6 +6,7 @@ import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
+import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.repository.specification.AccountSpecification;
@@ -26,16 +27,18 @@ public class AccountServiceImpl implements AccountService {
   private final AccountMapper accountMapper;
   private final ProductService productService;
   private final ConfigurationService configurationService;
+  private final AccountProcessRepository processRepository;
 
   public AccountServiceImpl(
-      AccountRepository accountRepository,
-      AccountMapper accountMapper,
-      ProductService productService,
-      ConfigurationService configurationService) {
+          AccountRepository accountRepository,
+          AccountMapper accountMapper,
+          ProductService productService,
+          ConfigurationService configurationService, AccountProcessRepository processRepository) {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.productService = productService;
     this.configurationService = configurationService;
+    this.processRepository = processRepository;
   }
 
   @Override
@@ -146,6 +149,11 @@ public class AccountServiceImpl implements AccountService {
         .orElseThrow(AccountNotFoundException::new)
         .getShadowAccountNumber()
         .substring(startPoint, endPoint);
+  }
+
+  @Override
+  public void registerTransactionProcess(Account account) {
+    processRepository.save(accountMapper.domainToProcessEntity().map(account));
   }
 
   private String getCheckDigit(String branchCode, String productCode, String serial) {

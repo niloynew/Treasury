@@ -138,6 +138,22 @@ public enum Error {
       return message;
     }
   },
+
+  PROCESS_RECORD_NOT_FOUND("270", "0008") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+              localeMessages.get(this.getModule() + this.getCode()).orElse("Rrecord not found");
+      return message;
+    }
+  },
   ;
 
   // region <R>

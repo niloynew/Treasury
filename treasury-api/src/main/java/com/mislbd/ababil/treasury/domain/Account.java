@@ -14,6 +14,7 @@ public class Account {
   private String accountTitle;
   private String accountNumber;
   private BigDecimal balance;
+  private BigDecimal newBalance;
   private BigDecimal amount;
   private BigDecimal productAmount;
   private String shadowAccountNumber;
@@ -26,7 +27,7 @@ public class Account {
   private LocalDate newRenewalDate;
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
-  private AccountStatus newSstatus;
+  private AccountStatus newStatus;
   private String instrument;
   private TransactionEvent event;
   private BigDecimal profitAmount;
@@ -118,6 +119,15 @@ public class Account {
 
   public Account setBalance(BigDecimal balance) {
     this.balance = balance;
+    return this;
+  }
+
+  public BigDecimal getNewBalance() {
+    return newBalance;
+  }
+
+  public Account setNewBalance(BigDecimal newBalance) {
+    this.newBalance = newBalance;
     return this;
   }
 
@@ -229,12 +239,12 @@ public class Account {
     return this;
   }
 
-  public AccountStatus getNewSstatus() {
-    return newSstatus;
+  public AccountStatus getNewStatus() {
+    return newStatus;
   }
 
-  public Account setNewSstatus(AccountStatus newSstatus) {
-    this.newSstatus = newSstatus;
+  public Account setNewStatus(AccountStatus newStatus) {
+    this.newStatus = newStatus;
     return this;
   }
 

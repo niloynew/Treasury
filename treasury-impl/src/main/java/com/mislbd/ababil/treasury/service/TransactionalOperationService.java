@@ -202,11 +202,10 @@ public class TransactionalOperationService {
             TransactionRequestType.TRANSFER);
       }
 
-      accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
-      if (account.getRenewWithProfit() != null
+      if (!account.getRenewWithProfit()
           && account.getProfitAmount().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
             mapper.getProfitPayableAccount(

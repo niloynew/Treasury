@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface AccountRepository
     extends JpaRepository<AccountEntity, Long>, JpaSpecificationExecutor {
-  Optional<AccountEntity> findByShadowAccountNumberAndOwnerBranchId(
-      String accountNumber, Long branchId);
+  Optional<AccountEntity> findByAccountNumberAndOwnerBranchId(String accountNumber, Long branchId);
 }

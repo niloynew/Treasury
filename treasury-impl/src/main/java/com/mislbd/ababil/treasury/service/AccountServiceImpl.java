@@ -106,7 +106,7 @@ public class AccountServiceImpl implements AccountService {
         .entityToSettlementDomain()
         .map(
             accountRepository
-                .findByShadowAccountNumberAndOwnerBranchId(accountNumber, ownerBranchId)
+                .findByAccountNumberAndOwnerBranchId(accountNumber, ownerBranchId)
                 .orElseThrow(AccountNotFoundException::new));
   }
 
@@ -146,9 +146,9 @@ public class AccountServiceImpl implements AccountService {
             AccountSpecification.findProductAndBranchSpecificAccount(productId, branchId));
     return accounts
         .stream()
-        .max(Comparator.comparing(AccountEntity::getShadowAccountNumber))
+        .max(Comparator.comparing(AccountEntity::getAccountNumber))
         .orElseThrow(AccountNotFoundException::new)
-        .getShadowAccountNumber()
+        .getAccountNumber()
         .substring(startPoint, endPoint);
   }
 

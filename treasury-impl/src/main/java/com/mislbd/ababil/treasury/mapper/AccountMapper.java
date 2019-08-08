@@ -43,10 +43,11 @@ public class AccountMapper {
             .setBankId(entity.getBankId())
             .setBranchId(entity.getBranchId())
             .setAccountTitle(entity.getAccountTitle())
-            .setAccountNumber(entity.getAccountNumber())
+            .setNostroAccountNumber(entity.getNostroAccountNumber())
             .setAmount(entity.getAmount())
+            .setBalance(entity.getBalance())
             .setOwnerBranchId(entity.getOwnerBranchId())
-            .setShadowAccountNumber(entity.getShadowAccountNumber())
+            .setAccountNumber(entity.getAccountNumber())
             .setAccountOpenDate(entity.getOpenDate())
             .setAccountClosingDate(entity.getClosingDate())
             .setExpiryDate(entity.getExpiryDate())
@@ -72,9 +73,9 @@ public class AccountMapper {
             .setBankId(domain.getBankId())
             .setBranchId(domain.getBranchId())
             .setAccountTitle(domain.getAccountTitle())
-            .setAccountNumber(domain.getAccountNumber())
+            .setNostroAccountNumber(domain.getNostroAccountNumber())
             .setAmount(domain.getAmount())
-            .setShadowAccountNumber(domain.getShadowAccountNumber())
+            .setAccountNumber(domain.getAccountNumber())
             .setOpenDate(domain.getAccountOpenDate())
             .setExpiryDate(domain.getExpiryDate())
             .setTenorAmount(domain.getTenorAmount())
@@ -90,7 +91,7 @@ public class AccountMapper {
   public ResultMapper<Account, AccountProcessEntity> domainToProcessEntity() {
     return domain ->
         new AccountProcessEntity()
-            .setAccountNumber(domain.getShadowAccountNumber())
+            .setAccountNumber(domain.getAccountNumber())
             .setName(domain.getAccountTitle())
             .setBalance(domain.getBalance())
             .setTotalProduct(domain.getProductAmount())
@@ -114,7 +115,7 @@ public class AccountMapper {
         accountRepository
             .findById(domain.getId())
             .orElseThrow(AccountNotFoundException::new)
-            .setShadowAccountNumber(domain.getShadowAccountNumber())
+            .setAccountNumber(domain.getAccountNumber())
             .setExpiryDate(domain.getNewExpiryDate())
             .setTenorAmount(domain.getNewTenorAmount())
             .setTenorType(domain.getNewTenorType())
@@ -143,9 +144,9 @@ public class AccountMapper {
             .setBankId(entity.getBankId())
             .setBranchId(entity.getBranchId())
             .setAccountTitle(entity.getAccountTitle())
-            .setAccountNumber(entity.getAccountNumber())
+            .setNostroAccountNumber(entity.getNostroAccountNumber())
             .setBalance(entity.getBalance())
-            .setShadowAccountNumber(entity.getShadowAccountNumber())
+            .setAccountNumber(entity.getAccountNumber())
             .setAccountOpenDate(entity.getOpenDate())
             .setExpiryDate(entity.getExpiryDate())
             .setTenorAmount(entity.getTenorAmount())
@@ -154,10 +155,8 @@ public class AccountMapper {
             .setExpectedProfitRate(entity.getProfitRate())
             .setInstrument(entity.getInstrumentNumber())
             .setProfitAmount(
-                utilityService.totalProvisionOfAccounts(
-                    entity.getShadowAccountNumber(), true, false))
+                utilityService.totalProvisionOfAccounts(entity.getAccountNumber(), true, false))
             .setProductAmount(
-                utilityService.totalProductOfAccounts(
-                    entity.getShadowAccountNumber(), true, false));
+                utilityService.totalProductOfAccounts(entity.getAccountNumber(), true, false));
   }
 }

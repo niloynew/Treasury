@@ -40,11 +40,11 @@ public class TransactionalOperationMapper {
             + " BDT "
             + (isDebit ? "debited to" : "credited from")
             + " account "
-            + entity.getShadowAccountNumber());
+            + entity.getAccountNumber());
     request.setApprovalFlowInstanceId(auditInformation.getProcessId());
     request.setInitiatorModule("TREASURY");
     request.setInitiatorBranch(auditInformation.getUserBranch());
-    request.setAccNumber(entity.getShadowAccountNumber());
+    request.setAccNumber(entity.getAccountNumber());
     return request;
   }
 
@@ -72,10 +72,7 @@ public class TransactionalOperationMapper {
     glRequest.setVerifyUser(auditInformation.getVerifyUser());
     glRequest.setVerifyTerminal(auditInformation.getVerifyTerminal());
     glRequest.setNarration(
-        " GL "
-            + (isDebit ? "DEBIT" : "CREDIT")
-            + " FOR TREASURY."
-            + entity.getShadowAccountNumber());
+        " GL " + (isDebit ? "DEBIT" : "CREDIT") + " FOR TREASURY." + entity.getAccountNumber());
     glRequest.setApprovalFlowInstanceId(auditInformation.getProcessId());
     glRequest.setInitiatorModule("TREASURY");
     glRequest.setInitiatorBranch(auditInformation.getUserBranch());

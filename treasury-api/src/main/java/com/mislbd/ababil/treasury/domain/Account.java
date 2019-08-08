@@ -12,12 +12,12 @@ public class Account {
   private Long bankId;
   private Long branchId;
   private String accountTitle;
-  private String accountNumber;
+  private String nostroAccountNumber;
   private BigDecimal balance;
   private BigDecimal newBalance;
   private BigDecimal amount;
   private BigDecimal productAmount;
-  private String shadowAccountNumber;
+  private String accountNumber;
   private LocalDate accountOpenDate;
   private LocalDate accountClosingDate;
   private LocalDate expiryDate;
@@ -104,12 +104,12 @@ public class Account {
     return this;
   }
 
-  public String getAccountNumber() {
-    return accountNumber;
+  public String getNostroAccountNumber() {
+    return nostroAccountNumber;
   }
 
-  public Account setAccountNumber(String accountNumber) {
-    this.accountNumber = accountNumber;
+  public Account setNostroAccountNumber(String nostroAccountNumber) {
+    this.nostroAccountNumber = nostroAccountNumber;
     return this;
   }
 
@@ -149,12 +149,12 @@ public class Account {
     return this;
   }
 
-  public String getShadowAccountNumber() {
-    return shadowAccountNumber;
+  public String getAccountNumber() {
+    return accountNumber;
   }
 
-  public Account setShadowAccountNumber(String shadowAccountNumber) {
-    this.shadowAccountNumber = shadowAccountNumber;
+  public Account setAccountNumber(String accountNumber) {
+    this.accountNumber = accountNumber;
     return this;
   }
 

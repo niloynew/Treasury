@@ -153,7 +153,7 @@ public class TransactionalOperationService {
             baseCurrency,
             auditInformation,
             true,
-            entity.getShadowAccountNumber(),
+            entity.getAccountNumber(),
             account.getActualProfit()),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PROFIT);
@@ -164,7 +164,7 @@ public class TransactionalOperationService {
             baseCurrency,
             auditInformation,
             false,
-            entity.getShadowAccountNumber(),
+            entity.getAccountNumber(),
             account.getProfitAmount(),
             profitReceivableGl,
             account.getValueDate()),
@@ -180,7 +180,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 true,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 overBalance,
                 incomeGl,
                 account.getValueDate()),
@@ -195,7 +195,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 false,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 lowerBalance,
                 incomeGl,
                 account.getValueDate()),
@@ -212,7 +212,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 false,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 account.getProfitAmount()),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
@@ -222,7 +222,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 true,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 account.getProfitAmount(),
                 settlementGl,
                 account.getValueDate()),
@@ -242,7 +242,7 @@ public class TransactionalOperationService {
               baseCurrency,
               auditInformation,
               false,
-              entity.getShadowAccountNumber(),
+              entity.getAccountNumber(),
               closingProfit),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PROFIT);
@@ -252,7 +252,7 @@ public class TransactionalOperationService {
               baseCurrency,
               auditInformation,
               false,
-              entity.getShadowAccountNumber(),
+              entity.getAccountNumber(),
               closingPrincipal),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PRINCIPAL);
@@ -262,7 +262,7 @@ public class TransactionalOperationService {
               baseCurrency,
               auditInformation,
               true,
-              entity.getShadowAccountNumber(),
+              entity.getAccountNumber(),
               entity.getBalance(),
               settlementGl,
               account.getValueDate()),
@@ -270,7 +270,7 @@ public class TransactionalOperationService {
       accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
-    doProvisionPosted(entity.getShadowAccountNumber(), account.getProfitAmount());
+    doProvisionPosted(entity.getAccountNumber(), account.getProfitAmount());
 
     return txnInformation.getGlobalTxnNumber();
   }
@@ -303,7 +303,7 @@ public class TransactionalOperationService {
     AccountProcessEntity processEntity =
         processRepository
             .findByAccountNumberAndNewStatusAndValid(
-                entity.getShadowAccountNumber(), entity.getStatus(), true)
+                entity.getAccountNumber(), entity.getStatus(), true)
             .orElseThrow(ProcessRecordNotFoundException::new);
 
     TransactionalInformation txnInformation =

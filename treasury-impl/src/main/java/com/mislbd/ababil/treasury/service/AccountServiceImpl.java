@@ -124,9 +124,11 @@ public class AccountServiceImpl implements AccountService {
             .getCode()
             .trim();
     int totalAccountPrefix = branchCodeLength + productCodeLength + 1;
+    int serialLength = accountCodeLength - (branchCodeLength + productCodeLength) - 1;
 
     String maxSerialNumber =
-        getMaxSerialNumber(productId, branchId, totalAccountPrefix, accountCodeLength);
+        getMaxSerialNumber(
+            productId, branchId, totalAccountPrefix, accountCodeLength, serialLength);
 
     String newSerialNumber =
         StringUtils.leftPad(
@@ -138,18 +140,19 @@ public class AccountServiceImpl implements AccountService {
         .concat(getCheckDigit(branchCode, productCode, newSerialNumber));
   }
 
-  @Override
-  public String getMaxSerialNumber(
-      Long productId, Long branchId, Integer startPoint, Integer endPoint) {
+  private String getMaxSerialNumber(
+      Long productId, Long branchId, Integer startPoint, Integer endPoint, int lengthOfSerial) {
     List<AccountEntity> accounts =
         accountRepository.findAll(
             AccountSpecification.findProductAndBranchSpecificAccount(productId, branchId));
-    return accounts
-        .stream()
-        .max(Comparator.comparing(AccountEntity::getAccountNumber))
-        .orElseThrow(AccountNotFoundException::new)
-        .getAccountNumber()
-        .substring(startPoint, endPoint);
+    return accounts.isEmpty()
+        ? StringUtils.leftPad("0", lengthOfSerial, "0")
+        : accounts
+            .stream()
+            .max(Comparator.comparing(AccountEntity::getAccountNumber))
+            .orElseThrow(AccountNotFoundException::new)
+            .getAccountNumber()
+            .substring(startPoint, endPoint);
   }
 
   @Override

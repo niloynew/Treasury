@@ -13,10 +13,9 @@ import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
+import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-
-import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,14 +38,15 @@ public class TransactionalOperationService {
   private final AccountProcessRepository processRepository;
 
   public TransactionalOperationService(
-          TransactionService transactionService,
-          ConfigurationService configurationService,
-          TransactionalOperationMapper mapper,
-          ProductRelatedGLRepository productRelatedGLRepository,
-          AccountRepository accountRepository,
-          AccountMapper accountMapper,
-          UtilityService utilityService,
-          GlAccountService glAccountService, AccountProcessRepository processRepository) {
+      TransactionService transactionService,
+      ConfigurationService configurationService,
+      TransactionalOperationMapper mapper,
+      ProductRelatedGLRepository productRelatedGLRepository,
+      AccountRepository accountRepository,
+      AccountMapper accountMapper,
+      UtilityService utilityService,
+      GlAccountService glAccountService,
+      AccountProcessRepository processRepository) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -201,7 +201,6 @@ public class TransactionalOperationService {
                 account.getValueDate()),
             TransactionRequestType.TRANSFER);
       }
-
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
@@ -301,10 +300,15 @@ public class TransactionalOperationService {
     AccountEntity entity =
         accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
 
-    AccountProcessEntity processEntity = processRepository.findByAccountNumberAndNewStatusAndValid(entity.getShadowAccountNumber(), entity.getStatus(), true).orElseThrow(ProcessRecordNotFoundException::new);
+    AccountProcessEntity processEntity =
+        processRepository
+            .findByAccountNumberAndNewStatusAndValid(
+                entity.getShadowAccountNumber(), entity.getStatus(), true)
+            .orElseThrow(ProcessRecordNotFoundException::new);
 
     TransactionalInformation txnInformation =
-        getTransactionInformation(auditInformation, REACTIVE_ACTIVITY, processEntity.getGlobalTxnNumber());
+        getTransactionInformation(
+            auditInformation, REACTIVE_ACTIVITY, processEntity.getGlobalTxnNumber());
 
     if (!entity.getClosingDate().isEqual(account.getValueDate())) {
       throw new ReactiveTransactionException(
@@ -318,7 +322,8 @@ public class TransactionalOperationService {
           "Can not be reverse, account status found " + entity.getStatus());
     }
 
-    transactionService.correctTransaction(mapper.doTransactionCorrection(txnInformation, auditInformation));
+    transactionService.correctTransaction(
+        mapper.doTransactionCorrection(txnInformation, auditInformation));
     return txnInformation.getGlobalTxnNumber();
   }
 }

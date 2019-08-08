@@ -149,8 +149,7 @@ public enum Error {
 
     @Override
     public String getMessages(LocaleMessages localeMessages) {
-      message =
-              localeMessages.get(this.getModule() + this.getCode()).orElse("Rrecord not found");
+      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Rrecord not found");
       return message;
     }
   },

@@ -73,7 +73,8 @@ public class AccountCommandHandlerAggregate {
     AuditInformation auditInformation = getAuditInformation(command);
     Long globalTxnNumber =
         operationService.doSettlementOrCloseTransaction(auditInformation, command.getPayload());
-    accountService.registerTransactionProcess(command.getPayload().setGlobalTxnNumber(globalTxnNumber));
+    accountService.registerTransactionProcess(
+        command.getPayload().setGlobalTxnNumber(globalTxnNumber));
     return CommandResponse.of(globalTxnNumber);
   }
 

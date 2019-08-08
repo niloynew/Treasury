@@ -30,10 +30,11 @@ public class AccountServiceImpl implements AccountService {
   private final AccountProcessRepository processRepository;
 
   public AccountServiceImpl(
-          AccountRepository accountRepository,
-          AccountMapper accountMapper,
-          ProductService productService,
-          ConfigurationService configurationService, AccountProcessRepository processRepository) {
+      AccountRepository accountRepository,
+      AccountMapper accountMapper,
+      ProductService productService,
+      ConfigurationService configurationService,
+      AccountProcessRepository processRepository) {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.productService = productService;

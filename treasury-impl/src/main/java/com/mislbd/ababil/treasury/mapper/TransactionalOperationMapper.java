@@ -226,7 +226,8 @@ public class TransactionalOperationMapper {
     return request;
   }
 
-  public TransactionCorrectionRequest doTransactionCorrection(TransactionalInformation transactionalInformation, AuditInformation auditInformation) {
+  public TransactionCorrectionRequest doTransactionCorrection(
+      TransactionalInformation transactionalInformation, AuditInformation auditInformation) {
     TransactionCorrectionRequest request = new TransactionCorrectionRequest();
     request.setGlobalTransactionNumber(transactionalInformation.getGlobalTxnNumber());
     request.setEntryUser(auditInformation.getEntryUser());

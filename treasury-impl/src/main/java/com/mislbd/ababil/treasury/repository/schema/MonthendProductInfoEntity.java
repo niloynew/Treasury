@@ -71,7 +71,7 @@ public class MonthendProductInfoEntity {
   private BigDecimal provisionAmount;
 
   @Column(name = "GLOBALTXNNUMBER")
-  private long globalTxnNumber;
+  private Long globalTxnNumber;
 
   @Column(name = "BRANCH_ID")
   private long branchid;
@@ -241,11 +241,11 @@ public class MonthendProductInfoEntity {
     return this;
   }
 
-  public long getGlobalTxnNumber() {
+  public Long getGlobalTxnNumber() {
     return globalTxnNumber;
   }
 
-  public MonthendProductInfoEntity setGlobalTxnNumber(long globalTxnNumber) {
+  public MonthendProductInfoEntity setGlobalTxnNumber(Long globalTxnNumber) {
     this.globalTxnNumber = globalTxnNumber;
     return this;
   }

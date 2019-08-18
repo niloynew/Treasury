@@ -68,11 +68,11 @@ public class AccountCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Long> settlemenOrClosetAccount(
+  public CommandResponse<Long> renewOrSettlementAccount(
       SettlementOrCloseTreasuryAccountCommand command) {
     AuditInformation auditInformation = getAuditInformation(command);
     Long globalTxnNumber =
-        operationService.doSettlementOrCloseTransaction(auditInformation, command.getPayload());
+        operationService.doSettlementOrRenewTransaction(auditInformation, command.getPayload());
     accountService.registerTransactionProcess(
         command.getPayload().setGlobalTxnNumber(globalTxnNumber));
     return CommandResponse.of(globalTxnNumber);

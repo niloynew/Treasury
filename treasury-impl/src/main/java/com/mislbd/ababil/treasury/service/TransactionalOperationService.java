@@ -111,7 +111,7 @@ public class TransactionalOperationService {
         .build();
   }
 
-  public Long doSettlementOrCloseTransaction(AuditInformation auditInformation, Account account) {
+  public Long doSettlementOrRenewTransaction(AuditInformation auditInformation, Account account) {
 
     /*
     ###### Settlement Transaction #######
@@ -127,7 +127,7 @@ public class TransactionalOperationService {
     * Settlement gl debit
     *
     *
-    ##### Close Transaction ###########
+    ##### Settlement Transaction ###########
     * calculate closing balance and principal
     * Treasury account credit
     * Settlement gl debit
@@ -203,7 +203,7 @@ public class TransactionalOperationService {
       }
     }
 
-    if (account.getEvent() == TransactionEvent.Settlement) {
+    if (account.getEvent() == TransactionEvent.Renew) {
       if (!account.getRenewWithProfit()
           && account.getProfitAmount().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
@@ -231,7 +231,7 @@ public class TransactionalOperationService {
       accountRepository.save(accountMapper.renwalDomainToEntity().map(account));
     }
 
-    if (account.getEvent() == TransactionEvent.Close) {
+    if (account.getEvent() == TransactionEvent.Settlement) {
       entity =
           accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
       BigDecimal closingProfit = entity.getProfitDebit().subtract(entity.getProfitCredit());

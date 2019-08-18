@@ -109,8 +109,8 @@ public class AccountController {
     if (account.getEvent() == TransactionEvent.Placement)
       return status(CREATED)
           .body(commandProcessor.executeResult(new CreateTreasuryAccountCommand(account)));
-    if (account.getEvent() == TransactionEvent.Settlement
-        || account.getEvent() == TransactionEvent.Close)
+    if (account.getEvent() == TransactionEvent.Renew
+        || account.getEvent() == TransactionEvent.Settlement)
       return status(CREATED)
           .body(
               commandProcessor.executeResult(new SettlementOrCloseTreasuryAccountCommand(account)));

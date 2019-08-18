@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class TransactionalOperationService {
 
   private static final Long PLACEMENT_ACTIVITY = Long.valueOf(801);
-  private static final Long SETTLEMENT_OR_CLOSE_ACTIVITY = Long.valueOf(802);
+  private static final Long SETTLEMENT_OR_RENEW_ACTIVITY = Long.valueOf(802);
   private static final Long REACTIVE_ACTIVITY = Long.valueOf(803);
   private static final String SYSTEM_EXCHANGE_RATE_TYPE = "SYSTEM_EXCHANGE_RATE_TYPE";
 
@@ -140,7 +140,7 @@ public class TransactionalOperationService {
         accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
 
     TransactionalInformation txnInformation =
-        getTransactionInformation(auditInformation, SETTLEMENT_OR_CLOSE_ACTIVITY, null);
+        getTransactionInformation(auditInformation, SETTLEMENT_OR_RENEW_ACTIVITY, null);
 
     String profitReceivableGl =
         getRelatedGlCode(entity.getProduct().getId(), GLType.PROFIT_RECEIVABLE_GL);

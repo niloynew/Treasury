@@ -114,7 +114,7 @@ public class TransactionalOperationService {
   public Long doSettlementOrRenewTransaction(AuditInformation auditInformation, Account account) {
 
     /*
-    ###### Settlement Transaction #######
+    ###### Common Transaction #######
     * Treasury account debit
     * Profit_Receivable credit
     * if actual_profit > provisional_profit

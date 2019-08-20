@@ -1,15 +1,11 @@
 package com.mislbd.ababil.treasury.command.handler;
 
 import com.mislbd.ababil.asset.service.Auditor;
-import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.SettlementOrCloseTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.*;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
-import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.service.AccountService;
@@ -28,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountCommandHandlerAggregate {
 
   private final AccountRepository accountRepository;
-  private final AccountMapper accountMapper;
   private final ProductRepository productRepository;
   private final Auditor auditor;
   private final AccountService accountService;
@@ -37,14 +32,12 @@ public class AccountCommandHandlerAggregate {
 
   public AccountCommandHandlerAggregate(
       AccountRepository accountRepository,
-      AccountMapper accountMapper,
       ProductRepository productRepository,
       Auditor auditor,
       AccountService accountService,
       NgSession ngSession,
       TransactionalOperationService operationService) {
     this.accountRepository = accountRepository;
-    this.accountMapper = accountMapper;
     this.productRepository = productRepository;
     this.auditor = auditor;
     this.accountService = accountService;
@@ -75,11 +68,13 @@ public class AccountCommandHandlerAggregate {
 
   @Transactional
   @CommandHandler
-  public CommandResponse<Long> settlemenOrClosetAccount(
+  public CommandResponse<Long> renewOrSettlementAccount(
       SettlementOrCloseTreasuryAccountCommand command) {
     AuditInformation auditInformation = getAuditInformation(command);
     Long globalTxnNumber =
-        operationService.doSettlementOrCloseTransaction(auditInformation, command.getPayload());
+        operationService.doSettlementOrRenewTransaction(auditInformation, command.getPayload());
+    accountService.registerTransactionProcess(
+        command.getPayload().setGlobalTxnNumber(globalTxnNumber));
     return CommandResponse.of(globalTxnNumber);
   }
 
@@ -102,9 +97,9 @@ public class AccountCommandHandlerAggregate {
         .setBankId(account.getBankId())
         .setBranchId(account.getBranchId())
         .setAccountTitle(account.getAccountTitle())
-        .setAccountNumber(account.getAccountNumber())
+        .setNostroAccountNumber(account.getNostroAccountNumber())
         .setAmount(account.getAmount())
-        .setShadowAccountNumber(account.getShadowAccountNumber())
+        .setAccountNumber(account.getAccountNumber())
         .setOpenDate(account.getAccountOpenDate())
         .setClosingDate(account.getAccountClosingDate())
         .setExpiryDate(account.getExpiryDate())
@@ -128,6 +123,15 @@ public class AccountCommandHandlerAggregate {
             .orElseThrow(AccountNotFoundException::new)
             .setActive(false));
     return CommandResponse.asVoid();
+  }
+
+  @Transactional
+  @CommandHandler
+  public CommandResponse<Long> reactivateAccount(ReactivateTreasuryAccountCommand command) {
+    AuditInformation auditInformation = getAuditInformation(command);
+    Long globalTxnNumber =
+        operationService.doReactiveTransaction(auditInformation, command.getPayload());
+    return CommandResponse.of(globalTxnNumber);
   }
 
   private AuditInformation getAuditInformation(Command<?> command) {

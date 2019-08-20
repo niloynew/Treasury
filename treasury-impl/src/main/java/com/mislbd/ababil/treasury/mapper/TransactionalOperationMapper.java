@@ -1,6 +1,7 @@
 package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.transaction.domain.GlTransactionRequest;
+import com.mislbd.ababil.transaction.domain.TransactionCorrectionRequest;
 import com.mislbd.ababil.transaction.domain.TreasuryTransactionRequest;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
 import com.mislbd.ababil.treasury.domain.TransactionalInformation;
@@ -39,11 +40,11 @@ public class TransactionalOperationMapper {
             + " BDT "
             + (isDebit ? "debited to" : "credited from")
             + " account "
-            + entity.getShadowAccountNumber());
+            + entity.getAccountNumber());
     request.setApprovalFlowInstanceId(auditInformation.getProcessId());
     request.setInitiatorModule("TREASURY");
     request.setInitiatorBranch(auditInformation.getUserBranch());
-    request.setAccNumber(entity.getShadowAccountNumber());
+    request.setAccNumber(entity.getAccountNumber());
     return request;
   }
 
@@ -71,10 +72,7 @@ public class TransactionalOperationMapper {
     glRequest.setVerifyUser(auditInformation.getVerifyUser());
     glRequest.setVerifyTerminal(auditInformation.getVerifyTerminal());
     glRequest.setNarration(
-        " GL "
-            + (isDebit ? "DEBIT" : "CREDIT")
-            + " FOR TREASURY."
-            + entity.getShadowAccountNumber());
+        " GL " + (isDebit ? "DEBIT" : "CREDIT") + " FOR TREASURY." + entity.getAccountNumber());
     glRequest.setApprovalFlowInstanceId(auditInformation.getProcessId());
     glRequest.setInitiatorModule("TREASURY");
     glRequest.setInitiatorBranch(auditInformation.getUserBranch());
@@ -222,6 +220,17 @@ public class TransactionalOperationMapper {
     request.setInitiatorModule("TREASURY");
     request.setInitiatorBranch(auditInformation.getUserBranch());
     request.setAccNumber(accountNumber);
+    return request;
+  }
+
+  public TransactionCorrectionRequest doTransactionCorrection(
+      TransactionalInformation transactionalInformation, AuditInformation auditInformation) {
+    TransactionCorrectionRequest request = new TransactionCorrectionRequest();
+    request.setGlobalTransactionNumber(transactionalInformation.getGlobalTxnNumber());
+    request.setEntryUser(auditInformation.getEntryUser());
+    request.setEntryTerminal(auditInformation.getEntryTerminal());
+    request.setVerifyUser(auditInformation.getVerifyUser());
+    request.setVerifyTerminal(auditInformation.getVerifyTerminal());
     return request;
   }
 }

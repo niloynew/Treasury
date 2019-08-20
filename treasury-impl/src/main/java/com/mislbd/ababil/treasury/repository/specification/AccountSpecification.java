@@ -74,30 +74,6 @@ public class AccountSpecification {
     };
   }
 
-  public static Specification<AccountEntity> findSettlementAccounts(
-      String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
-    return (root, query, cb) -> {
-      Predicate predicate = cb.conjunction();
-
-      if (accountNumber != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("shadowAccountNumber"), accountNumber));
-      }
-
-      if (ownerBranchId != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("ownerBranchId"), ownerBranchId));
-      }
-
-      if (expiryDate != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("expiryDate"), expiryDate));
-      }
-
-      predicate = cb.and(predicate, cb.equal(root.get("status"), AccountStatus.MATURED));
-      predicate = cb.and(predicate, cb.equal(root.get("active"), true));
-
-      return predicate;
-    };
-  }
-
   public static Specification<AccountEntity> findProductAndBranchSpecificAccount(
       Long productId, Long branchId) {
     return (root, query, cb) -> {

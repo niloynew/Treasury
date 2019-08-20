@@ -18,7 +18,7 @@ public class UtilityServiceImpl implements UtilityService {
 
   @Override
   public BigDecimal totalProvisionOfAccounts(
-      String accountNumber, boolean glPosted, boolean accountPosted) {
+      String accountNumber, Boolean glPosted, Boolean accountPosted) {
     List<MonthendProductInfoEntity> productInfoEntities =
         getMonthendProductInfoData(accountNumber, glPosted, accountPosted);
     return !productInfoEntities.isEmpty()
@@ -44,7 +44,7 @@ public class UtilityServiceImpl implements UtilityService {
 
   @Override
   public BigDecimal totalProductOfAccounts(
-      String shadowAccountNumber, boolean glPosted, boolean accountPosted) {
+      String shadowAccountNumber, Boolean glPosted, Boolean accountPosted) {
     List<MonthendProductInfoEntity> productInfoEntities =
         getMonthendProductInfoData(shadowAccountNumber, glPosted, accountPosted);
     return !productInfoEntities.isEmpty()

@@ -6,6 +6,7 @@ import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
+import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.repository.specification.AccountSpecification;
@@ -26,16 +27,19 @@ public class AccountServiceImpl implements AccountService {
   private final AccountMapper accountMapper;
   private final ProductService productService;
   private final ConfigurationService configurationService;
+  private final AccountProcessRepository processRepository;
 
   public AccountServiceImpl(
       AccountRepository accountRepository,
       AccountMapper accountMapper,
       ProductService productService,
-      ConfigurationService configurationService) {
+      ConfigurationService configurationService,
+      AccountProcessRepository processRepository) {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.productService = productService;
     this.configurationService = configurationService;
+    this.processRepository = processRepository;
   }
 
   @Override
@@ -96,14 +100,14 @@ public class AccountServiceImpl implements AccountService {
   }
 
   @Override
-  public PagedResult<Account> findSettlementAccounts(
-      Pageable pageable, String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
-
-    return PagedResultBuilder.build(
-        accountRepository.findAll(
-            AccountSpecification.findSettlementAccounts(accountNumber, expiryDate, ownerBranchId),
-            pageable),
-        accountMapper.entityToSettlementDomain());
+  public Account findSettlementAccounts(
+      String accountNumber, LocalDate expiryDate, Long ownerBranchId) {
+    return accountMapper
+        .entityToSettlementDomain()
+        .map(
+            accountRepository
+                .findByAccountNumberAndOwnerBranchId(accountNumber, ownerBranchId)
+                .orElseThrow(AccountNotFoundException::new));
   }
 
   @Override
@@ -120,9 +124,11 @@ public class AccountServiceImpl implements AccountService {
             .getCode()
             .trim();
     int totalAccountPrefix = branchCodeLength + productCodeLength + 1;
+    int serialLength = accountCodeLength - (branchCodeLength + productCodeLength) - 1;
 
     String maxSerialNumber =
-        getMaxSerialNumber(productId, branchId, totalAccountPrefix, accountCodeLength);
+        getMaxSerialNumber(
+            productId, branchId, totalAccountPrefix, accountCodeLength, serialLength);
 
     String newSerialNumber =
         StringUtils.leftPad(
@@ -134,18 +140,24 @@ public class AccountServiceImpl implements AccountService {
         .concat(getCheckDigit(branchCode, productCode, newSerialNumber));
   }
 
-  @Override
-  public String getMaxSerialNumber(
-      Long productId, Long branchId, Integer startPoint, Integer endPoint) {
+  private String getMaxSerialNumber(
+      Long productId, Long branchId, Integer startPoint, Integer endPoint, int lengthOfSerial) {
     List<AccountEntity> accounts =
         accountRepository.findAll(
             AccountSpecification.findProductAndBranchSpecificAccount(productId, branchId));
-    return accounts
-        .stream()
-        .max(Comparator.comparing(AccountEntity::getShadowAccountNumber))
-        .orElseThrow(AccountNotFoundException::new)
-        .getShadowAccountNumber()
-        .substring(startPoint, endPoint);
+    return accounts.isEmpty()
+        ? StringUtils.leftPad("0", lengthOfSerial, "0")
+        : accounts
+            .stream()
+            .max(Comparator.comparing(AccountEntity::getAccountNumber))
+            .orElseThrow(AccountNotFoundException::new)
+            .getAccountNumber()
+            .substring(startPoint, endPoint);
+  }
+
+  @Override
+  public void registerTransactionProcess(Account account) {
+    processRepository.save(accountMapper.domainToProcessEntity().map(account));
   }
 
   private String getCheckDigit(String branchCode, String productCode, String serial) {

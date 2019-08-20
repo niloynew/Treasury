@@ -31,10 +31,9 @@ public interface AccountService {
 
   Account findById(Long accountId);
 
-  PagedResult<Account> findSettlementAccounts(
-      Pageable pageable, String accountNumber, LocalDate expiryDate, Long brId);
+  Account findSettlementAccounts(String accountNumber, LocalDate expiryDate, Long brId);
 
   String generateAccountNumber(Long productId, Long branchId);
 
-  String getMaxSerialNumber(Long productId, Long branchId, Integer startPoint, Integer endPoint);
+  void registerTransactionProcess(Account account);
 }

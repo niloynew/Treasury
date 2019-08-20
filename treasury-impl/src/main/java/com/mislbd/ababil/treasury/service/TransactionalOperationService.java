@@ -5,23 +5,24 @@ import com.mislbd.ababil.transaction.domain.TransactionAmountType;
 import com.mislbd.ababil.transaction.domain.TransactionRequestType;
 import com.mislbd.ababil.transaction.service.TransactionService;
 import com.mislbd.ababil.treasury.domain.*;
-import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
-import com.mislbd.ababil.treasury.exception.ProductRelatedGLNotFoundException;
-import com.mislbd.ababil.treasury.exception.ProvisionMismatchException;
+import com.mislbd.ababil.treasury.exception.*;
+import com.mislbd.ababil.treasury.external.service.GlAccountService;
 import com.mislbd.ababil.treasury.mapper.AccountMapper;
 import com.mislbd.ababil.treasury.mapper.TransactionalOperationMapper;
+import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
-import com.mislbd.ababil.treasury.repository.schema.ProductRelatedGLEntity;
+import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TransactionalOperationService {
 
   private static final Long PLACEMENT_ACTIVITY = Long.valueOf(801);
-  private static final Long SETTLEMENT_OR_CLOSE_ACTIVITY = Long.valueOf(802);
+  private static final Long SETTLEMENT_OR_RENEW_ACTIVITY = Long.valueOf(802);
   private static final Long REACTIVE_ACTIVITY = Long.valueOf(803);
   private static final String SYSTEM_EXCHANGE_RATE_TYPE = "SYSTEM_EXCHANGE_RATE_TYPE";
 
@@ -33,6 +34,8 @@ public class TransactionalOperationService {
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
   private final UtilityService utilityService;
+  private final GlAccountService glAccountService;
+  private final AccountProcessRepository processRepository;
 
   public TransactionalOperationService(
       TransactionService transactionService,
@@ -41,7 +44,9 @@ public class TransactionalOperationService {
       ProductRelatedGLRepository productRelatedGLRepository,
       AccountRepository accountRepository,
       AccountMapper accountMapper,
-      UtilityService utilityService) {
+      UtilityService utilityService,
+      GlAccountService glAccountService,
+      AccountProcessRepository processRepository) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -50,6 +55,8 @@ public class TransactionalOperationService {
     this.accountRepository = accountRepository;
     this.accountMapper = accountMapper;
     this.utilityService = utilityService;
+    this.glAccountService = glAccountService;
+    this.processRepository = processRepository;
   }
 
   /*
@@ -72,7 +79,7 @@ public class TransactionalOperationService {
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
 
-    String settlementGlCode = getRelatedGl(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
+    String settlementGlCode = getRelatedGlCode(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
 
     transactionService.doGlTransaction(
         mapper.getPrincipalPayableGL(
@@ -104,23 +111,23 @@ public class TransactionalOperationService {
         .build();
   }
 
-  public Long doSettlementOrCloseTransaction(AuditInformation auditInformation, Account account) {
+  public Long doSettlementOrRenewTransaction(AuditInformation auditInformation, Account account) {
 
     /*
-    ###### Settlement Transaction #######
+    ###### Common Transaction #######
     * Treasury account debit
     * Profit_Receivable credit
     * if actual_profit > provisional_profit
-    *   then income gl credit (actual_profit - provisional_profit)
+    *   then income gl credit (amount = actual_profit - provisional_profit)
     * if provisional_profit > actual_profit
-    *   then debit income gl  (provisional_profit - actual_profit)
+    *   then debit income gl  (amount = provisional_profit - actual_profit)
     *
     ##### Renewal with profit #########
     * Treasury account credit
     * Settlement gl debit
     *
     *
-    ##### Close Transaction ###########
+    ##### Settlement Transaction ###########
     * calculate closing balance and principal
     * Treasury account credit
     * Settlement gl debit
@@ -133,12 +140,12 @@ public class TransactionalOperationService {
         accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
 
     TransactionalInformation txnInformation =
-        getTransactionInformation(auditInformation, SETTLEMENT_OR_CLOSE_ACTIVITY, null);
+        getTransactionInformation(auditInformation, SETTLEMENT_OR_RENEW_ACTIVITY, null);
 
     String profitReceivableGl =
-        getRelatedGl(entity.getProduct().getId(), GLType.PROFIT_RECEIVABLE_GL);
-    String incomeGl = getRelatedGl(entity.getProduct().getId(), GLType.INCOME_GL);
-    String settlementGl = getRelatedGl(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
+        getRelatedGlCode(entity.getProduct().getId(), GLType.PROFIT_RECEIVABLE_GL);
+    String incomeGl = getRelatedGlCode(entity.getProduct().getId(), GLType.INCOME_GL);
+    String settlementGl = getRelatedGlCode(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
 
     transactionService.doTreasuryTransaction(
         mapper.getProfitPayableAccount(
@@ -146,7 +153,7 @@ public class TransactionalOperationService {
             baseCurrency,
             auditInformation,
             true,
-            entity.getShadowAccountNumber(),
+            entity.getAccountNumber(),
             account.getActualProfit()),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PROFIT);
@@ -157,7 +164,7 @@ public class TransactionalOperationService {
             baseCurrency,
             auditInformation,
             false,
-            entity.getShadowAccountNumber(),
+            entity.getAccountNumber(),
             account.getProfitAmount(),
             profitReceivableGl,
             account.getValueDate()),
@@ -173,7 +180,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 true,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 overBalance,
                 incomeGl,
                 account.getValueDate()),
@@ -188,18 +195,16 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 false,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 lowerBalance,
                 incomeGl,
                 account.getValueDate()),
             TransactionRequestType.TRANSFER);
       }
-
-      accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
-    if (account.getEvent() == TransactionEvent.Settlement) {
-      if (account.getRenewWithProfit() != null
+    if (account.getEvent() == TransactionEvent.Renew) {
+      if (!account.getRenewWithProfit()
           && account.getProfitAmount().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
             mapper.getProfitPayableAccount(
@@ -207,7 +212,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 false,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 account.getProfitAmount()),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
@@ -217,7 +222,7 @@ public class TransactionalOperationService {
                 baseCurrency,
                 auditInformation,
                 true,
-                entity.getShadowAccountNumber(),
+                entity.getAccountNumber(),
                 account.getProfitAmount(),
                 settlementGl,
                 account.getValueDate()),
@@ -226,7 +231,7 @@ public class TransactionalOperationService {
       accountRepository.save(accountMapper.renwalDomainToEntity().map(account));
     }
 
-    if (account.getEvent() == TransactionEvent.Close) {
+    if (account.getEvent() == TransactionEvent.Settlement) {
       entity =
           accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
       BigDecimal closingProfit = entity.getProfitDebit().subtract(entity.getProfitCredit());
@@ -237,7 +242,7 @@ public class TransactionalOperationService {
               baseCurrency,
               auditInformation,
               false,
-              entity.getShadowAccountNumber(),
+              entity.getAccountNumber(),
               closingProfit),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PROFIT);
@@ -247,7 +252,7 @@ public class TransactionalOperationService {
               baseCurrency,
               auditInformation,
               false,
-              entity.getShadowAccountNumber(),
+              entity.getAccountNumber(),
               closingPrincipal),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PRINCIPAL);
@@ -257,7 +262,7 @@ public class TransactionalOperationService {
               baseCurrency,
               auditInformation,
               true,
-              entity.getShadowAccountNumber(),
+              entity.getAccountNumber(),
               entity.getBalance(),
               settlementGl,
               account.getValueDate()),
@@ -265,7 +270,7 @@ public class TransactionalOperationService {
       accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
-    doProvisionPosted(entity.getShadowAccountNumber(), account.getProfitAmount());
+    doProvisionPosted(entity.getAccountNumber(), account.getProfitAmount());
 
     return txnInformation.getGlobalTxnNumber();
   }
@@ -280,11 +285,45 @@ public class TransactionalOperationService {
     utilityService.updateMonthendInfo(shadowAccountNumber, "RENEWAL", false);
   }
 
-  String getRelatedGl(long productId, GLType glType) {
-    ProductRelatedGLEntity productRelatedGl =
-        productRelatedGLRepository
-            .findByProductIdAndGlType(productId, glType)
-            .orElseThrow(ProductRelatedGLNotFoundException::new);
-    return productRelatedGl.getGlCode();
+  String getRelatedGlCode(long productId, GLType glType) {
+    return glAccountService
+        .getGlAccount(
+            productRelatedGLRepository
+                .findByProductIdAndGlType(productId, glType)
+                .orElseThrow(ProductRelatedGLNotFoundException::new)
+                .getGlId())
+        .getCode();
+  }
+
+  public Long doReactiveTransaction(AuditInformation auditInformation, Account account) {
+
+    AccountEntity entity =
+        accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
+
+    AccountProcessEntity processEntity =
+        processRepository
+            .findByAccountNumberAndNewStatusAndValid(
+                entity.getAccountNumber(), entity.getStatus(), true)
+            .orElseThrow(ProcessRecordNotFoundException::new);
+
+    TransactionalInformation txnInformation =
+        getTransactionInformation(
+            auditInformation, REACTIVE_ACTIVITY, processEntity.getGlobalTxnNumber());
+
+    if (!entity.getClosingDate().isEqual(account.getValueDate())) {
+      throw new ReactiveTransactionException(
+          "Can not be reverse, account closing date "
+              + DateTimeFormatter.ofPattern("MM/dd/yyyy").format(entity.getClosingDate())
+              + " not equal to current date.");
+    }
+
+    if (entity.getStatus() != AccountStatus.CLOSED || entity.getStatus() != AccountStatus.REGULAR) {
+      throw new ReactiveTransactionException(
+          "Can not be reverse, account status found " + entity.getStatus());
+    }
+
+    transactionService.correctTransaction(
+        mapper.doTransactionCorrection(txnInformation, auditInformation));
+    return txnInformation.getGlobalTxnNumber();
   }
 }

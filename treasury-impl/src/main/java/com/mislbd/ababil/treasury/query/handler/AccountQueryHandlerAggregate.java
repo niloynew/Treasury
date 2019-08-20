@@ -51,13 +51,11 @@ public class AccountQueryHandlerAggregate {
 
   @QueryHandler
   public QueryResult<?> settlementAccountSearch(SettlementAccountQuery accountQuery) {
-    PagedResult<Account> accountPage =
+    return QueryResult.of(
         accountService.findSettlementAccounts(
-            accountQuery.getPageable(),
             accountQuery.getAccountNumber(),
             accountQuery.getExpiryDate(),
-            accountQuery.getOwnerBranchId());
-    return QueryResult.of(accountPage);
+            accountQuery.getOwnerBranchId()));
   }
 
   @QueryHandler

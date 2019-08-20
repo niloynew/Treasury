@@ -7,6 +7,7 @@ import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
+import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
 import com.mislbd.ababil.treasury.service.UtilityService;
 import com.mislbd.asset.commons.data.domain.ResultMapper;
 import com.mislbd.security.core.NgSession;
@@ -42,10 +43,11 @@ public class AccountMapper {
             .setBankId(entity.getBankId())
             .setBranchId(entity.getBranchId())
             .setAccountTitle(entity.getAccountTitle())
-            .setAccountNumber(entity.getAccountNumber())
+            .setNostroAccountNumber(entity.getNostroAccountNumber())
             .setAmount(entity.getAmount())
+            .setBalance(entity.getBalance())
             .setOwnerBranchId(entity.getOwnerBranchId())
-            .setShadowAccountNumber(entity.getShadowAccountNumber())
+            .setAccountNumber(entity.getAccountNumber())
             .setAccountOpenDate(entity.getOpenDate())
             .setAccountClosingDate(entity.getClosingDate())
             .setExpiryDate(entity.getExpiryDate())
@@ -71,9 +73,9 @@ public class AccountMapper {
             .setBankId(domain.getBankId())
             .setBranchId(domain.getBranchId())
             .setAccountTitle(domain.getAccountTitle())
-            .setAccountNumber(domain.getAccountNumber())
+            .setNostroAccountNumber(domain.getNostroAccountNumber())
             .setAmount(domain.getAmount())
-            .setShadowAccountNumber(domain.getShadowAccountNumber())
+            .setAccountNumber(domain.getAccountNumber())
             .setOpenDate(domain.getAccountOpenDate())
             .setExpiryDate(domain.getExpiryDate())
             .setTenorAmount(domain.getTenorAmount())
@@ -86,12 +88,34 @@ public class AccountMapper {
             .setActive(true);
   }
 
+  public ResultMapper<Account, AccountProcessEntity> domainToProcessEntity() {
+    return domain ->
+        new AccountProcessEntity()
+            .setAccountNumber(domain.getAccountNumber())
+            .setName(domain.getAccountTitle())
+            .setBalance(domain.getBalance())
+            .setTotalProduct(domain.getProductAmount())
+            .setProfitRate(domain.getExpectedProfitRate())
+            .setProvisionAmount(domain.getProfitAmount())
+            .setActualProvision(domain.getActualProfit())
+            .setOldStatus(domain.getStatus())
+            .setNewStatus(domain.getStatus())
+            .setOldExpiryDate(domain.getExpiryDate())
+            .setNewExpiryDate(domain.getNewExpiryDate())
+            .setOldRenewalDate(domain.getRenewalDate())
+            .setNewRenewalDate(domain.getRenewalDate())
+            .setLastProvisionDate(domain.getLastProvisionDate())
+            .setGlobalTxnNumber(domain.getGlobalTxnNumber())
+            .setValid(true)
+            .setRenewWithProfit(domain.getRenewWithProfit());
+  }
+
   public ResultMapper<Account, AccountEntity> renwalDomainToEntity() {
     return domain ->
         accountRepository
             .findById(domain.getId())
             .orElseThrow(AccountNotFoundException::new)
-            .setShadowAccountNumber(domain.getShadowAccountNumber())
+            .setAccountNumber(domain.getAccountNumber())
             .setExpiryDate(domain.getNewExpiryDate())
             .setTenorAmount(domain.getNewTenorAmount())
             .setTenorType(domain.getNewTenorType())
@@ -120,9 +144,9 @@ public class AccountMapper {
             .setBankId(entity.getBankId())
             .setBranchId(entity.getBranchId())
             .setAccountTitle(entity.getAccountTitle())
-            .setAccountNumber(entity.getAccountNumber())
+            .setNostroAccountNumber(entity.getNostroAccountNumber())
             .setBalance(entity.getBalance())
-            .setShadowAccountNumber(entity.getShadowAccountNumber())
+            .setAccountNumber(entity.getAccountNumber())
             .setAccountOpenDate(entity.getOpenDate())
             .setExpiryDate(entity.getExpiryDate())
             .setTenorAmount(entity.getTenorAmount())
@@ -131,10 +155,8 @@ public class AccountMapper {
             .setExpectedProfitRate(entity.getProfitRate())
             .setInstrument(entity.getInstrumentNumber())
             .setProfitAmount(
-                utilityService.totalProvisionOfAccounts(
-                    entity.getShadowAccountNumber(), true, false))
+                utilityService.totalProvisionOfAccounts(entity.getAccountNumber(), null, false))
             .setProductAmount(
-                utilityService.totalProductOfAccounts(
-                    entity.getShadowAccountNumber(), true, false));
+                utilityService.totalProductOfAccounts(entity.getAccountNumber(), null, false));
   }
 }

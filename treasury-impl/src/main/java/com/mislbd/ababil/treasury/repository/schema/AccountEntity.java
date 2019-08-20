@@ -20,11 +20,11 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "ID")
   private long id;
 
+  @Column(name = "NOSTRO_ACCNO")
+  private String nostroAccountNumber;
+
   @Column(name = "ACCNO")
   private String accountNumber;
-
-  @Column(name = "SHADOW_ACCNO")
-  private String shadowAccountNumber;
 
   @Column(name = "NAME")
   private String accountTitle;
@@ -107,21 +107,21 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
+  public String getNostroAccountNumber() {
+    return nostroAccountNumber;
+  }
+
+  public AccountEntity setNostroAccountNumber(String nostroAccountNumber) {
+    this.nostroAccountNumber = nostroAccountNumber;
+    return this;
+  }
+
   public String getAccountNumber() {
     return accountNumber;
   }
 
   public AccountEntity setAccountNumber(String accountNumber) {
     this.accountNumber = accountNumber;
-    return this;
-  }
-
-  public String getShadowAccountNumber() {
-    return shadowAccountNumber;
-  }
-
-  public AccountEntity setShadowAccountNumber(String shadowAccountNumber) {
-    this.shadowAccountNumber = shadowAccountNumber;
     return this;
   }
 

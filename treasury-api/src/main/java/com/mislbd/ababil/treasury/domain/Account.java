@@ -12,19 +12,22 @@ public class Account {
   private Long bankId;
   private Long branchId;
   private String accountTitle;
-  private String accountNumber;
+  private String nostroAccountNumber;
   private BigDecimal balance;
+  private BigDecimal newBalance;
   private BigDecimal amount;
   private BigDecimal productAmount;
-  private String shadowAccountNumber;
+  private String accountNumber;
   private LocalDate accountOpenDate;
   private LocalDate accountClosingDate;
   private LocalDate expiryDate;
   private int tenorAmount;
   private TenorType tenorType;
   private LocalDate renewalDate;
+  private LocalDate newRenewalDate;
   private BigDecimal expectedProfitRate;
   private AccountStatus status;
+  private AccountStatus newStatus;
   private String instrument;
   private TransactionEvent event;
   private BigDecimal profitAmount;
@@ -35,6 +38,8 @@ public class Account {
   private LocalDate valueDate;
   private BigDecimal newProfitRate;
   private LocalDate newExpiryDate;
+  private Long globalTxnNumber;
+  private LocalDate lastProvisionDate;
 
   public long getId() {
     return id;
@@ -99,12 +104,12 @@ public class Account {
     return this;
   }
 
-  public String getAccountNumber() {
-    return accountNumber;
+  public String getNostroAccountNumber() {
+    return nostroAccountNumber;
   }
 
-  public Account setAccountNumber(String accountNumber) {
-    this.accountNumber = accountNumber;
+  public Account setNostroAccountNumber(String nostroAccountNumber) {
+    this.nostroAccountNumber = nostroAccountNumber;
     return this;
   }
 
@@ -114,6 +119,15 @@ public class Account {
 
   public Account setBalance(BigDecimal balance) {
     this.balance = balance;
+    return this;
+  }
+
+  public BigDecimal getNewBalance() {
+    return newBalance;
+  }
+
+  public Account setNewBalance(BigDecimal newBalance) {
+    this.newBalance = newBalance;
     return this;
   }
 
@@ -135,12 +149,12 @@ public class Account {
     return this;
   }
 
-  public String getShadowAccountNumber() {
-    return shadowAccountNumber;
+  public String getAccountNumber() {
+    return accountNumber;
   }
 
-  public Account setShadowAccountNumber(String shadowAccountNumber) {
-    this.shadowAccountNumber = shadowAccountNumber;
+  public Account setAccountNumber(String accountNumber) {
+    this.accountNumber = accountNumber;
     return this;
   }
 
@@ -198,6 +212,15 @@ public class Account {
     return this;
   }
 
+  public LocalDate getNewRenewalDate() {
+    return newRenewalDate;
+  }
+
+  public Account setNewRenewalDate(LocalDate newRenewalDate) {
+    this.newRenewalDate = newRenewalDate;
+    return this;
+  }
+
   public BigDecimal getExpectedProfitRate() {
     return expectedProfitRate;
   }
@@ -213,6 +236,15 @@ public class Account {
 
   public Account setStatus(AccountStatus status) {
     this.status = status;
+    return this;
+  }
+
+  public AccountStatus getNewStatus() {
+    return newStatus;
+  }
+
+  public Account setNewStatus(AccountStatus newStatus) {
+    this.newStatus = newStatus;
     return this;
   }
 
@@ -303,6 +335,24 @@ public class Account {
 
   public Account setNewExpiryDate(LocalDate newExpiryDate) {
     this.newExpiryDate = newExpiryDate;
+    return this;
+  }
+
+  public Long getGlobalTxnNumber() {
+    return globalTxnNumber;
+  }
+
+  public Account setGlobalTxnNumber(Long globalTxnNumber) {
+    this.globalTxnNumber = globalTxnNumber;
+    return this;
+  }
+
+  public LocalDate getLastProvisionDate() {
+    return lastProvisionDate;
+  }
+
+  public Account setLastProvisionDate(LocalDate lastProvisionDate) {
+    this.lastProvisionDate = lastProvisionDate;
     return this;
   }
 }

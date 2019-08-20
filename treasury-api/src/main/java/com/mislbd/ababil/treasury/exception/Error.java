@@ -24,7 +24,7 @@ public enum Error {
     }
   },
 
-  TRANSACTION_RECORD_NOT_FOUND("270", "0001") {
+  TRANSACTION_RECORD_NOT_FOUND("270", "0002") {
     private String message;
 
     @Override
@@ -39,7 +39,7 @@ public enum Error {
     }
   },
 
-  PRODUCT_NATURE_NOT_FOUND("270", "0002") {
+  PRODUCT_NATURE_NOT_FOUND("270", "0003") {
     private String message;
 
     @Override
@@ -55,7 +55,7 @@ public enum Error {
     }
   },
 
-  ACCOUNT_NOT_FOUND("270", "0003") {
+  ACCOUNT_NOT_FOUND("270", "0004") {
     private String message;
 
     @Override
@@ -71,7 +71,7 @@ public enum Error {
     }
   },
 
-  PRODUCT_RELATED_GL_NOT_FOUND("270", "0004") {
+  PRODUCT_RELATED_GL_NOT_FOUND("270", "0005") {
     private String message;
 
     @Override
@@ -87,7 +87,7 @@ public enum Error {
     }
   },
 
-  PROVISION_MISMATCH("270", "0005") {
+  PROVISION_MISMATCH("270", "0006") {
     private String message;
 
     @Override
@@ -99,6 +99,57 @@ public enum Error {
     public String getMessages(LocaleMessages localeMessages) {
       message =
           localeMessages.get(this.getModule() + this.getCode()).orElse("Product Nature not found");
+      return message;
+    }
+  },
+
+  GENERAL_LEDGER_ACCOUNT_NOT_FOUND("270", "0007") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("General ledger account not found.");
+      return message;
+    }
+  },
+
+  REACTIVE_TRANSACTION_EXCEPTION("270", "0007") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("Reactive transaction exception");
+      return message;
+    }
+  },
+
+  PROCESS_RECORD_NOT_FOUND("270", "0008") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Rrecord not found");
       return message;
     }
   },

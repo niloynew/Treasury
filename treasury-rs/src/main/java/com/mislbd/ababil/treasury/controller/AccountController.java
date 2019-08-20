@@ -5,10 +5,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.http.ResponseEntity.status;
 
-import com.mislbd.ababil.treasury.command.CreateTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.DeleteTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.SettlementOrCloseTreasuryAccountCommand;
-import com.mislbd.ababil.treasury.command.UpdateTreasuryAccountCommand;
+import com.mislbd.ababil.treasury.command.*;
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
 import com.mislbd.ababil.treasury.domain.TransactionEvent;
@@ -85,14 +82,12 @@ public class AccountController {
 
   @GetMapping(path = "/settlement")
   public ResponseEntity<?> getSettlementAccounts(
-      Pageable pageable,
-      @RequestParam(value = "accountNumber", required = false) final String accountNumber,
+      @RequestParam(value = "accountNumber") final String accountNumber,
       @RequestParam(value = "expiryDate", required = false) final LocalDate expiryDate,
       @RequestParam(value = "brId", required = false) final Long ownerBranchId) {
     QueryResult<?> queryResult =
         queryManager.executeQuery(
             new SettlementAccountQuery(
-                pageable,
                 accountNumber,
                 expiryDate,
                 ownerBranchId != null ? ownerBranchId : ngSession.getUserBranch()));
@@ -114,11 +109,14 @@ public class AccountController {
     if (account.getEvent() == TransactionEvent.Placement)
       return status(CREATED)
           .body(commandProcessor.executeResult(new CreateTreasuryAccountCommand(account)));
-    if (account.getEvent() == TransactionEvent.Settlement
-        || account.getEvent() == TransactionEvent.Close)
+    if (account.getEvent() == TransactionEvent.Renew
+        || account.getEvent() == TransactionEvent.Settlement)
       return status(CREATED)
           .body(
               commandProcessor.executeResult(new SettlementOrCloseTreasuryAccountCommand(account)));
+    if (account.getEvent() == TransactionEvent.Reactive)
+      return status(CREATED)
+          .body(commandProcessor.executeResult(new ReactivateTreasuryAccountCommand(account)));
     return status(NOT_IMPLEMENTED).build();
   }
 

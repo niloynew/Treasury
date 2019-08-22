@@ -23,10 +23,10 @@ public class ProductEntity extends BaseEntity {
   @Column(name = "ID")
   private long id;
 
-  @Column(name = "PRODUCT_CODE")
+  @Column(name = "PRODUCT_CODE", nullable = false, length = 3, unique = true)
   private String code;
 
-  @Column(name = "PRODUCT_NAME")
+  @Column(name = "PRODUCT_NAME", nullable = false, unique = true)
   private String name;
 
   @Column(name = "PROFIT_APPLICABLE")

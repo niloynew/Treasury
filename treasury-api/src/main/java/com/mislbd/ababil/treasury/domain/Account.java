@@ -21,8 +21,8 @@ public class Account {
   private LocalDate accountOpenDate;
   private LocalDate accountClosingDate;
   private LocalDate expiryDate;
-  private int tenorAmount;
-  private TenorType tenorType;
+  private int tenureAmount;
+  private TenureType tenureType;
   private LocalDate renewalDate;
   private LocalDate newRenewalDate;
   private BigDecimal expectedProfitRate;
@@ -33,8 +33,8 @@ public class Account {
   private BigDecimal profitAmount;
   private BigDecimal actualProfit;
   private Boolean renewWithProfit;
-  private int newTenorAmount;
-  private TenorType newTenorType;
+  private int newTenureAmount;
+  private TenureType newTenureType;
   private LocalDate valueDate;
   private BigDecimal newProfitRate;
   private LocalDate newExpiryDate;
@@ -185,21 +185,21 @@ public class Account {
     return this;
   }
 
-  public int getTenorAmount() {
-    return tenorAmount;
+  public int getTenureAmount() {
+    return tenureAmount;
   }
 
-  public Account setTenorAmount(int tenorAmount) {
-    this.tenorAmount = tenorAmount;
+  public Account setTenureAmount(int tenureAmount) {
+    this.tenureAmount = tenureAmount;
     return this;
   }
 
-  public TenorType getTenorType() {
-    return tenorType;
+  public TenureType getTenureType() {
+    return tenureType;
   }
 
-  public Account setTenorType(TenorType tenorType) {
-    this.tenorType = tenorType;
+  public Account setTenureType(TenureType tenureType) {
+    this.tenureType = tenureType;
     return this;
   }
 
@@ -293,21 +293,21 @@ public class Account {
     return this;
   }
 
-  public int getNewTenorAmount() {
-    return newTenorAmount;
+  public int getNewTenureAmount() {
+    return newTenureAmount;
   }
 
-  public Account setNewTenorAmount(int newTenorAmount) {
-    this.newTenorAmount = newTenorAmount;
+  public Account setNewTenureAmount(int newTenureAmount) {
+    this.newTenureAmount = newTenureAmount;
     return this;
   }
 
-  public TenorType getNewTenorType() {
-    return newTenorType;
+  public TenureType getNewTenureType() {
+    return newTenureType;
   }
 
-  public Account setNewTenorType(TenorType newTenorType) {
-    this.newTenorType = newTenorType;
+  public Account setNewTenureType(TenureType newTenureType) {
+    this.newTenureType = newTenureType;
     return this;
   }
 

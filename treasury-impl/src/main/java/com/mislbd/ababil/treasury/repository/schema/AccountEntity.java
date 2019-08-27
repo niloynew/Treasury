@@ -2,7 +2,7 @@ package com.mislbd.ababil.treasury.repository.schema;
 
 import com.mislbd.ababil.asset.repository.schema.BaseEntity;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
-import com.mislbd.ababil.treasury.domain.TenorType;
+import com.mislbd.ababil.treasury.domain.TenureType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.*;
@@ -77,11 +77,11 @@ public class AccountEntity extends BaseEntity {
   private BigDecimal balance;
 
   @Column(name = "TENOR_AMOUNT")
-  private int tenorAmount;
+  private int tenureAmount;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "TENOR_TYPE")
-  private TenorType tenorType;
+  private TenureType tenureType;
 
   @Column(name = "PRINCIPAL_DEBIT")
   private BigDecimal principalDebit;
@@ -269,21 +269,21 @@ public class AccountEntity extends BaseEntity {
     return this;
   }
 
-  public int getTenorAmount() {
-    return tenorAmount;
+  public int getTenureAmount() {
+    return tenureAmount;
   }
 
-  public AccountEntity setTenorAmount(int tenorAmount) {
-    this.tenorAmount = tenorAmount;
+  public AccountEntity setTenureAmount(int tenureAmount) {
+    this.tenureAmount = tenureAmount;
     return this;
   }
 
-  public TenorType getTenorType() {
-    return tenorType;
+  public TenureType getTenureType() {
+    return tenureType;
   }
 
-  public AccountEntity setTenorType(TenorType tenorType) {
-    this.tenorType = tenorType;
+  public AccountEntity setTenureType(TenureType tenureType) {
+    this.tenureType = tenureType;
     return this;
   }
 

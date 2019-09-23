@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "ababil-general-ledger", url = "${mislbd.api.gatewayUrl}/ababil-general-ledger")
 public interface GeneralLedgerClient {
 
-  @RequestMapping(method = RequestMethod.GET, value = "/general-ledger-accounts/{id}")
-  ResponseEntity<GeneralLedgerAccount> getGeneralLedgerAccount(@PathVariable("id") Long id);
+  @RequestMapping(
+      method = RequestMethod.GET,
+      value = "/general-ledger-accounts/{generalLedgerAccountId}")
+  ResponseEntity<GeneralLedgerAccount> getGeneralLedgerAccount(
+      @PathVariable("generalLedgerAccountId") Long id);
 }

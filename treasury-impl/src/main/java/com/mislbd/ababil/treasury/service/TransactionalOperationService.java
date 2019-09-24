@@ -232,10 +232,13 @@ public class TransactionalOperationService {
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
-      entity =
-          accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
-      BigDecimal closingProfit = entity.getProfitDebit().subtract(entity.getProfitCredit());
-      BigDecimal closingPrincipal = entity.getBalance().subtract(closingProfit);
+      //      entity =
+      //
+      // accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
+      BigDecimal closingProfit =
+          entity.getProfitDebit().subtract(entity.getProfitCredit()).add(account.getActualProfit());
+      BigDecimal closingPrincipal =
+          entity.getPrincipalDebit().subtract(entity.getPrincipalCredit());
       transactionService.doTreasuryTransaction(
           mapper.getProfitPayableAccount(
               txnInformation,
@@ -263,7 +266,7 @@ public class TransactionalOperationService {
               auditInformation,
               true,
               entity.getAccountNumber(),
-              entity.getBalance(),
+              closingPrincipal.add(closingPrincipal),
               settlementGl,
               account.getValueDate()),
           TransactionRequestType.TRANSFER);

@@ -129,7 +129,7 @@ public class AccountMapper {
         accountRepository
             .findById(domain.getId())
             .orElseThrow(AccountNotFoundException::new)
-            .setAmount(BigDecimal.ZERO)
+            .setBalance(BigDecimal.ZERO)
             .setClosingDate(domain.getValueDate())
             .setStatus(AccountStatus.CLOSED);
   }

@@ -232,9 +232,6 @@ public class TransactionalOperationService {
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
-      //      entity =
-      //
-      // accountRepository.findById(account.getId()).orElseThrow(AccountNotFoundException::new);
       BigDecimal closingProfit =
           entity.getProfitDebit().subtract(entity.getProfitCredit()).add(account.getActualProfit());
       BigDecimal closingPrincipal =
@@ -266,26 +263,16 @@ public class TransactionalOperationService {
               auditInformation,
               true,
               entity.getAccountNumber(),
-              closingPrincipal.add(closingPrincipal),
+              closingPrincipal.add(closingProfit),
               settlementGl,
               account.getValueDate()),
           TransactionRequestType.TRANSFER);
       accountRepository.save(accountMapper.closeDomainToEntity().map(account));
     }
 
-    doProvisionPosted(entity.getAccountNumber(), account.getProfitAmount());
+    utilityService.updateMonthendInfo(entity.getAccountNumber(), account.getEvent().name(), false);
 
     return txnInformation.getGlobalTxnNumber();
-  }
-
-  private void doProvisionPosted(String shadowAccountNumber, BigDecimal profitAmount) {
-    BigDecimal provisionAmount =
-        utilityService.totalProvisionOfAccounts(shadowAccountNumber, true, false);
-    if (provisionAmount.compareTo(profitAmount) != 0) {
-      throw new ProvisionMismatchException(
-          "Provision not match for account " + shadowAccountNumber);
-    }
-    utilityService.updateMonthendInfo(shadowAccountNumber, "RENEWAL", false);
   }
 
   String getRelatedGlCode(long productId, GLType glType) {

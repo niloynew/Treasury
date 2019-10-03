@@ -69,7 +69,10 @@ public class TransactionalOperationService {
   public Long dolPlacementTransaction(AuditInformation auditInformation, Account account) {
 
     AccountEntity entity =
-        accountRepository.saveAndFlush(accountMapper.domainToEntity().map(account));
+        accountRepository.saveAndFlush(
+            accountMapper
+                .domainToEntity(account.getAmount(), account.getAmount(), null, null, null)
+                .map(account));
 
     TransactionalInformation txnInformation =
         getTransactionInformation(auditInformation, PLACEMENT_ACTIVITY, null);
@@ -115,25 +118,23 @@ public class TransactionalOperationService {
 
     /*
     ###### Common Transaction #######
-    * Treasury account debit
-    * Profit_Receivable credit
+    * Treasury account debit with actual_profit
+    * Profit_Receivable credit with provisional_profit
     * if actual_profit > provisional_profit
     *   then income gl credit (amount = actual_profit - provisional_profit)
     * if provisional_profit > actual_profit
     *   then debit income gl  (amount = provisional_profit - actual_profit)
-    *
+
     ##### Renewal with profit #########
     * Treasury account credit
     * Settlement gl debit
-    *
-    *
+    * Update treasury account set new renewal date, profit rate, expiry date and status
+
     ##### Settlement Transaction ###########
     * calculate closing balance and principal
     * Treasury account credit
     * Settlement gl debit
-    *
-    #### Update treasury account ######
-    * set new renewal date, profit rate, expiry date and status module
+    * Update treasury account set status closed
     * */
 
     AccountEntity entity =
@@ -205,7 +206,7 @@ public class TransactionalOperationService {
 
     if (account.getEvent() == TransactionEvent.Renew) {
       if (!account.getRenewWithProfit()
-          && account.getProfitAmount().compareTo(BigDecimal.ZERO) == 1) {
+          && account.getActualProfit().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
             mapper.getProfitPayableAccount(
                 txnInformation,
@@ -213,7 +214,7 @@ public class TransactionalOperationService {
                 auditInformation,
                 false,
                 entity.getAccountNumber(),
-                account.getProfitAmount()),
+                account.getActualProfit()),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
         transactionService.doGlTransaction(
@@ -223,12 +224,30 @@ public class TransactionalOperationService {
                 auditInformation,
                 true,
                 entity.getAccountNumber(),
-                account.getProfitAmount(),
+                account.getActualProfit(),
                 settlementGl,
                 account.getValueDate()),
             TransactionRequestType.TRANSFER);
+        accountRepository.save(
+            accountMapper
+                .renwalDomainToEntity(
+                    entity.getBalance(),
+                    entity.getPrincipalDebit(),
+                    entity.getPrincipalCredit(),
+                    account.getActualProfit(),
+                    account.getActualProfit())
+                .map(account));
+      } else {
+        accountRepository.save(
+            accountMapper
+                .renwalDomainToEntity(
+                    entity.getBalance().add(account.getActualProfit()),
+                    entity.getPrincipalDebit(),
+                    entity.getPrincipalCredit(),
+                    account.getActualProfit(),
+                    entity.getProfitCredit())
+                .map(account));
       }
-      accountRepository.save(accountMapper.renwalDomainToEntity().map(account));
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
@@ -256,6 +275,7 @@ public class TransactionalOperationService {
               closingPrincipal),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PRINCIPAL);
+      BigDecimal closingTotal = closingPrincipal.add(closingProfit);
       transactionService.doGlTransaction(
           mapper.getBalancingPayableGl(
               txnInformation,
@@ -263,11 +283,21 @@ public class TransactionalOperationService {
               auditInformation,
               true,
               entity.getAccountNumber(),
-              closingPrincipal.add(closingProfit),
+              closingTotal,
               settlementGl,
               account.getValueDate()),
           TransactionRequestType.TRANSFER);
-      accountRepository.save(accountMapper.closeDomainToEntity().map(account));
+      BigDecimal balance =
+          entity.getBalance().add(account.getActualProfit()).subtract(closingTotal);
+      accountRepository.save(
+          accountMapper
+              .closeDomainToEntity(
+                  balance,
+                  entity.getPrincipalDebit(),
+                  closingPrincipal,
+                  account.getActualProfit(),
+                  closingProfit)
+              .map(account));
     }
 
     utilityService.updateMonthendInfo(entity.getAccountNumber(), account.getEvent().name(), false);

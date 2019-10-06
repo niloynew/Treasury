@@ -59,32 +59,44 @@ public class AccountMapper {
             .setInstrument(entity.getInstrumentNumber());
   }
 
-  public ResultMapper<Account, AccountEntity> domainToEntity() {
+  public ResultMapper<Account, AccountEntity> domainToEntity(
+      BigDecimal balance,
+      BigDecimal principalDebit,
+      BigDecimal principalCredit,
+      BigDecimal profitDebit,
+      BigDecimal profitCredit) {
     return domain ->
         accountRepository
             .findById(domain.getId())
             .orElseGet(AccountEntity::new)
             .setId(domain.getId())
+            .setNostroAccountNumber(domain.getNostroAccountNumber())
+            .setAccountNumber(domain.getAccountNumber())
+            .setAccountTitle(domain.getAccountTitle())
+            .setOwnerBranchId(ngSession.getUserBranch())
+            .setInstrumentNumber(domain.getInstrument())
+            .setOpenDate(domain.getAccountOpenDate())
+            .setClosingDate(domain.getAccountClosingDate())
+            .setExpiryDate(domain.getExpiryDate())
+            .setRenewalDate(domain.getRenewalDate())
+            .setLastProvisionDate(domain.getLastProvisionDate())
+            .setStatus(AccountStatus.REGULAR)
+            .setCurrencyCode(domain.getCurrencyCode())
+            .setBankId(domain.getBankId())
+            .setBranchId(domain.getBranchId())
+            .setProfitRate(domain.getExpectedProfitRate())
             .setProduct(
                 productRepository
                     .findById(domain.getProductId())
                     .orElseThrow(ProductNotFoundException::new))
-            .setCurrencyCode(domain.getCurrencyCode())
-            .setBankId(domain.getBankId())
-            .setBranchId(domain.getBranchId())
-            .setAccountTitle(domain.getAccountTitle())
-            .setNostroAccountNumber(domain.getNostroAccountNumber())
             .setAmount(domain.getAmount())
-            .setAccountNumber(domain.getAccountNumber())
-            .setOpenDate(domain.getAccountOpenDate())
-            .setExpiryDate(domain.getExpiryDate())
+            .setBalance(balance)
             .setTenureAmount(domain.getTenureAmount())
             .setTenureType(domain.getTenureType())
-            .setRenewalDate(domain.getRenewalDate())
-            .setProfitRate(domain.getExpectedProfitRate())
-            .setStatus(AccountStatus.REGULAR)
-            .setInstrumentNumber(domain.getInstrument())
-            .setOwnerBranchId(ngSession.getUserBranch())
+            .setPrincipalDebit(principalDebit != null ? principalDebit : BigDecimal.ZERO)
+            .setPrincipalCredit(principalCredit != null ? principalCredit : BigDecimal.ZERO)
+            .setProfitDebit(profitDebit != null ? profitDebit : BigDecimal.ZERO)
+            .setProfitCredit(profitCredit != null ? profitCredit : BigDecimal.ZERO)
             .setActive(true);
   }
 
@@ -107,15 +119,24 @@ public class AccountMapper {
             .setLastProvisionDate(domain.getLastProvisionDate())
             .setGlobalTxnNumber(domain.getGlobalTxnNumber())
             .setValid(true)
-            .setRenewWithProfit(domain.getRenewWithProfit());
+            .setRenewWithProfit(domain.isRenewWithProfit());
   }
 
-  public ResultMapper<Account, AccountEntity> renwalDomainToEntity() {
+  public ResultMapper<Account, AccountEntity> renewalDomainToEntity(
+      BigDecimal balance,
+      BigDecimal principalDebit,
+      BigDecimal principalCredit,
+      BigDecimal profitDebit,
+      BigDecimal profitCredit) {
     return domain ->
         accountRepository
             .findById(domain.getId())
             .orElseThrow(AccountNotFoundException::new)
-            .setAccountNumber(domain.getAccountNumber())
+            .setBalance(balance != null ? balance : BigDecimal.ZERO)
+            .setPrincipalDebit(principalDebit != null ? principalDebit : BigDecimal.ZERO)
+            .setPrincipalCredit(principalCredit != null ? principalCredit : BigDecimal.ZERO)
+            .setProfitDebit(profitDebit != null ? profitDebit : BigDecimal.ZERO)
+            .setProfitCredit(profitCredit != null ? profitCredit : BigDecimal.ZERO)
             .setExpiryDate(domain.getNewExpiryDate())
             .setTenureAmount(domain.getNewTenureAmount())
             .setTenureType(domain.getNewTenureType())
@@ -124,12 +145,21 @@ public class AccountMapper {
             .setStatus(AccountStatus.REGULAR);
   }
 
-  public ResultMapper<Account, AccountEntity> closeDomainToEntity() {
+  public ResultMapper<Account, AccountEntity> closeDomainToEntity(
+      BigDecimal balance,
+      BigDecimal principalDebit,
+      BigDecimal principalCredit,
+      BigDecimal profitDebit,
+      BigDecimal profitCredit) {
     return domain ->
         accountRepository
             .findById(domain.getId())
             .orElseThrow(AccountNotFoundException::new)
-            .setAmount(BigDecimal.ZERO)
+            .setBalance(balance != null ? balance : BigDecimal.ZERO)
+            .setPrincipalDebit(principalDebit != null ? principalDebit : BigDecimal.ZERO)
+            .setPrincipalCredit(principalCredit != null ? principalCredit : BigDecimal.ZERO)
+            .setProfitDebit(profitDebit != null ? profitDebit : BigDecimal.ZERO)
+            .setProfitCredit(profitCredit != null ? profitCredit : BigDecimal.ZERO)
             .setClosingDate(domain.getValueDate())
             .setStatus(AccountStatus.CLOSED);
   }

@@ -119,10 +119,10 @@ public class AccountMapper {
             .setLastProvisionDate(domain.getLastProvisionDate())
             .setGlobalTxnNumber(domain.getGlobalTxnNumber())
             .setValid(true)
-            .setRenewWithProfit(domain.getRenewWithProfit());
+            .setRenewWithProfit(domain.isRenewWithProfit());
   }
 
-  public ResultMapper<Account, AccountEntity> renwalDomainToEntity(
+  public ResultMapper<Account, AccountEntity> renewalDomainToEntity(
       BigDecimal balance,
       BigDecimal principalDebit,
       BigDecimal principalCredit,

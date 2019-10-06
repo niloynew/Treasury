@@ -205,7 +205,7 @@ public class TransactionalOperationService {
     }
 
     if (account.getEvent() == TransactionEvent.Renew) {
-      if (!account.getRenewWithProfit()
+      if (!account.isRenewWithProfit()
           && account.getActualProfit().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
             mapper.getProfitPayableAccount(
@@ -230,7 +230,7 @@ public class TransactionalOperationService {
             TransactionRequestType.TRANSFER);
         accountRepository.save(
             accountMapper
-                .renwalDomainToEntity(
+                .renewalDomainToEntity(
                     entity.getBalance(),
                     entity.getPrincipalDebit(),
                     entity.getPrincipalCredit(),
@@ -240,7 +240,7 @@ public class TransactionalOperationService {
       } else {
         accountRepository.save(
             accountMapper
-                .renwalDomainToEntity(
+                .renewalDomainToEntity(
                     entity.getBalance().add(account.getActualProfit()),
                     entity.getPrincipalDebit(),
                     entity.getPrincipalCredit(),

@@ -129,7 +129,7 @@ public class AccountServiceImpl implements AccountService {
 
     String maxSerialNumber =
         getMaxSerialNumber(
-            productId, branchId, totalAccountPrefix, accountCodeLength - 1, serialLength);
+            productId, branchId, totalAccountPrefix - 1, accountCodeLength - 1, serialLength);
 
     String newSerialNumber =
         StringUtils.leftPad(

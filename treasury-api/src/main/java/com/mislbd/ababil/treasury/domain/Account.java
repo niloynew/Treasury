@@ -32,7 +32,7 @@ public class Account {
   private TransactionEvent event;
   private BigDecimal profitAmount;
   private BigDecimal actualProfit;
-  private Boolean renewWithProfit;
+  private boolean renewWithProfit;
   private int newTenureAmount;
   private TenureType newTenureType;
   private LocalDate valueDate;
@@ -284,13 +284,12 @@ public class Account {
     return this;
   }
 
-  public Boolean getRenewWithProfit() {
+  public boolean isRenewWithProfit() {
     return renewWithProfit;
   }
 
-  public Account setRenewWithProfit(Boolean renewWithProfit) {
+  public void setRenewWithProfit(boolean renewWithProfit) {
     this.renewWithProfit = renewWithProfit;
-    return this;
   }
 
   public int getNewTenureAmount() {

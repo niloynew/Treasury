@@ -83,16 +83,16 @@ public class AccountEntity extends BaseEntity {
   @Column(name = "TENOR_TYPE")
   private TenureType tenureType;
 
-  @Column(name = "PRINCIPAL_DEBIT")
+  @Column(name = "PRINCIPAL_DEBIT", columnDefinition = "Decimal(10,2) default '0.00'")
   private BigDecimal principalDebit;
 
-  @Column(name = "PRINCIPAL_CREDIT")
+  @Column(name = "PRINCIPAL_CREDIT", columnDefinition = "Decimal(10,2) default '0.00'")
   private BigDecimal principalCredit;
 
-  @Column(name = "PROFIT_DEBIT")
+  @Column(name = "PROFIT_DEBIT", columnDefinition = "Decimal(10,2) default '0.00'")
   private BigDecimal profitDebit;
 
-  @Column(name = "PROFIT_CREDIT")
+  @Column(name = "PROFIT_CREDIT", columnDefinition = "Decimal(10,2) default '0.00'")
   private BigDecimal profitCredit;
 
   @Column(name = "active")

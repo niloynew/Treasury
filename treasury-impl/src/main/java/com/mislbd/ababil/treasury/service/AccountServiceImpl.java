@@ -16,6 +16,7 @@ import com.mislbd.asset.commons.data.domain.PagedResultBuilder;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -149,10 +150,15 @@ public class AccountServiceImpl implements AccountService {
         ? StringUtils.leftPad("0", lengthOfSerial, "0")
         : accounts
             .stream()
+            .map(
+                entity ->
+                    entity.setAccountNumber(
+                        entity.getAccountNumber().substring(startPoint, endPoint)))
+            .collect(Collectors.toList())
+            .stream()
             .max(Comparator.comparing(AccountEntity::getAccountNumber))
             .orElseThrow(AccountNotFoundException::new)
-            .getAccountNumber()
-            .substring(startPoint, endPoint);
+            .getAccountNumber();
   }
 
   @Override

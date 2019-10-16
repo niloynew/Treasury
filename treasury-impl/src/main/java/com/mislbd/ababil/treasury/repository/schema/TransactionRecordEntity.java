@@ -1,5 +1,6 @@
 package com.mislbd.ababil.treasury.repository.schema;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,7 +37,7 @@ public class TransactionRecordEntity {
   private LocalDate txnDate;
 
   @Column(name = "TRAMOUNT")
-  private int amount;
+  private BigDecimal amount;
 
   @Column(name = "TRORIGINATINGBRID")
   private String trOiginatingBrId;
@@ -54,7 +55,7 @@ public class TransactionRecordEntity {
   private String narration;
 
   @Column(name = "TRGLOBALTXNNO")
-  private int globalTxnNo;
+  private Long globalTxnNo;
 
   @Column(name = "TRINITIATOR")
   private String initiator;

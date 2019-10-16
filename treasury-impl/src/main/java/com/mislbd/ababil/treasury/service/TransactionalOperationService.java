@@ -12,10 +12,13 @@ import com.mislbd.ababil.treasury.mapper.TransactionalOperationMapper;
 import com.mislbd.ababil.treasury.repository.jpa.AccountProcessRepository;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
 import com.mislbd.ababil.treasury.repository.jpa.ProductRelatedGLRepository;
+import com.mislbd.ababil.treasury.repository.jpa.TransactionRecordRepository;
 import com.mislbd.ababil.treasury.repository.schema.AccountEntity;
 import com.mislbd.ababil.treasury.repository.schema.AccountProcessEntity;
+import com.mislbd.ababil.treasury.repository.schema.TransactionRecordEntity;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,6 +39,7 @@ public class TransactionalOperationService {
   private final UtilityService utilityService;
   private final GlAccountService glAccountService;
   private final AccountProcessRepository processRepository;
+  private final TransactionRecordRepository transactionRecordRepository;
 
   public TransactionalOperationService(
       TransactionService transactionService,
@@ -46,7 +50,8 @@ public class TransactionalOperationService {
       AccountMapper accountMapper,
       UtilityService utilityService,
       GlAccountService glAccountService,
-      AccountProcessRepository processRepository) {
+      AccountProcessRepository processRepository,
+      TransactionRecordRepository transactionRecordRepository) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -57,6 +62,7 @@ public class TransactionalOperationService {
     this.utilityService = utilityService;
     this.glAccountService = glAccountService;
     this.processRepository = processRepository;
+    this.transactionRecordRepository = transactionRecordRepository;
   }
 
   /*
@@ -344,6 +350,45 @@ public class TransactionalOperationService {
 
     transactionService.correctTransaction(
         mapper.doTransactionCorrection(txnInformation, auditInformation));
+
+    updateTreasuryAccount(entity, processEntity);
+
     return txnInformation.getGlobalTxnNumber();
+  }
+
+  private void updateTreasuryAccount(
+      AccountEntity accountEntity, AccountProcessEntity processEntity) {
+
+    BigDecimal balance = accountEntity.getBalance();
+    BigDecimal principalDebit = BigDecimal.ZERO;
+    BigDecimal principalCredit = BigDecimal.ZERO;
+    BigDecimal profitDebit = BigDecimal.ZERO;
+    BigDecimal profitCredit = BigDecimal.ZERO;
+
+    List<TransactionRecordEntity> recordList =
+        transactionRecordRepository.findAllByGlobalTxnNo(processEntity.getGlobalTxnNumber());
+    for (TransactionRecordEntity record : recordList) {
+      if (record.getTxnDefId() == 22080010) {
+        balance.subtract(record.getAmount());
+        principalDebit = accountEntity.getPrincipalDebit().subtract(record.getAmount());
+      }
+      if (record.getTxnDefId() == 12080010) {
+        balance.add(record.getAmount());
+        principalCredit = accountEntity.getPrincipalCredit().subtract(record.getAmount());
+      }
+      if (record.getTxnDefId() == 12080020) {
+        balance.subtract(record.getAmount());
+        profitDebit = accountEntity.getProfitDebit().subtract(record.getAmount());
+      }
+      if (record.getTxnDefId() == 22080020) {
+        balance.add(record.getAmount());
+        profitCredit = accountEntity.getProfitCredit().subtract(record.getAmount());
+      }
+    }
+
+    accountRepository.save(
+        accountMapper
+            .reactiveEntity(balance, principalDebit, principalCredit, profitDebit, profitCredit)
+            .map(processEntity));
   }
 }

@@ -2,7 +2,10 @@ package com.mislbd.ababil.treasury.service;
 
 import com.mislbd.ababil.asset.service.ConfigurationService;
 import com.mislbd.ababil.transaction.domain.TransactionAmountType;
+import com.mislbd.ababil.transaction.domain.TransactionDefinitionJournalType;
+import com.mislbd.ababil.transaction.domain.TransactionDefinitionModule;
 import com.mislbd.ababil.transaction.domain.TransactionRequestType;
+import com.mislbd.ababil.transaction.service.TransactionDefinitionService;
 import com.mislbd.ababil.transaction.service.TransactionService;
 import com.mislbd.ababil.treasury.domain.*;
 import com.mislbd.ababil.treasury.exception.*;
@@ -40,18 +43,19 @@ public class TransactionalOperationService {
   private final GlAccountService glAccountService;
   private final AccountProcessRepository processRepository;
   private final TransactionRecordRepository transactionRecordRepository;
+  private final TransactionDefinitionService transactionDefinitionService;
 
   public TransactionalOperationService(
-      TransactionService transactionService,
-      ConfigurationService configurationService,
-      TransactionalOperationMapper mapper,
-      ProductRelatedGLRepository productRelatedGLRepository,
-      AccountRepository accountRepository,
-      AccountMapper accountMapper,
-      UtilityService utilityService,
-      GlAccountService glAccountService,
-      AccountProcessRepository processRepository,
-      TransactionRecordRepository transactionRecordRepository) {
+          TransactionService transactionService,
+          ConfigurationService configurationService,
+          TransactionalOperationMapper mapper,
+          ProductRelatedGLRepository productRelatedGLRepository,
+          AccountRepository accountRepository,
+          AccountMapper accountMapper,
+          UtilityService utilityService,
+          GlAccountService glAccountService,
+          AccountProcessRepository processRepository,
+          TransactionRecordRepository transactionRecordRepository, TransactionDefinitionService transactionDefinitionService) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -63,6 +67,7 @@ public class TransactionalOperationService {
     this.glAccountService = glAccountService;
     this.processRepository = processRepository;
     this.transactionRecordRepository = transactionRecordRepository;
+    this.transactionDefinitionService = transactionDefinitionService;
   }
 
   /*
@@ -365,22 +370,27 @@ public class TransactionalOperationService {
     BigDecimal profitDebit = accountEntity.getProfitDebit();
     BigDecimal profitCredit = accountEntity.getProfitCredit();
 
+    Long principalDebitDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.DEBIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PRINCIPAL);
+    Long principalCreditDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.CREDIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PRINCIPAL);
+    Long profitDebitDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.DEBIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PROFIT);
+    Long profitCreditDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.CREDIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PROFIT);
+
     List<TransactionRecordEntity> recordList =
         transactionRecordRepository.findAllByGlobalTxnNo(processEntity.getGlobalTxnNumber());
     for (TransactionRecordEntity record : recordList) {
-      if (record.getTxnDefId() == 22080010) {
+      if (record.getTxnDefId() == principalDebitDefId) {
         balance.subtract(record.getAmount());
         principalDebit.subtract(record.getAmount());
       }
-      if (record.getTxnDefId() == 12080010) {
+      if (record.getTxnDefId() == principalCreditDefId) {
         balance.add(record.getAmount());
         principalCredit.subtract(record.getAmount());
       }
-      if (record.getTxnDefId() == 12080020) {
+      if (record.getTxnDefId() == profitDebitDefId) {
         balance.subtract(record.getAmount());
         profitDebit.subtract(record.getAmount());
       }
-      if (record.getTxnDefId() == 22080020) {
+      if (record.getTxnDefId() == profitCreditDefId) {
         balance.add(record.getAmount());
         profitCredit.subtract(record.getAmount());
       }

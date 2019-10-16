@@ -46,7 +46,7 @@ public class TransactionRecordEntity {
   private String instrumentNo;
 
   @Column(name = "TRTRDID")
-  private int txnDefId;
+  private Long txnDefId;
 
   @Column(name = "TRREFACCID")
   private int refAccId;

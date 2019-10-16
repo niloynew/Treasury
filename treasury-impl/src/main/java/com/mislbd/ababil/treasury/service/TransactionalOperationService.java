@@ -360,29 +360,29 @@ public class TransactionalOperationService {
       AccountEntity accountEntity, AccountProcessEntity processEntity) {
 
     BigDecimal balance = accountEntity.getBalance();
-    BigDecimal principalDebit = BigDecimal.ZERO;
-    BigDecimal principalCredit = BigDecimal.ZERO;
-    BigDecimal profitDebit = BigDecimal.ZERO;
-    BigDecimal profitCredit = BigDecimal.ZERO;
+    BigDecimal principalDebit = accountEntity.getPrincipalDebit();
+    BigDecimal principalCredit = accountEntity.getPrincipalCredit();
+    BigDecimal profitDebit = accountEntity.getProfitDebit();
+    BigDecimal profitCredit = accountEntity.getProfitCredit();
 
     List<TransactionRecordEntity> recordList =
         transactionRecordRepository.findAllByGlobalTxnNo(processEntity.getGlobalTxnNumber());
     for (TransactionRecordEntity record : recordList) {
       if (record.getTxnDefId() == 22080010) {
         balance.subtract(record.getAmount());
-        principalDebit = accountEntity.getPrincipalDebit().subtract(record.getAmount());
+        principalDebit.subtract(record.getAmount());
       }
       if (record.getTxnDefId() == 12080010) {
         balance.add(record.getAmount());
-        principalCredit = accountEntity.getPrincipalCredit().subtract(record.getAmount());
+        principalCredit.subtract(record.getAmount());
       }
       if (record.getTxnDefId() == 12080020) {
         balance.subtract(record.getAmount());
-        profitDebit = accountEntity.getProfitDebit().subtract(record.getAmount());
+        profitDebit.subtract(record.getAmount());
       }
       if (record.getTxnDefId() == 22080020) {
         balance.add(record.getAmount());
-        profitCredit = accountEntity.getProfitCredit().subtract(record.getAmount());
+        profitCredit.subtract(record.getAmount());
       }
     }
 

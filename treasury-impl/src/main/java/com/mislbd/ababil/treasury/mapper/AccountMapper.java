@@ -111,11 +111,11 @@ public class AccountMapper {
             .setProvisionAmount(domain.getProfitAmount())
             .setActualProvision(domain.getActualProfit())
             .setOldStatus(domain.getStatus())
-            .setNewStatus(domain.getStatus())
+            .setNewStatus(domain.getNewStatus())
             .setOldExpiryDate(domain.getExpiryDate())
             .setNewExpiryDate(domain.getNewExpiryDate())
             .setOldRenewalDate(domain.getRenewalDate())
-            .setNewRenewalDate(domain.getRenewalDate())
+            .setNewRenewalDate(domain.getNewRenewalDate())
             .setLastProvisionDate(domain.getLastProvisionDate())
             .setGlobalTxnNumber(domain.getGlobalTxnNumber())
             .setValid(true)
@@ -140,7 +140,7 @@ public class AccountMapper {
             .setExpiryDate(domain.getNewExpiryDate())
             .setTenureAmount(domain.getNewTenureAmount())
             .setTenureType(domain.getNewTenureType())
-            .setRenewalDate(domain.getRenewalDate().plusDays(1))
+            .setRenewalDate(domain.getExpiryDate().plusDays(1))
             .setProfitRate(domain.getNewProfitRate())
             .setStatus(AccountStatus.REGULAR);
   }
@@ -188,5 +188,27 @@ public class AccountMapper {
                 utilityService.totalProvisionOfAccounts(entity.getAccountNumber(), null, false))
             .setProductAmount(
                 utilityService.totalProductOfAccounts(entity.getAccountNumber(), null, false));
+  }
+
+  public ResultMapper<AccountProcessEntity, AccountEntity> reactiveEntity(
+      BigDecimal balance,
+      BigDecimal principalDebit,
+      BigDecimal principalCredit,
+      BigDecimal profitDebit,
+      BigDecimal profitCredit) {
+    return process ->
+        accountRepository
+            .findByAccountNumber(process.getAccountNumber())
+            .orElseThrow(AccountNotFoundException::new)
+            .setBalance(balance)
+            .setPrincipalDebit(principalDebit)
+            .setPrincipalCredit(principalCredit)
+            .setProfitDebit(profitDebit)
+            .setProfitCredit(profitCredit)
+            .setStatus(AccountStatus.MATURED)
+            .setLastProvisionDate(process.getLastProvisionDate())
+            .setRenewalDate(process.getOldRenewalDate())
+            .setExpiryDate(process.getOldExpiryDate())
+            .setClosingDate(null);
   }
 }

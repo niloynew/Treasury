@@ -227,6 +227,7 @@ public class TransactionalOperationMapper {
       TransactionalInformation transactionalInformation, AuditInformation auditInformation) {
     TransactionCorrectionRequest request = new TransactionCorrectionRequest();
     request.setGlobalTransactionNumber(transactionalInformation.getGlobalTxnNumber());
+    request.setInitiatorBranch(Long.valueOf(auditInformation.getUserBranch()));
     request.setEntryUser(auditInformation.getEntryUser());
     request.setEntryTerminal(auditInformation.getEntryTerminal());
     request.setVerifyUser(auditInformation.getVerifyUser());

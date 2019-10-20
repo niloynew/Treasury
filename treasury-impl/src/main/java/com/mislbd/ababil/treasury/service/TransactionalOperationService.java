@@ -46,16 +46,17 @@ public class TransactionalOperationService {
   private final TransactionDefinitionService transactionDefinitionService;
 
   public TransactionalOperationService(
-          TransactionService transactionService,
-          ConfigurationService configurationService,
-          TransactionalOperationMapper mapper,
-          ProductRelatedGLRepository productRelatedGLRepository,
-          AccountRepository accountRepository,
-          AccountMapper accountMapper,
-          UtilityService utilityService,
-          GlAccountService glAccountService,
-          AccountProcessRepository processRepository,
-          TransactionRecordRepository transactionRecordRepository, TransactionDefinitionService transactionDefinitionService) {
+      TransactionService transactionService,
+      ConfigurationService configurationService,
+      TransactionalOperationMapper mapper,
+      ProductRelatedGLRepository productRelatedGLRepository,
+      AccountRepository accountRepository,
+      AccountMapper accountMapper,
+      UtilityService utilityService,
+      GlAccountService glAccountService,
+      AccountProcessRepository processRepository,
+      TransactionRecordRepository transactionRecordRepository,
+      TransactionDefinitionService transactionDefinitionService) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
     this.baseCurrency = configurationService.getBaseCurrencyCode();
@@ -348,7 +349,7 @@ public class TransactionalOperationService {
               + " not equal to current date.");
     }
 
-    if (entity.getStatus() != AccountStatus.CLOSED || entity.getStatus() != AccountStatus.REGULAR) {
+    if (entity.getStatus() != AccountStatus.CLOSED) {
       throw new ReactiveTransactionException(
           "Can not be reverse, account status found " + entity.getStatus());
     }
@@ -370,29 +371,49 @@ public class TransactionalOperationService {
     BigDecimal profitDebit = accountEntity.getProfitDebit();
     BigDecimal profitCredit = accountEntity.getProfitCredit();
 
-    Long principalDebitDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.DEBIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PRINCIPAL);
-    Long principalCreditDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.CREDIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PRINCIPAL);
-    Long profitDebitDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.DEBIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PROFIT);
-    Long profitCreditDefId = transactionDefinitionService.getId(TransactionDefinitionJournalType.CREDIT, TransactionRequestType.TRANSFER, TransactionDefinitionModule.TREASURY, TransactionAmountType.PROFIT);
+    Long principalDebitDefId =
+        transactionDefinitionService.getId(
+            TransactionDefinitionJournalType.DEBIT,
+            TransactionRequestType.TRANSFER,
+            TransactionDefinitionModule.TREASURY,
+            TransactionAmountType.PRINCIPAL);
+    Long principalCreditDefId =
+        transactionDefinitionService.getId(
+            TransactionDefinitionJournalType.CREDIT,
+            TransactionRequestType.TRANSFER,
+            TransactionDefinitionModule.TREASURY,
+            TransactionAmountType.PRINCIPAL);
+    Long profitDebitDefId =
+        transactionDefinitionService.getId(
+            TransactionDefinitionJournalType.DEBIT,
+            TransactionRequestType.TRANSFER,
+            TransactionDefinitionModule.TREASURY,
+            TransactionAmountType.PROFIT);
+    Long profitCreditDefId =
+        transactionDefinitionService.getId(
+            TransactionDefinitionJournalType.CREDIT,
+            TransactionRequestType.TRANSFER,
+            TransactionDefinitionModule.TREASURY,
+            TransactionAmountType.PROFIT);
 
     List<TransactionRecordEntity> recordList =
         transactionRecordRepository.findAllByGlobalTxnNo(processEntity.getGlobalTxnNumber());
     for (TransactionRecordEntity record : recordList) {
-      if (record.getTxnDefId() == principalDebitDefId) {
-        balance.subtract(record.getAmount());
-        principalDebit.subtract(record.getAmount());
+      if (record.getTxnDefId().compareTo(principalDebitDefId) == 0) {
+        balance = balance.subtract(record.getAmount());
+        principalDebit = principalDebit.subtract(record.getAmount());
       }
-      if (record.getTxnDefId() == principalCreditDefId) {
-        balance.add(record.getAmount());
-        principalCredit.subtract(record.getAmount());
+      if (record.getTxnDefId().compareTo(principalCreditDefId) == 0) {
+        balance = balance.add(record.getAmount());
+        principalCredit = principalCredit.subtract(record.getAmount());
       }
-      if (record.getTxnDefId() == profitDebitDefId) {
-        balance.subtract(record.getAmount());
-        profitDebit.subtract(record.getAmount());
+      if (record.getTxnDefId().compareTo(profitDebitDefId) == 0) {
+        balance = balance.subtract(record.getAmount());
+        profitDebit = profitDebit.subtract(record.getAmount());
       }
-      if (record.getTxnDefId() == profitCreditDefId) {
-        balance.add(record.getAmount());
-        profitCredit.subtract(record.getAmount());
+      if (record.getTxnDefId().compareTo(profitCreditDefId) == 0) {
+        balance = balance.add(record.getAmount());
+        profitCredit = profitCredit.subtract(record.getAmount());
       }
     }
 

@@ -49,7 +49,7 @@ public class TransactionRecordEntity {
   private Long txnDefId;
 
   @Column(name = "TRREFACCID")
-  private int refAccId;
+  private Long refAccId;
 
   @Column(name = "TRNARRATION")
   private String narration;

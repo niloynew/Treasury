@@ -46,7 +46,12 @@ public class AccountCommandHandlerAggregate {
   }
 
   @CommandListener(
-      commandClasses = {CreateTreasuryAccountCommand.class, UpdateTreasuryAccountCommand.class, SettlementOrCloseTreasuryAccountCommand.class, ReactivateTreasuryAccountCommand.class})
+      commandClasses = {
+        CreateTreasuryAccountCommand.class,
+        UpdateTreasuryAccountCommand.class,
+        SettlementOrCloseTreasuryAccountCommand.class,
+        ReactivateTreasuryAccountCommand.class
+      })
   public void auditAccountCreateAndUpdate(CommandEvent e) {
     auditor.audit(e.getCommand().getPayload(), e.getCommand());
   }

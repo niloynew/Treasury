@@ -5,4 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ProductRepository
-    extends JpaRepository<ProductEntity, Long>, JpaSpecificationExecutor {}
+    extends JpaRepository<ProductEntity, Long>, JpaSpecificationExecutor {
+
+  boolean existsByCode(String code);
+
+  boolean existsByName(String name);
+}

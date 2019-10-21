@@ -7,6 +7,8 @@ import com.mislbd.ababil.treasury.command.CreateTreasuryProductCommand;
 import com.mislbd.ababil.treasury.command.DeleteTreasuryProductCommand;
 import com.mislbd.ababil.treasury.command.UpdateTreasuryProductCommand;
 import com.mislbd.ababil.treasury.domain.Product;
+import com.mislbd.ababil.treasury.exception.DuplicateProductCodeException;
+import com.mislbd.ababil.treasury.exception.DuplicateProductNameException;
 import com.mislbd.ababil.treasury.exception.ProductNatureNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.mapper.ProductGLMapper;
@@ -63,6 +65,12 @@ public class ProductCommandHandlerAggregate {
   @Transactional
   @CommandHandler
   public CommandResponse<Long> createProduct(CreateTreasuryProductCommand command) {
+    if (productRepository.existsByCode(command.getPayload().getCode())) {
+      throw new DuplicateProductCodeException();
+    }
+    if (productRepository.existsByName(command.getPayload().getName())) {
+      throw new DuplicateProductNameException();
+    }
     long productId =
         productRepository.save(productMapper.domainToEntity().map(command.getPayload())).getId();
     command

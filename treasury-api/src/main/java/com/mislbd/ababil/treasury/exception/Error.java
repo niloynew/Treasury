@@ -34,7 +34,10 @@ public enum Error {
 
     @Override
     public String getMessages(LocaleMessages localeMessages) {
-      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Product not found");
+      message =
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("Transaction record not found");
       return message;
     }
   },
@@ -65,8 +68,7 @@ public enum Error {
 
     @Override
     public String getMessages(LocaleMessages localeMessages) {
-      message =
-          localeMessages.get(this.getModule() + this.getCode()).orElse("Product Nature not found");
+      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Account not found");
       return message;
     }
   },
@@ -82,7 +84,9 @@ public enum Error {
     @Override
     public String getMessages(LocaleMessages localeMessages) {
       message =
-          localeMessages.get(this.getModule() + this.getCode()).orElse("Product Nature not found");
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("Product related GL not found");
       return message;
     }
   },
@@ -97,8 +101,7 @@ public enum Error {
 
     @Override
     public String getMessages(LocaleMessages localeMessages) {
-      message =
-          localeMessages.get(this.getModule() + this.getCode()).orElse("Product Nature not found");
+      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Provision mismatch");
       return message;
     }
   },
@@ -149,11 +152,46 @@ public enum Error {
 
     @Override
     public String getMessages(LocaleMessages localeMessages) {
-      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Rrecord not found");
+      message = localeMessages.get(this.getModule() + this.getCode()).orElse("Record not found");
       return message;
     }
   },
-  ;
+
+  DUPLICATE_PRODUCT_CODE("270", "0009") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("Product Code already exists");
+      return message;
+    }
+  },
+
+  DUPLICATE_PRODUCT_NAME("270", "0010") {
+    private String message;
+
+    @Override
+    public String getMessages() {
+      return message;
+    }
+
+    @Override
+    public String getMessages(LocaleMessages localeMessages) {
+      message =
+          localeMessages
+              .get(this.getModule() + this.getCode())
+              .orElse("Product Name already exists");
+      return message;
+    }
+  };
 
   // region <R>
   Error(final String module, final String code) {

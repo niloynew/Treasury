@@ -175,6 +175,7 @@ public class AccountMapper {
             .setBranchId(entity.getBranchId())
             .setAccountTitle(entity.getAccountTitle())
             .setNostroAccountNumber(entity.getNostroAccountNumber())
+            .setAmount(entity.getAmount())
             .setBalance(entity.getBalance())
             .setAccountNumber(entity.getAccountNumber())
             .setAccountOpenDate(entity.getOpenDate())

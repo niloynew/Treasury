@@ -35,7 +35,7 @@ public class TransactionalOperationService {
   private final TransactionService transactionService;
   private final ConfigurationService configurationService;
   private final TransactionalOperationMapper mapper;
-  private final String baseCurrency;
+  //  private final String baseCurrency;
   private final ProductRelatedGLRepository productRelatedGLRepository;
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
@@ -59,7 +59,7 @@ public class TransactionalOperationService {
       TransactionDefinitionService transactionDefinitionService) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
-    this.baseCurrency = configurationService.getBaseCurrencyCode();
+    //    this.baseCurrency = configurationService.getBaseCurrencyCode();
     this.mapper = mapper;
     this.productRelatedGLRepository = productRelatedGLRepository;
     this.accountRepository = accountRepository;
@@ -90,7 +90,12 @@ public class TransactionalOperationService {
         getTransactionInformation(auditInformation, PLACEMENT_ACTIVITY, null);
 
     transactionService.doTreasuryTransaction(
-        mapper.getPayableAccount(txnInformation, baseCurrency, auditInformation, true, entity),
+        mapper.getPayableAccount(
+            txnInformation,
+            configurationService.getBaseCurrencyCode(),
+            auditInformation,
+            true,
+            entity),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
 
@@ -98,7 +103,12 @@ public class TransactionalOperationService {
 
     transactionService.doGlTransaction(
         mapper.getPrincipalPayableGL(
-            txnInformation, baseCurrency, auditInformation, false, entity, settlementGlCode),
+            txnInformation,
+            configurationService.getBaseCurrencyCode(),
+            auditInformation,
+            false,
+            entity,
+            settlementGlCode),
         TransactionRequestType.TRANSFER);
 
     return txnInformation.getGlobalTxnNumber();
@@ -118,7 +128,8 @@ public class TransactionalOperationService {
                 ? globalTxnNumber
                 : transactionService.getGlobalTransactionNumber(
                     auditInformation.getEntryUser(), activityId))
-        .exchangeRate(transactionService.getSystemExchangeRate(baseCurrency))
+        .exchangeRate(
+            transactionService.getSystemExchangeRate(configurationService.getBaseCurrencyCode()))
         .exchangeRateType(
             Long.valueOf(
                 configurationService.getConfiguration(SYSTEM_EXCHANGE_RATE_TYPE).get().getValue()))
@@ -163,7 +174,7 @@ public class TransactionalOperationService {
     transactionService.doTreasuryTransaction(
         mapper.getProfitPayableAccount(
             txnInformation,
-            baseCurrency,
+            configurationService.getBaseCurrencyCode(),
             auditInformation,
             true,
             entity.getAccountNumber(),
@@ -174,7 +185,7 @@ public class TransactionalOperationService {
     transactionService.doGlTransaction(
         mapper.getProfitPayableGL(
             txnInformation,
-            baseCurrency,
+            configurationService.getBaseCurrencyCode(),
             auditInformation,
             false,
             entity.getAccountNumber(),
@@ -190,7 +201,7 @@ public class TransactionalOperationService {
         transactionService.doGlTransaction(
             mapper.getBalancingPayableGl(
                 txnInformation,
-                baseCurrency,
+                configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 true,
                 entity.getAccountNumber(),
@@ -205,7 +216,7 @@ public class TransactionalOperationService {
         transactionService.doGlTransaction(
             mapper.getBalancingPayableGl(
                 txnInformation,
-                baseCurrency,
+                configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 false,
                 entity.getAccountNumber(),
@@ -222,7 +233,7 @@ public class TransactionalOperationService {
         transactionService.doTreasuryTransaction(
             mapper.getProfitPayableAccount(
                 txnInformation,
-                baseCurrency,
+                configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 false,
                 entity.getAccountNumber(),
@@ -232,7 +243,7 @@ public class TransactionalOperationService {
         transactionService.doGlTransaction(
             mapper.getProfitPayableGL(
                 txnInformation,
-                baseCurrency,
+                configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 true,
                 entity.getAccountNumber(),
@@ -270,7 +281,7 @@ public class TransactionalOperationService {
       transactionService.doTreasuryTransaction(
           mapper.getProfitPayableAccount(
               txnInformation,
-              baseCurrency,
+              configurationService.getBaseCurrencyCode(),
               auditInformation,
               false,
               entity.getAccountNumber(),
@@ -280,7 +291,7 @@ public class TransactionalOperationService {
       transactionService.doTreasuryTransaction(
           mapper.getPrincipalPayableAccount(
               txnInformation,
-              baseCurrency,
+              configurationService.getBaseCurrencyCode(),
               auditInformation,
               false,
               entity.getAccountNumber(),
@@ -291,7 +302,7 @@ public class TransactionalOperationService {
       transactionService.doGlTransaction(
           mapper.getBalancingPayableGl(
               txnInformation,
-              baseCurrency,
+              configurationService.getBaseCurrencyCode(),
               auditInformation,
               true,
               entity.getAccountNumber(),

@@ -35,7 +35,6 @@ public class TransactionalOperationService {
   private final TransactionService transactionService;
   private final ConfigurationService configurationService;
   private final TransactionalOperationMapper mapper;
-  //  private final String baseCurrency;
   private final ProductRelatedGLRepository productRelatedGLRepository;
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
@@ -59,7 +58,6 @@ public class TransactionalOperationService {
       TransactionDefinitionService transactionDefinitionService) {
     this.transactionService = transactionService;
     this.configurationService = configurationService;
-    //    this.baseCurrency = configurationService.getBaseCurrencyCode();
     this.mapper = mapper;
     this.productRelatedGLRepository = productRelatedGLRepository;
     this.accountRepository = accountRepository;
@@ -171,28 +169,32 @@ public class TransactionalOperationService {
     String incomeGl = getRelatedGlCode(entity.getProduct().getId(), GLType.INCOME_GL);
     String settlementGl = getRelatedGlCode(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
 
-    transactionService.doTreasuryTransaction(
-        mapper.getProfitPayableAccount(
-            txnInformation,
-            configurationService.getBaseCurrencyCode(),
-            auditInformation,
-            true,
-            entity.getAccountNumber(),
-            account.getActualProfit()),
-        TransactionRequestType.TRANSFER,
-        TransactionAmountType.PROFIT);
+    if (account.getActualProfit().signum() == 1) {
+      transactionService.doTreasuryTransaction(
+          mapper.getProfitPayableAccount(
+              txnInformation,
+              configurationService.getBaseCurrencyCode(),
+              auditInformation,
+              true,
+              entity.getAccountNumber(),
+              account.getActualProfit()),
+          TransactionRequestType.TRANSFER,
+          TransactionAmountType.PROFIT);
+    }
 
-    transactionService.doGlTransaction(
-        mapper.getProfitPayableGL(
-            txnInformation,
-            configurationService.getBaseCurrencyCode(),
-            auditInformation,
-            false,
-            entity.getAccountNumber(),
-            account.getProfitAmount(),
-            profitReceivableGl,
-            account.getValueDate()),
-        TransactionRequestType.TRANSFER);
+    if (account.getProfitAmount().signum() == 1) {
+      transactionService.doGlTransaction(
+          mapper.getProfitPayableGL(
+              txnInformation,
+              configurationService.getBaseCurrencyCode(),
+              auditInformation,
+              false,
+              entity.getAccountNumber(),
+              account.getProfitAmount(),
+              profitReceivableGl,
+              account.getValueDate()),
+          TransactionRequestType.TRANSFER);
+    }
 
     if (account.getProfitAmount() != null && account.getActualProfit() != null) {
 
@@ -278,38 +280,48 @@ public class TransactionalOperationService {
           entity.getProfitDebit().subtract(entity.getProfitCredit()).add(account.getActualProfit());
       BigDecimal closingPrincipal =
           entity.getPrincipalDebit().subtract(entity.getPrincipalCredit());
-      transactionService.doTreasuryTransaction(
-          mapper.getProfitPayableAccount(
-              txnInformation,
-              configurationService.getBaseCurrencyCode(),
-              auditInformation,
-              false,
-              entity.getAccountNumber(),
-              closingProfit),
-          TransactionRequestType.TRANSFER,
-          TransactionAmountType.PROFIT);
-      transactionService.doTreasuryTransaction(
-          mapper.getPrincipalPayableAccount(
-              txnInformation,
-              configurationService.getBaseCurrencyCode(),
-              auditInformation,
-              false,
-              entity.getAccountNumber(),
-              closingPrincipal),
-          TransactionRequestType.TRANSFER,
-          TransactionAmountType.PRINCIPAL);
+      if (closingProfit.signum() == 1) {
+        transactionService.doTreasuryTransaction(
+            mapper.getProfitPayableAccount(
+                txnInformation,
+                configurationService.getBaseCurrencyCode(),
+                auditInformation,
+                false,
+                entity.getAccountNumber(),
+                closingProfit),
+            TransactionRequestType.TRANSFER,
+            TransactionAmountType.PROFIT);
+      }
+
+      if (closingPrincipal.signum() == 1) {
+        transactionService.doTreasuryTransaction(
+            mapper.getPrincipalPayableAccount(
+                txnInformation,
+                configurationService.getBaseCurrencyCode(),
+                auditInformation,
+                false,
+                entity.getAccountNumber(),
+                closingPrincipal),
+            TransactionRequestType.TRANSFER,
+            TransactionAmountType.PRINCIPAL);
+      }
+
       BigDecimal closingTotal = closingPrincipal.add(closingProfit);
-      transactionService.doGlTransaction(
-          mapper.getBalancingPayableGl(
-              txnInformation,
-              configurationService.getBaseCurrencyCode(),
-              auditInformation,
-              true,
-              entity.getAccountNumber(),
-              closingTotal,
-              settlementGl,
-              account.getValueDate()),
-          TransactionRequestType.TRANSFER);
+
+      if (closingTotal.signum() == 1) {
+        transactionService.doGlTransaction(
+            mapper.getBalancingPayableGl(
+                txnInformation,
+                configurationService.getBaseCurrencyCode(),
+                auditInformation,
+                true,
+                entity.getAccountNumber(),
+                closingTotal,
+                settlementGl,
+                account.getValueDate()),
+            TransactionRequestType.TRANSFER);
+      }
+
       BigDecimal balance =
           entity.getBalance().add(account.getActualProfit()).subtract(closingTotal);
       accountRepository.save(

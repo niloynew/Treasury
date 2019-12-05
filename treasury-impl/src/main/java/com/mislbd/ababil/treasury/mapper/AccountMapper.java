@@ -206,7 +206,7 @@ public class AccountMapper {
             .setPrincipalCredit(principalCredit)
             .setProfitDebit(profitDebit)
             .setProfitCredit(profitCredit)
-            .setStatus(AccountStatus.MATURED)
+            .setStatus(process.getOldStatus())
             .setLastProvisionDate(process.getLastProvisionDate())
             .setRenewalDate(process.getOldRenewalDate())
             .setExpiryDate(process.getOldExpiryDate())

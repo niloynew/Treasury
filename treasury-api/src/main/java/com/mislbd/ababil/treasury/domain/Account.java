@@ -32,6 +32,7 @@ public class Account {
   private TransactionEvent event;
   private BigDecimal profitAmount;
   private BigDecimal actualProfit;
+  private BigDecimal provisionAmount;
   private boolean renewWithProfit;
   private int newTenureAmount;
   private TenureType newTenureType;
@@ -281,6 +282,15 @@ public class Account {
 
   public Account setActualProfit(BigDecimal actualProfit) {
     this.actualProfit = actualProfit;
+    return this;
+  }
+
+  public BigDecimal getProvisionAmount() {
+    return provisionAmount;
+  }
+
+  public Account setProvisionAmount(BigDecimal provisionAmount) {
+    this.provisionAmount = provisionAmount;
     return this;
   }
 

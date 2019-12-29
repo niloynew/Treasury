@@ -15,10 +15,10 @@ public class MonthendProductSpecification {
         predicate = cb.and(predicate, cb.equal(root.get("accNo"), accountNumber));
       }
       if (glPosted != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("glPosted"), true));
+        predicate = cb.and(predicate, cb.equal(root.get("glPosted"), glPosted));
       }
       if (accPosted != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("accPosted"), false));
+        predicate = cb.and(predicate, cb.equal(root.get("accPosted"), accPosted));
       }
 
       return predicate;

@@ -23,7 +23,7 @@ public class TransactionalOperationMapper {
       BigDecimal amount,
       TransactionAmountType amountType) {
     String narration =
-        amountType.name() + (isDebit ? " debited to " : " credited from ") + accountNumber;
+        amountType.name() + (isDebit ? " debited " : " credited ");
     TreasuryTransactionRequest request = new TreasuryTransactionRequest();
     request.setActivityId(txnInformation.getActivityId());
     request.setAmountCcy(amount);
@@ -46,75 +46,6 @@ public class TransactionalOperationMapper {
     request.setAccNumber(accountNumber);
     return request;
   }
-
-  //  public GlTransactionRequest getPayableGL(
-  //      TransactionalInformation txnInformation,
-  //      String baseCurrency,
-  //      AuditInformation auditInformation,
-  //      boolean isDebit,
-  //      AccountEntity entity,
-  //      String glCode, TransactionAmountType amountType) {
-  //    String narration = amountType.name() + (isDebit ? " debited to " : " credited from ");
-  //    GlTransactionRequest glRequest = new GlTransactionRequest();
-  //    glRequest.setActivityId(txnInformation.getActivityId());
-  //    glRequest.setAmountLcy(entity.getAmount());
-  //    glRequest.setAmountCcy(entity.getAmount());
-  //    glRequest.setCurrencyCode(baseCurrency);
-  //    glRequest.setExchangeRate(txnInformation.getExchangeRate());
-  //    glRequest.setRateType(txnInformation.getExchangeRateType());
-  //    glRequest.setDebitTransaction(isDebit);
-  //    glRequest.setBatchNo(txnInformation.getBatchNumber());
-  //    glRequest.setGlobalTxnNo(txnInformation.getGlobalTxnNumber());
-  //    glRequest.setOwnerBranch(auditInformation.getUserBranch());
-  //    glRequest.setEntryUser(auditInformation.getEntryUser());
-  //    glRequest.setEntryTerminal(auditInformation.getEntryTerminal());
-  //    glRequest.setEntryTime(auditInformation.getEntryDate());
-  //    glRequest.setVerifyUser(auditInformation.getVerifyUser());
-  //    glRequest.setVerifyTerminal(auditInformation.getVerifyTerminal());
-  //    glRequest.setNarration(narration);
-  //    glRequest.setApprovalFlowInstanceId(auditInformation.getProcessId());
-  //    glRequest.setInitiatorModule("TREASURY");
-  //    glRequest.setInitiatorBranch(auditInformation.getUserBranch());
-  //    glRequest.setValueDate(entity.getOpenDate());
-  //    glRequest.setGlCode(glCode);
-  //    return glRequest;
-  //  }
-
-  //  public TreasuryTransactionRequest getProfitPayableAccount(
-  //      TransactionalInformation txnInformation,
-  //      String baseCurrency,
-  //      AuditInformation auditInformation,
-  //      boolean isDebit,
-  //      String accountNumber,
-  //      BigDecimal profitAmount) {
-  //    TreasuryTransactionRequest request = new TreasuryTransactionRequest();
-  //    request.setActivityId(txnInformation.getActivityId());
-  //    request.setAmountCcy(profitAmount);
-  //    request.setAmountLcy(profitAmount);
-  //    request.setCurrencyCode(baseCurrency);
-  //    request.setExchangeRate(txnInformation.getExchangeRate());
-  //    request.setRateType(txnInformation.getExchangeRateType());
-  //    request.setDebitTransaction(isDebit);
-  //    request.setBatchNo(txnInformation.getBatchNumber());
-  //    request.setGlobalTxnNo(txnInformation.getGlobalTxnNumber());
-  //    request.setEntryUser(auditInformation.getEntryUser());
-  //    request.setEntryTerminal(auditInformation.getEntryTerminal());
-  //    request.setEntryTime(auditInformation.getEntryDate());
-  //    request.setVerifyUser(auditInformation.getVerifyUser());
-  //    request.setVerifyTerminal(auditInformation.getVerifyTerminal());
-  //    request.setNarration(
-  //        "Profit "
-  //            + profitAmount
-  //            + " BDT "
-  //            + (isDebit ? "debited to" : "credited from")
-  //            + " account "
-  //            + accountNumber);
-  //    request.setApprovalFlowInstanceId(auditInformation.getProcessId());
-  //    request.setInitiatorModule("TREASURY");
-  //    request.setInitiatorBranch(auditInformation.getUserBranch());
-  //    request.setAccNumber(accountNumber);
-  //    return request;
-  //  }
 
   public GlTransactionRequest getPayableGL(
       TransactionalInformation txnInformation,
@@ -151,77 +82,6 @@ public class TransactionalOperationMapper {
     glRequest.setGlCode(glCode);
     return glRequest;
   }
-
-  //  public GlTransactionRequest getBalancingPayableGl(
-  //      TransactionalInformation txnInformation,
-  //      String baseCurrency,
-  //      AuditInformation auditInformation,
-  //      boolean isDebit,
-  //      String accountNumber,
-  //      BigDecimal balance,
-  //      String glCode,
-  //      LocalDate valueDate) {
-  //    GlTransactionRequest glRequest = new GlTransactionRequest();
-  //    glRequest.setActivityId(txnInformation.getActivityId());
-  //    glRequest.setAmountCcy(balance);
-  //    glRequest.setAmountLcy(balance);
-  //    glRequest.setCurrencyCode(baseCurrency);
-  //    glRequest.setExchangeRate(txnInformation.getExchangeRate());
-  //    glRequest.setRateType(txnInformation.getExchangeRateType());
-  //    glRequest.setDebitTransaction(isDebit);
-  //    glRequest.setBatchNo(txnInformation.getBatchNumber());
-  //    glRequest.setGlobalTxnNo(txnInformation.getGlobalTxnNumber());
-  //    glRequest.setOwnerBranch(auditInformation.getUserBranch());
-  //    glRequest.setEntryUser(auditInformation.getEntryUser());
-  //    glRequest.setEntryTerminal(auditInformation.getEntryTerminal());
-  //    glRequest.setEntryTime(auditInformation.getEntryDate());
-  //    glRequest.setVerifyUser(auditInformation.getVerifyUser());
-  //    glRequest.setVerifyTerminal(auditInformation.getVerifyTerminal());
-  //    glRequest.setNarration(
-  //        " PROFIT " + (isDebit ? "DEBIT" : "CREDIT") + " ON PLACEMENT A/C: " + accountNumber);
-  //    glRequest.setApprovalFlowInstanceId(auditInformation.getProcessId());
-  //    glRequest.setInitiatorModule("TREASURY");
-  //    glRequest.setInitiatorBranch(auditInformation.getUserBranch());
-  //    glRequest.setValueDate(valueDate);
-  //    glRequest.setGlCode(glCode);
-  //    return glRequest;
-  //  }
-
-  //  public TreasuryTransactionRequest getPrincipalPayableAccount(
-  //      TransactionalInformation txnInformation,
-  //      String baseCurrency,
-  //      AuditInformation auditInformation,
-  //      boolean isDebit,
-  //      String accountNumber,
-  //      BigDecimal principalAmount) {
-  //    TreasuryTransactionRequest request = new TreasuryTransactionRequest();
-  //    request.setActivityId(txnInformation.getActivityId());
-  //    request.setAmountCcy(principalAmount);
-  //    request.setAmountLcy(principalAmount);
-  //    request.setCurrencyCode(baseCurrency);
-  //    request.setExchangeRate(txnInformation.getExchangeRate());
-  //    request.setRateType(txnInformation.getExchangeRateType());
-  //    request.setDebitTransaction(isDebit);
-  //    request.setBatchNo(txnInformation.getBatchNumber());
-  //    request.setGlobalTxnNo(txnInformation.getGlobalTxnNumber());
-  //    request.setEntryUser(auditInformation.getEntryUser());
-  //    request.setEntryTerminal(auditInformation.getEntryTerminal());
-  //    request.setEntryTime(auditInformation.getEntryDate());
-  //    request.setVerifyUser(auditInformation.getVerifyUser());
-  //    request.setVerifyTerminal(auditInformation.getVerifyTerminal());
-  //    request.setNarration(
-  //        "Principal "
-  //            + principalAmount
-  //            + " BDT "
-  //            + (isDebit ? "debited to" : "credited from")
-  //            + " account "
-  //            + accountNumber);
-  //    request.setApprovalFlowInstanceId(auditInformation.getProcessId());
-  //    request.setInitiatorModule("TREASURY");
-  //    request.setInitiatorBranch(auditInformation.getUserBranch());
-  //    request.setAccNumber(accountNumber);
-  //    return request;
-  //  }
 
   public TransactionCorrectionRequest doTransactionCorrection(
       TransactionalInformation transactionalInformation, AuditInformation auditInformation) {

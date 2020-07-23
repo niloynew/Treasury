@@ -93,20 +93,24 @@ public class TransactionalOperationService {
             configurationService.getBaseCurrencyCode(),
             auditInformation,
             true,
-            entity),
+            entity.getAccountNumber(),
+            entity.getAmount(),
+            TransactionAmountType.PRINCIPAL),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
 
     String settlementGlCode = getRelatedGlCode(entity.getProduct().getId(), GLType.SETTLEMENT_GL);
 
     transactionService.doGlTransaction(
-        mapper.getPrincipalPayableGL(
+        mapper.getPayableGL(
             txnInformation,
             configurationService.getBaseCurrencyCode(),
             auditInformation,
             false,
-            entity,
-            settlementGlCode),
+            entity.getAmount(),
+            settlementGlCode,
+            entity.getOpenDate(),
+            TransactionAmountType.PRINCIPAL),
         TransactionRequestType.TRANSFER);
 
     return txnInformation.getGlobalTxnNumber();
@@ -171,28 +175,29 @@ public class TransactionalOperationService {
 
     if (account.getActualProfit().signum() == 1) {
       transactionService.doTreasuryTransaction(
-          mapper.getProfitPayableAccount(
+          mapper.getPayableAccount(
               txnInformation,
               configurationService.getBaseCurrencyCode(),
               auditInformation,
               true,
               entity.getAccountNumber(),
-              account.getActualProfit()),
+              account.getActualProfit(),
+              TransactionAmountType.PROFIT),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PROFIT);
     }
 
     if (account.getProfitAmount().signum() == 1) {
       transactionService.doGlTransaction(
-          mapper.getProfitPayableGL(
+          mapper.getPayableGL(
               txnInformation,
               configurationService.getBaseCurrencyCode(),
               auditInformation,
               false,
-              entity.getAccountNumber(),
               account.getProfitAmount(),
               profitReceivableGl,
-              account.getValueDate()),
+              account.getValueDate(),
+              TransactionAmountType.PROFIT),
           TransactionRequestType.TRANSFER);
     }
 
@@ -201,30 +206,30 @@ public class TransactionalOperationService {
       if (account.getProfitAmount().compareTo(account.getActualProfit()) == 1) {
         BigDecimal overBalance = account.getProfitAmount().subtract(account.getActualProfit());
         transactionService.doGlTransaction(
-            mapper.getBalancingPayableGl(
+            mapper.getPayableGL(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 true,
-                entity.getAccountNumber(),
                 overBalance,
                 incomeGl,
-                account.getValueDate()),
+                account.getValueDate(),
+                TransactionAmountType.PROFIT),
             TransactionRequestType.TRANSFER);
       }
 
       if (account.getActualProfit().compareTo(account.getProfitAmount()) == 1) {
         BigDecimal lowerBalance = account.getActualProfit().subtract(account.getProfitAmount());
         transactionService.doGlTransaction(
-            mapper.getBalancingPayableGl(
+            mapper.getPayableGL(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 false,
-                entity.getAccountNumber(),
                 lowerBalance,
                 incomeGl,
-                account.getValueDate()),
+                account.getValueDate(),
+                TransactionAmountType.PROFIT),
             TransactionRequestType.TRANSFER);
       }
     }
@@ -233,25 +238,26 @@ public class TransactionalOperationService {
       if (!account.isRenewWithProfit()
           && account.getActualProfit().compareTo(BigDecimal.ZERO) == 1) {
         transactionService.doTreasuryTransaction(
-            mapper.getProfitPayableAccount(
+            mapper.getPayableAccount(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 false,
                 entity.getAccountNumber(),
-                account.getActualProfit()),
+                account.getActualProfit(),
+                TransactionAmountType.PROFIT),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
         transactionService.doGlTransaction(
-            mapper.getProfitPayableGL(
+            mapper.getPayableGL(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 true,
-                entity.getAccountNumber(),
                 account.getActualProfit(),
                 settlementGl,
-                account.getValueDate()),
+                account.getValueDate(),
+                TransactionAmountType.PROFIT),
             TransactionRequestType.TRANSFER);
         accountRepository.save(
             accountMapper
@@ -282,26 +288,28 @@ public class TransactionalOperationService {
           entity.getPrincipalDebit().subtract(entity.getPrincipalCredit());
       if (closingProfit.signum() == 1) {
         transactionService.doTreasuryTransaction(
-            mapper.getProfitPayableAccount(
+            mapper.getPayableAccount(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 false,
                 entity.getAccountNumber(),
-                closingProfit),
+                closingProfit,
+                TransactionAmountType.PROFIT),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
       }
 
       if (closingPrincipal.signum() == 1) {
         transactionService.doTreasuryTransaction(
-            mapper.getPrincipalPayableAccount(
+            mapper.getPayableAccount(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 false,
                 entity.getAccountNumber(),
-                closingPrincipal),
+                closingPrincipal,
+                TransactionAmountType.PRINCIPAL),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PRINCIPAL);
       }
@@ -310,15 +318,15 @@ public class TransactionalOperationService {
 
       if (closingTotal.signum() == 1) {
         transactionService.doGlTransaction(
-            mapper.getBalancingPayableGl(
+            mapper.getPayableGL(
                 txnInformation,
                 configurationService.getBaseCurrencyCode(),
                 auditInformation,
                 true,
-                entity.getAccountNumber(),
                 closingTotal,
                 settlementGl,
-                account.getValueDate()),
+                account.getValueDate(),
+                TransactionAmountType.PRINCIPAL),
             TransactionRequestType.TRANSFER);
       }
 

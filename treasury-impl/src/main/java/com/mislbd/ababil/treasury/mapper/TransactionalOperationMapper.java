@@ -23,7 +23,7 @@ public class TransactionalOperationMapper {
       BigDecimal amount,
       TransactionAmountType amountType) {
     String narration =
-        amountType.name() + (isDebit ? " debited " : " credited ");
+        amountType.name() + (isDebit ? " debited" : " credited");
     TreasuryTransactionRequest request = new TreasuryTransactionRequest();
     request.setActivityId(txnInformation.getActivityId());
     request.setAmountCcy(amount);

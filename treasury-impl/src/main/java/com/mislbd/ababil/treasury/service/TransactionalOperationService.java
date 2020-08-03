@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+@SuppressWarnings("Duplicates")
 @Service
 public class TransactionalOperationService {
 
@@ -95,7 +96,7 @@ public class TransactionalOperationService {
             true,
             entity.getAccountNumber(),
             entity.getAmount(),
-            TransactionAmountType.PRINCIPAL),
+            "PRINCIPAL"),
         TransactionRequestType.TRANSFER,
         TransactionAmountType.PRINCIPAL);
 
@@ -110,7 +111,7 @@ public class TransactionalOperationService {
             entity.getAmount(),
             settlementGlCode,
             entity.getOpenDate(),
-            TransactionAmountType.PRINCIPAL),
+            "PRINCIPAL"),
         TransactionRequestType.TRANSFER);
 
     return txnInformation.getGlobalTxnNumber();
@@ -182,7 +183,7 @@ public class TransactionalOperationService {
               true,
               entity.getAccountNumber(),
               account.getActualProfit(),
-              TransactionAmountType.PROFIT),
+              "ACTUAL PROFIT"),
           TransactionRequestType.TRANSFER,
           TransactionAmountType.PROFIT);
     }
@@ -197,7 +198,7 @@ public class TransactionalOperationService {
               account.getProfitAmount(),
               profitReceivableGl,
               account.getValueDate(),
-              TransactionAmountType.PROFIT),
+              "PROVISIONAL PROFIT"),
           TransactionRequestType.TRANSFER);
     }
 
@@ -214,7 +215,7 @@ public class TransactionalOperationService {
                 overBalance,
                 incomeGl,
                 account.getValueDate(),
-                TransactionAmountType.PROFIT),
+                "OVER PROFIT"),
             TransactionRequestType.TRANSFER);
       }
 
@@ -229,7 +230,7 @@ public class TransactionalOperationService {
                 lowerBalance,
                 incomeGl,
                 account.getValueDate(),
-                TransactionAmountType.PROFIT),
+                "DOWN PROFIT"),
             TransactionRequestType.TRANSFER);
       }
     }
@@ -245,7 +246,7 @@ public class TransactionalOperationService {
                 false,
                 entity.getAccountNumber(),
                 account.getActualProfit(),
-                TransactionAmountType.PROFIT),
+                "ACTUAL PROFIT"),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
         transactionService.doGlTransaction(
@@ -257,7 +258,7 @@ public class TransactionalOperationService {
                 account.getActualProfit(),
                 settlementGl,
                 account.getValueDate(),
-                TransactionAmountType.PROFIT),
+                "ACTUAL PROFIT"),
             TransactionRequestType.TRANSFER);
         accountRepository.save(
             accountMapper
@@ -295,7 +296,7 @@ public class TransactionalOperationService {
                 false,
                 entity.getAccountNumber(),
                 closingProfit,
-                TransactionAmountType.PROFIT),
+                "PROFIT"),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
       }
@@ -309,7 +310,7 @@ public class TransactionalOperationService {
                 false,
                 entity.getAccountNumber(),
                 closingPrincipal,
-                TransactionAmountType.PRINCIPAL),
+                "PRINCIPAL"),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PRINCIPAL);
       }
@@ -326,7 +327,7 @@ public class TransactionalOperationService {
                 closingTotal,
                 settlementGl,
                 account.getValueDate(),
-                TransactionAmountType.PRINCIPAL),
+                "PRINCIPAL"),
             TransactionRequestType.TRANSFER);
       }
 

@@ -14,6 +14,7 @@ import com.mislbd.security.core.NgSession;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("Duplicates")
 @Component
 public class AccountMapper {
 

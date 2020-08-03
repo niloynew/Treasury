@@ -1,7 +1,6 @@
 package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.transaction.domain.GlTransactionRequest;
-import com.mislbd.ababil.transaction.domain.TransactionAmountType;
 import com.mislbd.ababil.transaction.domain.TransactionCorrectionRequest;
 import com.mislbd.ababil.transaction.domain.TreasuryTransactionRequest;
 import com.mislbd.ababil.treasury.domain.AuditInformation;
@@ -21,9 +20,8 @@ public class TransactionalOperationMapper {
       boolean isDebit,
       String accountNumber,
       BigDecimal amount,
-      TransactionAmountType amountType) {
-    String narration =
-        amountType.name() + (isDebit ? " debited" : " credited");
+      String amountType) {
+    String narration = amountType + (isDebit ? " debited" : " credited");
     TreasuryTransactionRequest request = new TreasuryTransactionRequest();
     request.setActivityId(txnInformation.getActivityId());
     request.setAmountCcy(amount);
@@ -55,9 +53,8 @@ public class TransactionalOperationMapper {
       BigDecimal amount,
       String glCode,
       LocalDate valueDate,
-      TransactionAmountType amountType) {
-    String narration =
-        amountType.name() + (isDebit ? " debited to GL:" : " credited from GL:") + glCode;
+      String amountType) {
+    String narration = amountType + (isDebit ? " debited to GL:" : " credited from GL:") + glCode;
     GlTransactionRequest glRequest = new GlTransactionRequest();
     glRequest.setActivityId(txnInformation.getActivityId());
     glRequest.setAmountLcy(amount);

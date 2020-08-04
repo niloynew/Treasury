@@ -141,7 +141,7 @@ public class AccountMapper {
             .setExpiryDate(domain.getNewExpiryDate())
             .setTenureAmount(domain.getNewTenureAmount())
             .setTenureType(domain.getNewTenureType())
-            .setRenewalDate(domain.getExpiryDate().plusDays(1))
+            .setRenewalDate(domain.getRenewalDate())
             .setProfitRate(domain.getNewProfitRate())
             .setStatus(AccountStatus.REGULAR);
   }

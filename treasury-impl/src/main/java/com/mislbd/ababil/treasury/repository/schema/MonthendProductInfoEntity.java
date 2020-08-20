@@ -36,22 +36,22 @@ public class MonthendProductInfoEntity {
   @Column(name = "PROFIT_RATE_ACC_TYPE")
   private int profitRateAccType;
 
-  @Column(name = "IS_PROVISION_POSTED")
+  @Column(name = "IS_PROVISION_POSTED", columnDefinition = "int default 0")
   private boolean provisionalPosted;
 
-  @Column(name = "IS_ENHANCED_POSTED")
+  @Column(name = "IS_ENHANCED_POSTED", columnDefinition = "int default 0")
   private boolean enhancedPosted;
 
   @Column(name = "GL_POSTED_DATE")
   private LocalDate glPostedDate;
 
-  @Column(name = "IS_GL_POSTED")
+  @Column(name = "IS_GL_POSTED", columnDefinition = "int default 0")
   private boolean glPosted;
 
   @Column(name = "PROVISION_RATE")
   private BigDecimal provisionRate;
 
-  @Column(name = "IS_ACCOUNT_POSTED")
+  @Column(name = "IS_ACCOUNT_POSTED", columnDefinition = "int default 0")
   private boolean accPosted;
 
   @Enumerated(EnumType.STRING)

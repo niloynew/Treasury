@@ -188,7 +188,7 @@ public class TransactionalOperationService {
           TransactionAmountType.PROFIT);
     }
 
-    if (account.getProfitAmount().signum() == 1) {
+    if (account.getProvisionAmount().signum() == 1) {
       transactionService.doGlTransaction(
           mapper.getPayableGL(
               txnInformation,
@@ -202,10 +202,10 @@ public class TransactionalOperationService {
           TransactionRequestType.TRANSFER);
     }
 
-    if (account.getProfitAmount() != null && account.getActualProfit() != null) {
+    if (account.getProvisionAmount() != null && account.getActualProfit() != null) {
 
-      if (account.getProfitAmount().compareTo(account.getActualProfit()) == 1) {
-        BigDecimal overBalance = account.getProfitAmount().subtract(account.getActualProfit());
+      if (account.getProvisionAmount().compareTo(account.getActualProfit()) == 1) {
+        BigDecimal overBalance = account.getProvisionAmount().subtract(account.getActualProfit());
         transactionService.doGlTransaction(
             mapper.getPayableGL(
                 txnInformation,
@@ -215,12 +215,12 @@ public class TransactionalOperationService {
                 overBalance,
                 incomeGl,
                 account.getValueDate(),
-                "OVER PROFIT"),
+                "OVER PROFIT REVERSED"),
             TransactionRequestType.TRANSFER);
       }
 
-      if (account.getActualProfit().compareTo(account.getProfitAmount()) == 1) {
-        BigDecimal lowerBalance = account.getActualProfit().subtract(account.getProfitAmount());
+      if (account.getActualProfit().compareTo(account.getProvisionAmount()) == 1) {
+        BigDecimal lowerBalance = account.getActualProfit().subtract(account.getProvisionAmount());
         transactionService.doGlTransaction(
             mapper.getPayableGL(
                 txnInformation,
@@ -230,7 +230,7 @@ public class TransactionalOperationService {
                 lowerBalance,
                 incomeGl,
                 account.getValueDate(),
-                "DOWN PROFIT"),
+                "DOWN PROFIT REVERSED"),
             TransactionRequestType.TRANSFER);
       }
     }
@@ -276,7 +276,7 @@ public class TransactionalOperationService {
                     entity.getBalance().add(account.getActualProfit()),
                     entity.getPrincipalDebit(),
                     entity.getPrincipalCredit(),
-                    account.getActualProfit(),
+                    entity.getProfitDebit().add(account.getActualProfit()),
                     entity.getProfitCredit())
                 .map(account));
       }
@@ -339,12 +339,16 @@ public class TransactionalOperationService {
                   balance,
                   entity.getPrincipalDebit(),
                   closingPrincipal,
-                  account.getActualProfit(),
+                  entity.getProfitDebit().add(account.getActualProfit()),
                   closingProfit)
               .map(account));
     }
 
-    utilityService.updateMonthendInfo(entity.getAccountNumber(), account.getEvent().name(), false);
+    utilityService.updateMonthendInfo(
+        entity.getAccountNumber(),
+        account.getEvent().name(),
+        true,
+        txnInformation.getGlobalTxnNumber());
 
     return txnInformation.getGlobalTxnNumber();
   }

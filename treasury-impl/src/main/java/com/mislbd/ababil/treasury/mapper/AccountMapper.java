@@ -187,9 +187,9 @@ public class AccountMapper {
             .setExpectedProfitRate(entity.getProfitRate())
             .setInstrument(entity.getInstrumentNumber())
             .setProvisionAmount(
-                utilityService.totalProvisionOfAccounts(entity.getAccountNumber(), null, false))
-            .setProfitAmount(
                 utilityService.totalProvisionOfAccounts(entity.getAccountNumber(), true, false))
+            .setProfitAmount(
+                utilityService.totalProvisionOfAccounts(entity.getAccountNumber(), null, false))
             .setProductAmount(
                 utilityService.totalProductOfAccounts(entity.getAccountNumber(), true, false));
   }

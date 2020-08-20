@@ -31,15 +31,17 @@ public class UtilityServiceImpl implements UtilityService {
   }
 
   @Override
-  public void updateMonthendInfo(String accountNumber, String event, boolean accountPosted) {
+  public void updateMonthendInfo(
+      String accountNumber, String event, boolean accountPosted, Long globalTxnNumber) {
     List<MonthendProductInfoEntity> productInfoEntities =
         getMonthendProductInfoData(accountNumber, null, false);
-    productInfoEntities
-        .stream()
-        .forEach(
-            object ->
-                monthendProductInfoRepository.save(
-                    object.setProfitPostingEvent(event).setGlPosted(true).setAccPosted(true)));
+    productInfoEntities.forEach(
+        object ->
+            monthendProductInfoRepository.save(
+                object
+                    .setProfitPostingEvent(event)
+                    .setAccPosted(accountPosted)
+                    .setGlobalTxnNumber(globalTxnNumber)));
   }
 
   @Override
@@ -54,6 +56,13 @@ public class UtilityServiceImpl implements UtilityService {
                 .mapToDouble(entity -> entity.getAccProduct().doubleValue())
                 .sum())
         : BigDecimal.ZERO;
+  }
+
+  @Override
+  public void reactiveMonthendInfo(Long globalTxnNumber) {
+    List<MonthendProductInfoEntity> entities =
+        monthendProductInfoRepository.findAllByGlobalTxnNumber(globalTxnNumber);
+    entities.forEach(object -> monthendProductInfoRepository.save(object.setAccPosted(false)));
   }
 
   private List<MonthendProductInfoEntity> getMonthendProductInfoData(

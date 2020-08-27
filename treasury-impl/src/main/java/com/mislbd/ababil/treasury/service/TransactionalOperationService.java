@@ -274,22 +274,19 @@ public class TransactionalOperationService {
             accountMapper
                 .renewalDomainToEntity(
                     entity.getBalance().add(account.getActualProfit()),
-                    entity.getPrincipalDebit(),
+                    entity.getPrincipalDebit().add(account.getActualProfit()),
                     entity.getPrincipalCredit(),
-                    entity.getProfitDebit().add(account.getActualProfit()),
-                    entity.getProfitCredit())
+                    entity.getProfitDebit(),
+                    entity.getProfitCredit().add(account.getActualProfit()))
                 .map(account));
       }
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
-      BigDecimal closingProfit = account.getActualProfit();
+      BigDecimal closingProfit =
+          entity.getProfitDebit().subtract(entity.getProfitCredit()).add(account.getActualProfit());
       BigDecimal closingPrincipal =
-          entity
-              .getPrincipalDebit()
-              .subtract(entity.getPrincipalCredit())
-              .add(entity.getProfitDebit())
-              .subtract(entity.getProfitCredit());
+          entity.getPrincipalDebit().subtract(entity.getPrincipalCredit());
       if (closingProfit.signum() == 1) {
         transactionService.doTreasuryTransaction(
             mapper.getPayableAccount(

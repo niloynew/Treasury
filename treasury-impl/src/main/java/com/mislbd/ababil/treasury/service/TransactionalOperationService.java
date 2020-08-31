@@ -337,10 +337,10 @@ public class TransactionalOperationService {
           accountMapper
               .closeDomainToEntity(
                   balance,
-                  entity.getPrincipalDebit(),
+                  entity.getPrincipalCredit().add(entity.getPrincipalDebit()),
                   closingPrincipal,
                   entity.getProfitDebit().add(account.getActualProfit()),
-                  closingProfit)
+                  entity.getProfitCredit().add(closingProfit))
               .map(account));
     }
 

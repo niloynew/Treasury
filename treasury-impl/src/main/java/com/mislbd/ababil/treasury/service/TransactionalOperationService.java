@@ -249,17 +249,6 @@ public class TransactionalOperationService {
                 "ACTUAL PROFIT"),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
-        transactionService.doGlTransaction(
-            mapper.getPayableGL(
-                txnInformation,
-                configurationService.getBaseCurrencyCode(),
-                auditInformation,
-                true,
-                account.getActualProfit(),
-                settlementGl,
-                account.getValueDate(),
-                "ACTUAL PROFIT"),
-            TransactionRequestType.TRANSFER);
         accountRepository.save(
             accountMapper
                 .renewalDomainToEntity(
@@ -270,6 +259,28 @@ public class TransactionalOperationService {
                     account.getActualProfit())
                 .map(account));
       } else {
+        transactionService.doTreasuryTransaction(
+                mapper.getPayableAccount(
+                        txnInformation,
+                        configurationService.getBaseCurrencyCode(),
+                        auditInformation,
+                        false,
+                        entity.getAccountNumber(),
+                        account.getActualProfit(),
+                        "PRINCIPAL"),
+                TransactionRequestType.TRANSFER,
+                TransactionAmountType.PROFIT);
+        transactionService.doTreasuryTransaction(
+                mapper.getPayableAccount(
+                        txnInformation,
+                        configurationService.getBaseCurrencyCode(),
+                        auditInformation,
+                        true,
+                        entity.getAccountNumber(),
+                        entity.getAmount(),
+                        "PRINCIPAL"),
+                TransactionRequestType.TRANSFER,
+                TransactionAmountType.PRINCIPAL);
         accountRepository.save(
             accountMapper
                 .renewalDomainToEntity(

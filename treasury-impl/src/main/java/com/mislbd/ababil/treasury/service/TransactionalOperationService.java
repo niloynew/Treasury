@@ -276,7 +276,7 @@ public class TransactionalOperationService {
                     entity.getBalance().add(account.getActualProfit()),
                     entity.getPrincipalDebit().add(account.getActualProfit()),
                     entity.getPrincipalCredit(),
-                    entity.getProfitDebit(),
+                    entity.getProfitDebit().add(account.getActualProfit()),
                     entity.getProfitCredit().add(account.getActualProfit()))
                 .map(account));
       }

@@ -296,7 +296,7 @@ public class TransactionalOperationService {
                 false,
                 entity.getAccountNumber(),
                 closingProfit,
-                "PROFIT"),
+                "SETTLEMENT PROFIT"),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PROFIT);
       }
@@ -310,7 +310,7 @@ public class TransactionalOperationService {
                 false,
                 entity.getAccountNumber(),
                 closingPrincipal,
-                "PRINCIPAL"),
+                "SETTLEMENT PRINCIPAL"),
             TransactionRequestType.TRANSFER,
             TransactionAmountType.PRINCIPAL);
       }

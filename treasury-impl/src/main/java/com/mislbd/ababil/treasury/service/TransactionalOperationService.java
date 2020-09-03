@@ -195,7 +195,7 @@ public class TransactionalOperationService {
               configurationService.getBaseCurrencyCode(),
               auditInformation,
               false,
-              account.getProfitAmount(),
+              account.getProvisionAmount(),
               profitReceivableGl,
               account.getValueDate(),
               "PROVISIONAL PROFIT"),

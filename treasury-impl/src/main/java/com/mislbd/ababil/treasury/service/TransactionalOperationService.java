@@ -232,7 +232,7 @@ public class TransactionalOperationService {
                 lowerBalance,
                 incomeGl,
                 account.getValueDate(),
-                "DOWN PROFIT REVERSED"),
+                "DOWN PROFIT ADJUSTED"),
             TransactionRequestType.TRANSFER);
       }
     }
@@ -273,28 +273,28 @@ public class TransactionalOperationService {
             TransactionRequestType.TRANSFER);
 
       } else {
-        transactionService.doTreasuryTransaction(
-            mapper.getPayableAccount(
-                txnInformation,
-                configurationService.getBaseCurrencyCode(),
-                auditInformation,
-                false,
-                entity.getAccountNumber(),
-                account.getActualProfit(),
-                "PROFIT"),
-            TransactionRequestType.TRANSFER,
-            TransactionAmountType.PROFIT);
-        transactionService.doTreasuryTransaction(
-            mapper.getPayableAccount(
-                txnInformation,
-                configurationService.getBaseCurrencyCode(),
-                auditInformation,
-                true,
-                entity.getAccountNumber(),
-                entity.getAmount(),
-                "PRINCIPAL"),
-            TransactionRequestType.TRANSFER,
-            TransactionAmountType.PRINCIPAL);
+        //        transactionService.doTreasuryTransaction(
+        //            mapper.getPayableAccount(
+        //                txnInformation,
+        //                configurationService.getBaseCurrencyCode(),
+        //                auditInformation,
+        //                false,
+        //                entity.getAccountNumber(),
+        //                account.getActualProfit(),
+        //                "PROFIT"),
+        //            TransactionRequestType.TRANSFER,
+        //            TransactionAmountType.PROFIT);
+        //        transactionService.doTreasuryTransaction(
+        //            mapper.getPayableAccount(
+        //                txnInformation,
+        //                configurationService.getBaseCurrencyCode(),
+        //                auditInformation,
+        //                true,
+        //                entity.getAccountNumber(),
+        //                entity.getAmount(),
+        //                "PRINCIPAL"),
+        //            TransactionRequestType.TRANSFER,
+        //            TransactionAmountType.PRINCIPAL);
         accountRepository.save(
             accountMapper
                 .renewalDomainToEntity(
@@ -423,6 +423,8 @@ public class TransactionalOperationService {
         mapper.doTransactionCorrection(txnInformation, auditInformation));
 
     updateTreasuryAccount(entity, processEntity);
+
+    processRepository.save(processEntity.setValid(false));
 
     return txnInformation.getGlobalTxnNumber();
   }

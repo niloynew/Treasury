@@ -82,6 +82,9 @@ public class AccountProcessEntity extends BaseEntity {
   @Column(name = "VERIFY_DATETIME")
   private LocalDate verifyTime;
 
+  @Column(name = "EVENT")
+  private String event;
+
   public long getId() {
     return id;
   }
@@ -277,6 +280,15 @@ public class AccountProcessEntity extends BaseEntity {
 
   public AccountProcessEntity setVerifyTime(LocalDate verifyTime) {
     this.verifyTime = verifyTime;
+    return this;
+  }
+
+  public String getEvent() {
+    return event;
+  }
+
+  public AccountProcessEntity setEvent(String event) {
+    this.event = event;
     return this;
   }
 }

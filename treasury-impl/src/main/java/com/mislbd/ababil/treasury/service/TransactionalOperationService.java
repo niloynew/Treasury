@@ -114,6 +114,8 @@ public class TransactionalOperationService {
             "PRINCIPAL"),
         TransactionRequestType.TRANSFER);
 
+    transactionService.isDebitCreditEqual(txnInformation.getGlobalTxnNumber());
+
     return txnInformation.getGlobalTxnNumber();
   }
 
@@ -255,49 +257,63 @@ public class TransactionalOperationService {
                     entity.getBalance(),
                     entity.getPrincipalDebit(),
                     entity.getPrincipalCredit(),
-                    account.getActualProfit(),
-                    account.getActualProfit())
+                    entity.getProfitDebit().add(account.getActualProfit()),
+                    entity.getProfitCredit().add(account.getActualProfit()))
                 .map(account));
+        transactionService.doGlTransaction(
+            mapper.getPayableGL(
+                txnInformation,
+                configurationService.getBaseCurrencyCode(),
+                auditInformation,
+                true,
+                account.getActualProfit(),
+                settlementGl,
+                account.getValueDate(),
+                "PROFIT"),
+            TransactionRequestType.TRANSFER);
+
       } else {
         transactionService.doTreasuryTransaction(
-                mapper.getPayableAccount(
-                        txnInformation,
-                        configurationService.getBaseCurrencyCode(),
-                        auditInformation,
-                        false,
-                        entity.getAccountNumber(),
-                        account.getActualProfit(),
-                        "PRINCIPAL"),
-                TransactionRequestType.TRANSFER,
-                TransactionAmountType.PROFIT);
+            mapper.getPayableAccount(
+                txnInformation,
+                configurationService.getBaseCurrencyCode(),
+                auditInformation,
+                false,
+                entity.getAccountNumber(),
+                account.getActualProfit(),
+                "PROFIT"),
+            TransactionRequestType.TRANSFER,
+            TransactionAmountType.PROFIT);
         transactionService.doTreasuryTransaction(
-                mapper.getPayableAccount(
-                        txnInformation,
-                        configurationService.getBaseCurrencyCode(),
-                        auditInformation,
-                        true,
-                        entity.getAccountNumber(),
-                        entity.getAmount(),
-                        "PRINCIPAL"),
-                TransactionRequestType.TRANSFER,
-                TransactionAmountType.PRINCIPAL);
+            mapper.getPayableAccount(
+                txnInformation,
+                configurationService.getBaseCurrencyCode(),
+                auditInformation,
+                true,
+                entity.getAccountNumber(),
+                entity.getAmount(),
+                "PRINCIPAL"),
+            TransactionRequestType.TRANSFER,
+            TransactionAmountType.PRINCIPAL);
         accountRepository.save(
             accountMapper
                 .renewalDomainToEntity(
                     entity.getBalance().add(account.getActualProfit()),
-                    entity.getPrincipalDebit().add(account.getActualProfit()),
+                    entity.getPrincipalDebit(),
                     entity.getPrincipalCredit(),
                     entity.getProfitDebit().add(account.getActualProfit()),
-                    entity.getProfitCredit().add(account.getActualProfit()))
+                    entity.getProfitCredit())
                 .map(account));
       }
     }
 
     if (account.getEvent() == TransactionEvent.Settlement) {
-      BigDecimal closingProfit =
-          entity.getProfitDebit().subtract(entity.getProfitCredit()).add(account.getActualProfit());
+      BigDecimal closingProfit = account.getActualProfit();
       BigDecimal closingPrincipal =
-          entity.getPrincipalDebit().subtract(entity.getPrincipalCredit());
+          entity
+              .getPrincipalDebit()
+              .subtract(entity.getPrincipalCredit())
+              .add(entity.getProfitDebit().subtract(entity.getProfitCredit()));
       if (closingProfit.signum() == 1) {
         transactionService.doTreasuryTransaction(
             mapper.getPayableAccount(
@@ -354,6 +370,8 @@ public class TransactionalOperationService {
                   entity.getProfitCredit().add(closingProfit))
               .map(account));
     }
+
+    transactionService.isDebitCreditEqual(txnInformation.getGlobalTxnNumber());
 
     utilityService.updateMonthendInfo(
         entity.getAccountNumber(),

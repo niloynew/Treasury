@@ -273,28 +273,6 @@ public class TransactionalOperationService {
             TransactionRequestType.TRANSFER);
 
       } else {
-        //        transactionService.doTreasuryTransaction(
-        //            mapper.getPayableAccount(
-        //                txnInformation,
-        //                configurationService.getBaseCurrencyCode(),
-        //                auditInformation,
-        //                false,
-        //                entity.getAccountNumber(),
-        //                account.getActualProfit(),
-        //                "PROFIT"),
-        //            TransactionRequestType.TRANSFER,
-        //            TransactionAmountType.PROFIT);
-        //        transactionService.doTreasuryTransaction(
-        //            mapper.getPayableAccount(
-        //                txnInformation,
-        //                configurationService.getBaseCurrencyCode(),
-        //                auditInformation,
-        //                true,
-        //                entity.getAccountNumber(),
-        //                entity.getAmount(),
-        //                "PRINCIPAL"),
-        //            TransactionRequestType.TRANSFER,
-        //            TransactionAmountType.PRINCIPAL);
         accountRepository.save(
             accountMapper
                 .renewalDomainToEntity(

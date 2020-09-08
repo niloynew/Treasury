@@ -2,6 +2,7 @@ package com.mislbd.ababil.treasury.mapper;
 
 import com.mislbd.ababil.treasury.domain.Account;
 import com.mislbd.ababil.treasury.domain.AccountStatus;
+import com.mislbd.ababil.treasury.domain.TransactionEvent;
 import com.mislbd.ababil.treasury.exception.AccountNotFoundException;
 import com.mislbd.ababil.treasury.exception.ProductNotFoundException;
 import com.mislbd.ababil.treasury.repository.jpa.AccountRepository;
@@ -121,7 +122,7 @@ public class AccountMapper {
             .setGlobalTxnNumber(domain.getGlobalTxnNumber())
             .setValid(true)
             .setEvent(domain.getEvent().name())
-            .setRenewWithProfit(domain.isRenewWithProfit());
+            .setRenewWithProfit(domain.getEvent() == TransactionEvent.Renew ? domain.isRenewWithProfit() : null);
   }
 
   public ResultMapper<Account, AccountEntity> renewalDomainToEntity(

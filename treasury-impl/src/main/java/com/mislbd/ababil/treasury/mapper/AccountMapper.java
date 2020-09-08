@@ -109,7 +109,7 @@ public class AccountMapper {
             .setBalance(domain.getBalance())
             .setTotalProduct(domain.getProductAmount())
             .setProfitRate(domain.getExpectedProfitRate())
-            .setProvisionAmount(domain.getProfitAmount())
+            .setProvisionAmount(domain.getProvisionAmount())
             .setActualProvision(domain.getActualProfit())
             .setOldStatus(domain.getStatus())
             .setNewStatus(domain.getNewStatus())
@@ -120,6 +120,7 @@ public class AccountMapper {
             .setLastProvisionDate(domain.getLastProvisionDate())
             .setGlobalTxnNumber(domain.getGlobalTxnNumber())
             .setValid(true)
+            .setEvent(domain.getEvent().name())
             .setRenewWithProfit(domain.isRenewWithProfit());
   }
 

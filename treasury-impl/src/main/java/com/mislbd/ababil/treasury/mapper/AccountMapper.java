@@ -122,7 +122,8 @@ public class AccountMapper {
             .setGlobalTxnNumber(domain.getGlobalTxnNumber())
             .setValid(true)
             .setEvent(domain.getEvent().name())
-            .setRenewWithProfit(domain.getEvent() == TransactionEvent.Renew ? domain.isRenewWithProfit() : null);
+            .setRenewWithProfit(
+                domain.getEvent() == TransactionEvent.Renew ? domain.isRenewWithProfit() : null);
   }
 
   public ResultMapper<Account, AccountEntity> renewalDomainToEntity(
